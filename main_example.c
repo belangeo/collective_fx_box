@@ -1,25 +1,43 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+/*
+ * An example of live processing with portaudio. A stereo delay line with an
+ * embedded lowpass filter.
+ *
+ * Compile with:
+ *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example
+ *
+ * Run with:
+ *  ./main_example
+*/
+
+// System includes.
+#include <stdlib.h>     /* malloc, free */
+#include <stdio.h>      /* printf, fprintf, getchar, stderr */    
+
+// Include all portaudio functions.
 #include "portaudio.h"
+
+// Program-specific includes.
 #include "delay.h"
 #include "lp1.h"
 
+// Define global audio parameters.
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
+// Program-specific parameters.
 #define DELTIME 0.25
 #define FEEDBACK 0.75
 #define CUTOFF 1000
 
+// The DSP structure contains all needed audio processing "objects". 
 struct DSP {
     struct delay *delayline[NUMBER_OF_CHANNELS];
     struct lp1 *filter[NUMBER_OF_CHANNELS];
 };
 
-struct DSP *
-dsp_init() {
+// This function allocates memory and intializes all dsp structures.
+struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
@@ -29,8 +47,8 @@ dsp_init() {
     return dsp;
 }
 
-void
-dsp_delete(struct DSP *dsp) {
+// This function releases memory used by all dsp structures.
+void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         delay_delete(dsp->delayline[i]);
@@ -39,6 +57,7 @@ dsp_delete(struct DSP *dsp) {
     free(dsp);
 }
 
+// This function does the actual processing chain.
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
     float readval, filtered;
@@ -52,6 +71,12 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
         }
     }
 }
+
+/**********************************************************************************************
+ *
+ * You shouldn't need to edit anything below here !
+ *
+ *********************************************************************************************/
 
 static int callback(const void *inputBuffer, void *outputBuffer,
                     unsigned long framesPerBuffer,
