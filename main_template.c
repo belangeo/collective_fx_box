@@ -12,6 +12,10 @@
 #include <stdlib.h>     /* malloc, free */
 #include <stdio.h>      /* printf, fprintf, getchar, stderr */    
 
+//== Program-specific system includes. ==
+// This is where you include the program-specific system headers (if needed) by your program...
+
+
 /* Include all portaudio functions. */
 #include "portaudio.h"
 

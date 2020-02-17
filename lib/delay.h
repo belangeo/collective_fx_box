@@ -8,6 +8,9 @@ struct delay {
     float *buffer;
 };
 
+/*
+ * Doc de la fonction delay_init...
+ */
 struct delay * delay_init(float maxdur, float sr);
 
 void delay_delete(struct delay *data);
