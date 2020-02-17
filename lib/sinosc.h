@@ -7,6 +7,7 @@ struct sinosc {
 	float angle;
 };
 
+// Fonction d'initialisation.
 struct sinosc * sinosc_init(float freq, float sr);
 
 void sinosc_delete(struct sinosc *data);
