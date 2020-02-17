@@ -2,11 +2,17 @@
  * An example of live processing with portaudio. A stereo delay line with an
  * embedded lowpass filter.
  *
- * Compile with:
+ * Compile on linux and MacOS with:
  *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example
  *
- * Run with:
+ * Compile on Windows with:
+ *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example.exe
+ *
+ * Run on linux and MacOS with:
  *  ./main_example
+ *
+ * Run on Windows with:
+ *  main_example.exe
 */
 
 // System includes.

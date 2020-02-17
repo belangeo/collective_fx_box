@@ -1,11 +1,17 @@
 /*
- * Template file to create a live audio processing program with portaudio.
+ * This program adds an FM-synthesis background to the input sound.
  *
- * Compile with:
+ * Compile on linux and MacOS with:
  *  gcc main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example2
  *
- * Run with:
+ * Compile on Windows with:
+ *  gcc main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example2.exe
+ *
+ * Run on linux and MacOS with:
  *  ./main_example2
+ *
+ * Run on Windows with:
+ *  main_example2.exe
 */
 
 /* System includes. */
@@ -21,7 +27,7 @@
 
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
-#define FRAMES_PER_BUFFER   1024
+#define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
 
@@ -40,11 +46,7 @@
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
     // This is where you declare the specific processing structures
-    // needed by your program... Each declaration should have the form:
-
-    // struct delay *delayline[NUMBER_OF_CHANNELS];
-
-    // Which means a "multi-channel" pointer to the processing structure.
+    // needed by your program... 
     struct sinosc *lfo1[NUMBER_OF_CHANNELS];
     struct sinosc *lfo2[NUMBER_OF_CHANNELS];
     struct sinosc *car[NUMBER_OF_CHANNELS];
@@ -57,14 +59,11 @@ struct DSP * dsp_init() {
     struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you setup the specific processing structures needed by your program,
-        // using the provided xxx_init functions. Something like:
-
-        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
+        // using the provided xxx_init functions.
         dsp->lfo1[i] = sinosc_init(LFO_FREQ1, SAMPLE_RATE);
         dsp->lfo2[i] = sinosc_init(LFO_FREQ2, SAMPLE_RATE);
         dsp->car[i] = sinosc_init(1, SAMPLE_RATE);
         dsp->mod[i] = sinosc_init(CARRIER * RATIO, SAMPLE_RATE);
-
     }
     return dsp;
 }
@@ -74,14 +73,11 @@ void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you release the memory used by the specific processing structure
-        // used in the program. Something like:
-
-        // delay_delete(dsp->delayline[i]);
+        // used in the program.
         sinosc_delete(dsp->lfo1[i]);
         sinosc_delete(dsp->lfo2[i]);
         sinosc_delete(dsp->car[i]);
         sinosc_delete(dsp->mod[i]);
-
     }
     free(dsp);
 }
@@ -97,8 +93,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {      /* For each channel in a frame... */
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
-            // This is where you want to put your processing logic... A simple thru is:
-            // out[index] = in[index];
+            // This is where you want to put your processing logic...
             lfoval = sinosc_process(dsp->lfo1[j]);
             modfreq = CARRIER * RATIO * (lfoval * 0.25 + 1);
             sinosc_set_freq(dsp->mod[j], modfreq);

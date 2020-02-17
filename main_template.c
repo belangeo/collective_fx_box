@@ -1,11 +1,17 @@
 /*
  * Template file to create a live audio processing program with portaudio.
  *
- * Compile with:
+ * Compile on linux and MacOS with:
  *  gcc main_template.c lib/*.c -Ilib -lm -lportaudio -o main_template
  *
- * Run with:
+ * Compile on Windows with:
+ *  gcc main_template.c lib/*.c -Ilib -lm -lportaudio -o main_template.exe
+ *
+ * Run on linux and MacOS with:
  *  ./main_template
+ *
+ * Run on Windows with:
+ *  main_template.exe
 */
 
 /* System includes. */
