@@ -33,6 +33,6 @@ void hardclip_delete(struct hardclip *data);
 /* Process the next sample of a phasor.
 	struct phasor *data: The structure for which to compute the next sample.
  */
-float hardclip_process(struct hardclip *data, float input, float thresh);
+float hardclip_process(struct hardclip *data, float input, float thresh, int mode);
 
 #endif

@@ -2,13 +2,9 @@
 #include <math.h>
 #include "hardclip.h"
 
-/* Hardclip
-
-0 < THRESH <= 1
-
-Si x est plus grand que THRESH, y = THRESH, sinon y = x.  
-Si x est plus petit que -THRESH, y = -THRESH, sinon y = x.  
-On normalise en multipliant la sortie par 1/THRESH.
+/* Distorsion avec differents modes.
+	->mode 0 = hardclip
+	->mode 1 = mirroir
 
  */
 struct hardclip * 
@@ -25,21 +21,43 @@ hardclip_delete(struct hardclip *data) {
 }
 
 float
-hardclip_process(struct hardclip *data, float input, float thresh) {
+hardclip_process(struct hardclip *data, float input, float thresh,int mode) {
 	float value;
-	if (input>thresh)
-	{
-		value = thresh;
+	if (mode ==0)
+	{		
+		if (input>thresh)
+		{
+			value = thresh;
+		}
+		if (input<thresh)
+		{
+			value=input;
+		}
+		if (input<-(thresh))
+		{
+			value = -(thresh);
+		}
+		value = value * (1/thresh);
 	}
-	if (input<thresh)
+	
+	if (mode ==1)
 	{
-		value=input;
+		//Si x est plus grand que THRESH, y = THRESH - (x - THRESH), sinon y = x.  
+//Si x est plus petit que -THRESH, y = -THRESH + (-THRESH - x), sinon y = x.
+		if (input>thresh)
+		{
+			value=thresh-(input-thresh);
+		}
+		if (input<thresh)
+		{
+			value=input;
+		}
+		if (input< -(thresh))
+		{
+			value=-(thresh)+(-thresh-input);
+		}
+		
 	}
-	if (input<-(thresh))
-	{
-		value = -(thresh);
-	}
-	value = value * (1/thresh);
 	return value;
 }
 

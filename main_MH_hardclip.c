@@ -36,7 +36,8 @@
 
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
-#define THRESH 1
+#define THRESH 0.01
+#define MODE 1 //0 = hardclip, 1 = mirror
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
@@ -96,7 +97,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 			
             // This is where you want to put your processing logic... A simple thru is:
-            out[index] = in[index]*hardclip_process(dsp->hardcliptest[j],in[index], THRESH);
+            out[index] = in[index]*hardclip_process(dsp->hardcliptest[j],in[index], THRESH,MODE);
         }
     }
 }

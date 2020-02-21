@@ -1,7 +1,7 @@
 Distorsion
 ==========
 
-écrêtage (hard clip)
+écrêtage (hard clip) ->MH
 --------------------
 
 0 < THRESH <= 1
@@ -11,7 +11,7 @@ Si x est plus petit que -THRESH, y = -THRESH, sinon y = x.
 On normalise en multipliant la sortie par 1/THRESH.
 
 
-effet miroir (folding)
+effet miroir (folding) ->MH
 ----------------------
 
 0 < THRESH <= 1
