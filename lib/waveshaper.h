@@ -21,15 +21,16 @@ struct waveshaper {
 	float sr;
 	float lastout;
 	float coeff;
+	float drive;
 };
 
-struct waveshaper* lp1_init(float freq, float sr);
+struct waveshaper* waveshaper_init(float drive, float sr);
 
 void waveshaper_delete(struct waveshaper* data);
 
-float waveshaper_process(struct waveshaper* data, float input);
+float waveshaper_process(struct waveshaper* data, float input, float drive);
 
-void waveshaper_set_freq(struct waveshaper* data, float freq);
+//void waveshaper_set_drive(struct waveshaper* data, float drive);
 
 
 
