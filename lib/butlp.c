@@ -6,6 +6,29 @@
 #define M_PI (3.14159265358979323846264338327950288)
 #endif
 
+
+/* Calculate de coefficient of Butterwoth lowpass filter's 
+ * on with a new frequency.
+ * 
+ * struct butlp *data: to uptade all coefficients
+ * float freq :        set new frequency
+ */
+static void butlp_compute_coeffs(struct butlp *data, float freq){
+    if (freq < 1.0) {
+        data->freq = 1.0;
+    }else if (freq > data->nyquist){
+        data->freq = data->nyquist;
+    }else{
+        data->freq = freq;
+    }
+    float c_ = 1.0 / tan(data->pi_over_sr * data->freq);
+    float c2_ = c_ * c_;
+    data->a0 = data->a2 = 1.0 / (1.0 + data->sqrt_2 * c_ + c2_);
+    data->a1 = 2.0 * data->a0;
+    data->b1 = data->a1 * (1.0-c2_);
+    data->b2 = data->a0 * (1.0 - data->sqrt_2 * c_ + c2_);
+}
+
 struct butlp * butlp_init(float freq, float sr) {
     struct butlp *data = malloc(sizeof(struct butlp));
     data->x1 = data->x2 = data->y1 = data->y2 = 0.0;
@@ -32,21 +55,8 @@ float butlp_process(struct butlp *data, float input) {
 }
 
 void butlp_set_freq(struct butlp *data, float freq) {
+// ajout de validation si freq est different de la dernière valeur
     butlp_compute_coeffs(data, freq);
 }
 
-void butlp_compute_coeffs(struct butlp *data, float freq){
-    if (freq < 1.0) {
-        data->freq = 1.0;
-    }else if (freq > data->nyquist){
-        data->freq = data->nyquist;
-    }else{
-        data->freq = freq;
-    }
-    float c_ = 1.0 / tan(data->pi_over_sr * data->freq);
-    float c2_ = c_ * c_;
-    data->a0 = data->a2 = 1.0 / (1.0 + data->sqrt_2 * c_ + c2_);
-    data->a1 = 2.0 * data->a0;
-    data->b1 = data->a1 * (1.0-c2_);
-    data->b2 = data->a0 * (1.0 - data->sqrt_2 * c_ + c2_);
-}
+
