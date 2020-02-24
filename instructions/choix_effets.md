@@ -19,6 +19,16 @@ effet miroir (folding) ->MH
 Si x est plus grand que THRESH, y = THRESH - (x - THRESH), sinon y = x.  
 Si x est plus petit que -THRESH, y = -THRESH + (-THRESH - x), sinon y = x.
 
+Meilleure implémentation:
+
+while ((x > THRESH) || (x < -THRESH)) {
+    if (x > THRESH)
+        x = THRESH + THRESH - x;
+    else
+        x = -THRESH + -THRESH - x;
+}
+y = x;
+
 
 tangente hyperbolique (tanh)
 ----------------------------
@@ -44,6 +54,7 @@ redresseur d'onde
 0 <= ALPHA <= 1
 
 y = x + (absf(x) - x) * ALPHA
+
 
 quantification (bit crushing)
 -----------------------------
@@ -153,6 +164,20 @@ y2 = low
 lowgain = (type <= 0.5) ? (0.5 - type) : 0.0  
 highgain = (type >= 0.5) ? (type - 0.5) : 0.0  
 bandgain = (type <= 0.5) ? type : (1.0 - type)
+
+
+lineto
+------
+
+NSAMPS >= 0 (durée de la rampe en échantillons)
+
+if (x != lastx)
+    inc = (x - lastx) / NSAMPS
+    count = 0
+
+if count < NSAMPS
+    lastx += inc * count++
+y = lastx
 
 
 Délais
