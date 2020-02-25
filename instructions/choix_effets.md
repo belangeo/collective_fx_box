@@ -171,12 +171,12 @@ lineto
 
 NSAMPS >= 0 (durée de la rampe en échantillons)
 
-if (x != lastx)
-    inc = (x - lastx) / NSAMPS
+if (x != lastx)  
+    inc = (x - lastx) / NSAMPS  
     count = 0
 
-if count < NSAMPS
-    lastx += inc * count++
+if count < NSAMPS  
+    lastx += inc * count++  
 y = lastx
 
 
@@ -202,9 +202,34 @@ Stochastique
 randi
 -----
 
+FREQ > 0
+
+inc = FREQ / sr  
+nsamps = sr / FREQ  
+
+x += inc  
+if x >= 1  
+    x -= 1.0  
+    y = random(min, max)  
+    inc = (y - lasty) / nsamps  
+    count = 0  
+
+out = lasty + inc * count++
+
 
 randh
 -----
+
+FREQ > 0
+
+inc = FREQ / sr
+
+x += inc  
+if x >= 1  
+    x -= 1.0  
+    y = random(min, max)  
+
+On tient y jusqu'à la prochaine pige.
 
 
 logistic equation
@@ -228,26 +253,65 @@ Déjà fait dans les fichiers sincosc.h/sinosc.c
 carrée
 ------
 
+FREQ > 0
+
+inc = FREQ / sr
+
+x += inc  
+if x >= 1  
+    x -= 1.0
+
+if x < 0.5  
+    out = 1.0  
+else  
+    out = -1.0
+
 
 triangle
 --------
+
+FREQ > 0
+
+inc = FREQ / sr
+
+x += inc  
+if x >= 1  
+    x -= 1
+
+y = min(x, 1 - x) * 4 - 1
 
 
 dent de scie
 ------------
 
+FREQ > 0
 
-rampe
------
+inc = 2 * FREQ / sr
+
+out -= inc  
+if out <= -1  
+    out += 2.0
 
 
-sample-and-hold
----------------
+rampe (phasor)
+--------------
+
+inc = FREQ / sr
+
+out += inc  
+if out < 0  
+    out += 1.0  
+else if out >= 1  
+    out -= 1.0
 
 
 bruit blanc
 -----------
 
+y = random(-1, 1) à chaque période d'échantillonnage.
+
+voir noise.c dans le dossier "05_noise".
+ 
 
 Modulation
 ==========
