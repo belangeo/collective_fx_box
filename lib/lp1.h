@@ -2,9 +2,10 @@
 #define __LP1_H__
 
 struct lp1 {
-	float sr;
-	float lastout;
-	float coeff;
+    float sr;
+    float nyquist;
+    float lastout;
+    float coeff;
 };
 
 struct lp1 * lp1_init(float freq, float sr);
