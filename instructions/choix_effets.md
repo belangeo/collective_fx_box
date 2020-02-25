@@ -21,12 +21,12 @@ Si x est plus petit que -THRESH, y = -THRESH + (-THRESH - x), sinon y = x.
 
 Meilleure implémentation:
 
-while ((x > THRESH) || (x < -THRESH)) {
-    if (x > THRESH)
-        x = THRESH + THRESH - x;
-    else
-        x = -THRESH + -THRESH - x;
-}
+while ((x > THRESH) || (x < -THRESH)) {  
+    if (x > THRESH)  
+        x = THRESH + THRESH - x;  
+    else  
+        x = -THRESH + -THRESH - x;  
+}  
 y = x;
 
 
