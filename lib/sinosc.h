@@ -17,6 +17,8 @@ struct sinosc {
  *
  * freq:    Desired frequency in Hz.
  * sr:      Sampling rate in Hz.
+ *
+ * Returns a pointer to a sinosc structure.
  */
 struct sinosc * sinosc_init(float freq, float sr);
 
