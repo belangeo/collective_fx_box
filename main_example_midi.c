@@ -42,7 +42,10 @@
 
 //== Program-specific parameters. ==
 // This is where you define the specific constant parameters needed by your program...
-
+#define MAXDELTIME 1.0
+#define DELTIME 0.1
+#define CUTOFF 1000
+#define FEEDBACK 0.5
 
 // The DSP structure contains all needed audio processing "objects" and parameters. 
 struct DSP {
@@ -61,12 +64,12 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     // Initialize dynamic parameters with default values.
-    dsp->deltime = 0.1;
-    dsp->cutoff = 1000;
-    dsp->feedback = 0.5;
+    dsp->deltime = DELTIME;
+    dsp->cutoff = CUTOFF;
+    dsp->feedback = FEEDBACK;
     // Initialize audio objects.
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->delayline[i] = delay_init(1.0, SAMPLE_RATE);
+        dsp->delayline[i] = delay_init(MAXDELTIME, SAMPLE_RATE);
         dsp->filter[i] = lp1_init(dsp->cutoff, SAMPLE_RATE);
         dsp->deltimeramp[i] = lp1_init(0.5, SAMPLE_RATE);
     }
@@ -103,7 +106,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 // This function maps midi controller values to our dsp variables.
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     if (ctlnum == 0) {          // CC 0  => delay time
-        dsp->deltime = value / 127.;
+        dsp->deltime = value / 127. * MAXDELTIME;
     } else if (ctlnum == 1) {   // CC 1 => filter cutoff
         dsp->cutoff = value / 127. * 18000. + 100.;
         int j;
