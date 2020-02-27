@@ -33,7 +33,7 @@ Outils à développer
 
 - 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série
 
-- Distortion avec filtre passe-bas intégré (ordre 1 ou 2)
+- Distortion avec filtre passe-bas intégré (ordre 1 ou 2) => Antoine Lussier et Rémi Coulombe
 
 - flanger => Jérémie Martineau
 
