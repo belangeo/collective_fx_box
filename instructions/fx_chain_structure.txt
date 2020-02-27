@@ -47,6 +47,9 @@ Outils à développer
 
 - matrice de routing des contrôles (lfos, randi, randh)
 
+- gestion d'un fichier de  config MIDI => Olivier Bélanger
+
+
 
 
 
