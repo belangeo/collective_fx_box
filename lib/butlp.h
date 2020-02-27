@@ -9,6 +9,7 @@
  *  float sqrt_2;               calculate square root of 2
  *  float x1, x2, y1, y2;       input and output retained value
  *  float a0, a1, a2, b1, b2;   coefficient calculation
+ *  float last_freq;            reminder last frequency
  *  
  */
 struct butlp {
