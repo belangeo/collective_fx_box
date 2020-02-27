@@ -41,7 +41,7 @@ struct butlp * butlp_init(float freq, float sr) {
 }
 
 void butlp_delete(struct butlp *data) {
-	free(data);
+    free(data);
 }
 
 float butlp_process(struct butlp *data, float input) {
@@ -55,8 +55,12 @@ float butlp_process(struct butlp *data, float input) {
 }
 
 void butlp_set_freq(struct butlp *data, float freq) {
-// ajout de validation si freq est different de la dernière valeur
-    butlp_compute_coeffs(data, freq);
+    // Verfifie si la frequence de "freq" est différente de la derniere.
+    if (freq != data->last_freq){
+        butlp_compute_coeffs(data, freq);
+        data->last_freq = freq;
+    }
+        
 }
 
 

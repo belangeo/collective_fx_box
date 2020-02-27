@@ -18,6 +18,7 @@ struct butlp {
     float sqrt_2;
     float x1, x2, y1, y2;
     float a0, a1, a2, b1, b2;
+    float last_freq;
 };
 
 /* Initialize the Butterwoth lowpass filter's structure.
