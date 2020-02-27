@@ -1,0 +1,52 @@
+Structure globale de la chaîne d'effet
+======================================
+
+[lfo 1] -> | [mic]
+[lfo 2] -> | | \
+[randi] -> | | [loop 1] - [loop 2] - [loop 3] - [loop 4]
+[randh] -> | | /
+           | [2 stereo delays (parallel or serial)]
+[control   | |
+ routing   | [disto + simple lowpass]
+ matrix]   | |
+           | [flanger]
+           | |
+           | [moog resonant lowpass filter]
+           | |
+           | [amplitude modulation (off, am, ring)]
+           | |
+           | [4 bands EQ]
+           | |
+           | [compressor]
+           | |
+           | [audio output]
+
+
+Outils à développer
+===================
+
+- LFO (sine, triangle, carrée, dent de scie, rampe)
+
+- Les 2 types de random (interpolation, hold)
+
+- sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons)
+
+- 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série
+
+- Distortion avec filtre passe-bas intégré (ordre 1 ou 2)
+
+- flanger => Jérémie Martineau
+
+- filtre passe-bas résonant de Moog (ordre 4) => Gabriel Lavoie-Viau
+
+- modulation d'amplitude (off, am, ring)
+
+- Egaliseur quatre bandes (similaire au biquad, voir objet "eq" de CookDSP)
+
+- compresseur
+
+- matrice de routing des contrôles (lfos, randi, randh)
+
+
+
+
