@@ -25,7 +25,7 @@ Structure globale de la chaîne d'effet
 Outils à développer
 ===================
 
-- LFO (sine, triangle, carrée, dent de scie, rampe)
+- LFO (sine, triangle, carrée, dent de scie, rampe) => Frédéric Lemelin
 
 - Les 2 types de random (interpolation, hold)
 
