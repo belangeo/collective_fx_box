@@ -18,7 +18,6 @@
  *  
  */
 struct compress {
-    float freq;
     float thresh;
     float ratio;
     float attack;
@@ -27,7 +26,7 @@ struct compress {
     float y0;
     float acoeff;
     float rcoeff;
-    struct delay look;
+    struct delay * look;
 };
 
 /* Initialize the compress structure.
