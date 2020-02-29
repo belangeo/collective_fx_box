@@ -55,8 +55,8 @@ struct compress *compress_init(float thresh, float ratio, float attack, float re
     {
         data->attack = attack;
     }
-    float freq = 1 / (data->attack * 0.001);
-    data->acoeff = exp(-2 * M_PI * freq / data->sr);
+    float freq1 = 1 / (data->attack * 0.001);
+    data->acoeff = exp(-2 * M_PI * freq1 / data->sr);
 
     // Set Release
     if (release < 1.0)
@@ -71,8 +71,8 @@ struct compress *compress_init(float thresh, float ratio, float attack, float re
     {
         data->release = release;
     }
-    float freq = 1 / (data->release * 0.001);
-    data->rcoeff = exp(-2 * M_PI * freq / data->sr);
+    float freq2 = 1 / (data->release * 0.001);
+    data->rcoeff = exp(-2 * M_PI * freq2 / data->sr);
 
 
     data->lookahead = lookahead;    // Set Lookahead
@@ -95,7 +95,7 @@ void compress_delete(struct compress *data){
 float compress_process(struct compress *data, float input){
     float value = delay_read(data->look, data->lookahead * 0.001);
     delay_write(data->look, input);
-    float absin = abs(input);
+    float absin = fabsf(input);
     if (absin > data->y0)
     {
         data->y0 = absin + (data->y0 - absin) * data->acoeff;
@@ -113,7 +113,7 @@ float compress_process(struct compress *data, float input){
     return value;
 }
 
-// Threshold en dB de -70 à 0dB
+// Threshold en dB de -70 à 0 dB 
 void compress_set_thresh(struct compress *data, float thresh){
     if (thresh > 0.0){
         data->thresh = 0.0;
@@ -139,7 +139,7 @@ void compress_set_ratio(struct compress *data, float ratio){
     }
 
 }
-// Set attack boundaries between 1 and 150 ms (in ms)
+// Set attack boundaries between 1 and 150 ms (in milliseconds)
 void compress_set_attack(struct compress *data, float attack){
     if (attack < 1.0)
     {
@@ -156,7 +156,7 @@ void compress_set_attack(struct compress *data, float attack){
 
 }
 
-// Set release boundaries between 1 and 250 ms (in ms)
+// Set release boundaries between 1 and 250 ms (in milliseconds)
 void compress_set_release(struct compress *data, float release){
     if (release < 1.0)
     {
@@ -173,7 +173,7 @@ void compress_set_release(struct compress *data, float release){
 
 }
 
-// Set lookahead boundaries between 0.5 and 10 ms (in ms)
+// Set lookahead boundaries between 0.5 and 10 ms (in milliseconds)
 void compress_set_lookahead(struct compress *data, float lookahead){
     if (lookahead < 0.5)
     {
