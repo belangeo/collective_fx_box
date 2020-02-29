@@ -23,10 +23,11 @@ struct compress {
     float attack;
     float release;
     float lookahead;
+    float sr;
     float y0;
     float acoeff;
     float rcoeff;
-    struct delay * look;
+    struct delay *look;
 };
 
 /* Initialize the compress structure.
@@ -37,6 +38,7 @@ struct compress * compress_init(float thresh, float ratio, float attack, float r
 /* Delete compressor structure.
  *
  * struct compress *data: The structure for which to release memory.
+ * 
  */
 void compress_delete(struct compress *data);
 
