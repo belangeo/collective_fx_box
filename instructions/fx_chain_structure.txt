@@ -43,9 +43,9 @@ Outils à développer
 
 - Egaliseur quatre bandes (similaire au biquad, voir objet "eq" de CookDSP)
 
-- compresseur
+- compresseur => Carl Lussier-Aksynczak
 
-- matrice de routing des contrôles (lfos, randi, randh)
+- matrice de routing des contrôles (lfos, randi, randh) => Fabien Lamarche-Filion
 
 - gestion d'un fichier de  config MIDI => Olivier Bélanger
 
