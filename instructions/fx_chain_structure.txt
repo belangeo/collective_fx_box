@@ -29,7 +29,7 @@ Outils à développer
 
 - Les 2 types de random (interpolation, hold)
 
-- sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons)
+- sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons) => Marie-Hélène Vallières-Riendeau
 
 - 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série
 
@@ -39,7 +39,7 @@ Outils à développer
 
 - filtre passe-bas résonant de Moog (ordre 4) => Gabriel Lavoie-Viau
 
-- modulation d'amplitude (off, am, ring)
+- modulation d'amplitude (off, am, ring) => Rémi Hermoso
 
 - Egaliseur quatre bandes (similaire au biquad, voir objet "eq" de CookDSP)
 
