@@ -8,6 +8,7 @@
 #define M_PI (3.14159265358979323846264338327950288)
 #endif
 
+// The routing matrix is passed as argument when creating the sinosc
 struct sinosc_with_matrix * 
 sinosc_with_matrix_init(float freq, float sr, struct routing_matrix * mat) {
     struct sinosc_with_matrix *data = malloc(sizeof(struct sinosc_with_matrix));
@@ -27,7 +28,9 @@ float
 sinosc_with_matrix_process(struct sinosc_with_matrix *data) {
     float value = sinf(2 * M_PI * data->angle);
 
-    float mod_freq = matrix_get_bus(data->matrix, BUS0, 0) * 100 + data->freq;
+    // The bus output value is fetched.
+    // If the channel state is OFF, the third argument is used istead
+    float mod_freq = matrix_bus_output(data->matrix, BUS0, 0) * 100 + data->freq;
     
     float inc = mod_freq / data->sr;
     

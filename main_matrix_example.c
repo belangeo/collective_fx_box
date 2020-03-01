@@ -2,16 +2,16 @@
  * This program adds an FM-synthesis background to the input sound.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example2
+ *  gcc main_matrix_example.c lib/routing.c lib/sinosc_with_matrix.c lib/sinosc.c -Ilib -lm -lportaudio -o main_matrix_example
  *
  * Compile on Windows with:
- *  gcc main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example2.exe
+ *  gcc main_matrix_example.c lib/routing.c lib/sinosc_with_matrix.c lib/sinosc.c -Ilib -lm -lportaudio -o main_matrix_example.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example2
+ *  ./main_matrix_example
  *
  * Run on Windows with:
- *  main_example2.exe
+ *  main_matrix_example.exe
 */
 
 /* System includes. */
@@ -29,7 +29,6 @@
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
-
 
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
@@ -52,17 +51,21 @@ struct DSP {
     struct sinosc *lfo2;
     struct sinosc_with_matrix *sin1[NUMBER_OF_CHANNELS];
 
-    struct routing_matrix * matrix;
-  
-  
+    // The routing matrix that will be passed aroud
+    struct routing_matrix * matrix;   
 };
 
 /* This function allocates memory and intializes all dsp structures. */
 struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
+
+    // Create and initialize the routing matrix
     struct routing_matrix * matrix = routing_matrix_init();
     dsp->matrix = matrix;
+
+    // Route an input to an output. Note that this will be
+    // replaced by a config file mechanism
     route(dsp->matrix, LFO1, BUS0);
     
     dsp->lfo1 = sinosc_init(LFO_FREQ1, SAMPLE_RATE);
@@ -72,6 +75,8 @@ struct DSP * dsp_init() {
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you setup the specific processing structures needed by your program,
         // using the provided xxx_init functions.
+
+      // The routing matrix is passed as argument so that the sinosc can use it
       dsp->sin1[i] = sinosc_with_matrix_init(440, SAMPLE_RATE, dsp->matrix);
     }
     return dsp;
@@ -87,6 +92,8 @@ void dsp_delete(struct DSP *dsp) {
         sinosc_delete(dsp->lfo2);
         sinosc_with_matrix_delete(dsp->sin1[i]);
     }
+
+    // the routing matrix must be correctly dealocated.
     delete_routing_matrix(dsp->matrix);
     free(dsp);
 }
@@ -104,6 +111,10 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
             // This is where you want to put your processing logic...
+
+	    // Each modulation function is processed here, and it's value passed to
+	    // the routing matrix
+	    
             lfoval = sinosc_process(dsp->lfo1);
 
 	    matrix_update_input(dsp->matrix, LFO1, lfoval);
@@ -112,11 +123,10 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 
 	    matrix_update_input(dsp->matrix, LFO2, lfoval);
 
+	    // Once the modulations are processed and stored in the matrix,
+	    // they are then copied into their respective  active outputs
 	    matrix_update_outputs(dsp->matrix);
-
-
 	    
-
             out[index] = sinosc_with_matrix_process(dsp->sin1[j]) * 0.3;
 	    //	    printf("out[%d] = %f\n", index, out[index]);
         }
