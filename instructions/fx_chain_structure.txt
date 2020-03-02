@@ -31,7 +31,7 @@ Outils à développer
 
 - sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons) => Marie-Hélène Vallières-Riendeau
 
-- 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série
+- 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série => Louis-Thomas Pineault
 
 - Distortion avec filtre passe-bas intégré (ordre 1 ou 2) => Antoine Lussier et Rémi Coulombe
 
