@@ -4,7 +4,7 @@
 enum filterT {PEAK=0, NOTCH=0, LOWSHELF=1, HIGHSHELF=2};
 
 
-/* Second-order Butterwoth lowpass filter
+/* Parametric EQ filter
  *
  *  float freq;                 frequency in Hz
  *  float q;                    q
