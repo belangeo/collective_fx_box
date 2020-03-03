@@ -66,9 +66,11 @@ void matrix_update_outputs(struct routing_matrix * mat) {
     if (mat->bus[i]->type == SINGLE) {
       mat->bus[i]->output = mat->inputs[mat->bus[i]->input];
     }
-    mat->bus[i]->output = interp(mat->inputs[mat->bus[i]->input],
-				 mat->inputs[mat->bus[i]->input_alt],
-				 mat->bus[i]->mix);
+    if (mat->bus[i]->type == MIX) {
+      mat->bus[i]->output = interp(mat->inputs[mat->bus[i]->input],
+				   mat->inputs[mat->bus[i]->input_alt],
+				   mat->bus[i]->mix);
+    }
   }
 }
 
