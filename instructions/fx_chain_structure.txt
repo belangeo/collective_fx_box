@@ -41,13 +41,13 @@ Outils à développer
 
 - modulation d'amplitude (off, am, ring) => Rémi Hermoso
 
-- Egaliseur quatre bandes (similaire au biquad, voir objet "eq" de CookDSP)
+- Egaliseur quatre bandes (similaire au biquad, voir objet "eq" de CookDSP) => Carl Lussier-Aksynczak
 
 - compresseur => Carl Lussier-Aksynczak
 
 - matrice de routing des contrôles (lfos, randi, randh) => Fabien Lamarche-Filion
 
-- gestion d'un fichier de  config MIDI => Olivier Bélanger
+- gestion d'un fichier de config MIDI => Olivier Bélanger
 
 
 
