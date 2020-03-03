@@ -27,7 +27,7 @@ Outils à développer
 
 - LFO (sine, triangle, carrée, dent de scie, rampe) => Frédéric Lemelin
 
-- Les 2 types de random (interpolation, hold)
+- Les 2 types de random (interpolation, hold) => Marwan Laroussi
 
 - sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons) => Marie-Hélène Vallières-Riendeau
 
