@@ -102,24 +102,29 @@ static void parametricEQ_compute_vars(struct parametricEQ *data, float freq, flo
 struct parametricEQ *parametricEQ_init(float freq, float q, float gain, filterT type, float sr)
 {
     struct parametricEQ *data = malloc(sizeof(struct parametricEQ));
+    data->nyquist = data->sr * 0.49;
 
     if (freq < 1.0)
     {
-        data->freq = 1.0;
+        freq = 1.0;
     }
     else if (freq > data->nyquist)
     {
-        data->freq = data->nyquist;
+        freq = data->nyquist;
     }
     else
     {
-        data->freq = freq;
+        freq = freq;
+    }
+
+    if (q < 0.1)
+    {
+        q = 0.1;
     }
     data->x1 = data->x2 = data->y1 = data->y2 = 0.0;
-    data->twopi = M_PI * 2;
-    data->nyquist = data->sr * 0.49;
+    data->twopi = M_PI * 2; 
     data->type = type;
-    parametricEQ_compute_vars(data);
+    parametricEQ_compute_vars(data, freq, q, gain);
 
     return data;
 }
@@ -132,6 +137,11 @@ void parametricEQ_delete(struct parametricEQ *data)
 float parametricEQ_process(struct parametricEQ *data, float input)
 {
     float value;
+    value = (data->b0 * input + data->b1 * data->x1 + data->b2 * data->x2 - data->a1 * data->y1 - data->a2 * data->y2) / data->a0;
+    data->x2 = data->x1; 
+    data->x1 = input; 
+    data->y2 = data->y1; 
+    data->y1 = value;
 
     return value;
 }
@@ -142,7 +152,6 @@ void parametricEQ_set_freq(struct parametricEQ *data, float freq)
     if (freq != data->freq)
     {
         parametricEQ_compute_vars(data, freq, data->q, data->gain);
-        data->freq = freq;
     }
 }
 
@@ -150,17 +159,17 @@ void parametricEQ_set_q(struct parametricEQ *data, float q){
     if (q != data->q)
     {
         parametricEQ_compute_vars(data, data->freq, q, data->gain);
-        data->q = q;
     }
 }
 
 void parametricEQ_set_gain(struct parametricEQ *data, float gain){
     if (gain != data->gain)
-    {
+    { 
         parametricEQ_compute_vars(data, data->freq, data->q, gain);
-        data->gain = gain;
+    }
 }
 
 void parametricEQ_set_filterT(struct parametricEQ *data, filterT type){
-
+    data->type;
+    parametricEQ_compute_vars(data, data->freq, data->q, data->gain);
 }
