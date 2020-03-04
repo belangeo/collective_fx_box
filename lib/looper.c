@@ -2,53 +2,7 @@
 #include <stdio.h>
 #include "looper.h"
 
-/*struct looper * 
-looper_init(float lenloop, float sr) {
-    struct looper *data = malloc(sizeof(struct looper));
-	data->sr = sr;
-    data->lenloop = (long)(lenloop * sr + 0.5);
-    data->writepos = 0;
-    data->buffer = (float *)calloc(data->lenloop + 1, sizeof(float));
-	//data->readspeed=1;
-    return data;
-}
 
-void 
-looper_delete(struct looper *data) {
-    free(data->buffer);
-    free(data);
-}
-
-float
-looper_read(struct looper *data, float deltime) {
-    int ipos;
-    float frac, samples, readpos, previous, next;
-    samples = deltime * data->sr;
-    readpos = data->writepos - samples;
-    if (readpos < 0) {
-        readpos += data->lenloop;
-    } else if (readpos >= data->lenloop) {
-        readpos -= data->lenloop;
-    }
-    ipos = (int)readpos;
-    frac = readpos - ipos;
-    previous = data->buffer[ipos];
-    next = data->buffer[ipos + 1];
-    return previous + (next - previous) * frac;
-}
-
-void
-looper_write(struct looper *data, float input) {
-    data->buffer[data->writepos] = input;
-    if (data->writepos == 0) {
-        data->buffer[data->lenloop] = input;
-    }
-    data->writepos=data->writepos+1;
-    if (data->writepos == data->lenloop) {
-        data->writepos = 0;
-    }
-}
-*/
 
   struct looper *looper_init(float lenloop, float sr)
   {
