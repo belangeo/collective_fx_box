@@ -29,7 +29,8 @@ Outils à développer
 
 - Les 2 types de random (interpolation, hold) => Marwan Laroussi
 
-- sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons) => Marie-Hélène Vallières-Riendeau
+- sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons)
+    => Marie-Hélène Vallières-Riendeau et Frédérick Lévesque
 
 - 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série => Louis-Thomas Pineault
 
