@@ -9,10 +9,6 @@
 
 struct compress *compress_init(float thresh, float ratio, float attack, float release, float lookahead, float sr){
     struct compress *data = malloc(sizeof(struct compress));
-    
-/*      Avoir des protections/validation sur les valeurs 
-        ratio, thresh, attack, release et lookahead         
-*/
 
     // Set threshold
     if (thresh > 0.0)

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include "parametricEQ.h"
 
@@ -7,7 +8,7 @@
 #endif
 
 /*  
- *
+ * Parametric EQ Type enum
  *  - 0 : peak/notch
  *  - 1 : lowshelf
  *  - 2 : highshelf
@@ -149,22 +150,19 @@ float parametricEQ_process(struct parametricEQ *data, float input)
 void parametricEQ_set_freq(struct parametricEQ *data, float freq)
 {
     // Verfifie si la frequence de "freq" est différente de la derniere.
-    if (freq != data->freq)
-    {
+    if (freq != data->freq){
         parametricEQ_compute_vars(data, freq, data->q, data->gain);
     }
 }
 
 void parametricEQ_set_q(struct parametricEQ *data, float q){
-    if (q != data->q)
-    {
+    if (q != data->q){
         parametricEQ_compute_vars(data, data->freq, q, data->gain);
     }
 }
 
 void parametricEQ_set_gain(struct parametricEQ *data, float gain){
-    if (gain != data->gain)
-    { 
+    if (gain != data->gain){ 
         parametricEQ_compute_vars(data, data->freq, data->q, gain);
     }
 }
