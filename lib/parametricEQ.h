@@ -1,16 +1,31 @@
 #ifndef __PARAMETRICEQ_H__
 #define __PARAMETRICEQ_H__
 
-enum filterT {PEAK=0, NOTCH=0, LOWSHELF=1, HIGHSHELF=2};
-
+typedef enum {
+    PEAK=0, 
+    NOTCH=0, 
+    LOWSHELF=1, 
+    HIGHSHELF=2
+} filterT;
 
 /* Parametric EQ filter
  *
  *  float freq;                 frequency in Hz
  *  float q;                    q
  *  float gain;                 Makup gain (boost)
- *  enum filterT;               Filter Type
- *  PEAK=0, NOTCH=0, LOWSHELF=1, HIGHSHELF=2
+ *  float nyquist;              calculate Nyquist frequency
+ *  float x1, x2, y1, y2;
+ *  float twopi;
+ *  float alpha;
+ *  float c;                    constant = cos(w0)
+ *  float a;                    constant = pow(10, gain/40)
+ *  float a0, a1, a2, b0, b1, b2;
+ *  float sr;                   samplerate
+ *  enum filterT ft;            Filter Type
+ *                              PEAK=0, 
+ *                              NOTCH=0, 
+ *                              LOWSHELF=1, 
+ *                              HIGHSHELF=2
  * 
  */
 struct parametricEQ
@@ -18,8 +33,15 @@ struct parametricEQ
     float freq;
     float q;
     float gain;
-    enum filterT;
-
+    float nyquist;
+    float x1, x2, y1, y2;
+    float twopi;
+    float alpha;
+    float c;
+    float a;
+    float a0, a1, a2, b0, b1, b2;
+    float sr;
+    filterT type;
 };
 
 /* Initialize the filter's structure.
@@ -27,7 +49,7 @@ struct parametricEQ
  * freq:    Desired frequency in Hz.
  * sr:      Sampling rate in Hz.
  */
-struct parametricEQ * parametricEQ_init(float freq, float q, float gain, enum filterT, float sr);
+struct parametricEQ * parametricEQ_init(float freq, float q, float gain, filterT type, float sr);
 
 /* Delete  filter's structure.
  *
@@ -76,4 +98,6 @@ void parametricEQ_set_gain(struct parametricEQ *data, float gain);
  * PEAK=0, NOTCH=0, LOWSHELF=1, HIGHSHELF=2
  * 
  */
-void parametricEQ_set_filterT(struct parametricEQ *data, enum filterT);
+void parametricEQ_set_filterT(struct parametricEQ *data, filterT type);
+
+#endif
