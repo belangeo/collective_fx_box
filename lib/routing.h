@@ -1,34 +1,46 @@
+/* routing.h
+   Fabien Lamarche-Filion, 02 March 2020
+*/
+
+
 #ifndef __ROUTING_H__
 #define __ROUTING_H__
 
-enum bus_id {BUS0, BUS1, NB_BUS}; //Dirty hack. NB_BUS must always be last
-
-enum input_id {LFO1, LFO2, RANDI, RANDH, NB_INPUTS}; //Same for NB_INPUTS
+#define MAX_BUSSES 32
+#define MAX_INPUTS 32
 
 enum state_id {ON, OFF};
+enum type_id {SINGLE, MIX};
 
 struct routing_matrix {
-  float inputs[NB_INPUTS];
-  struct bus * bus[NB_BUS];
+  float inputs[MAX_INPUTS];
+  struct bus * bus[MAX_BUSSES];
 };
-
-//struct bus * init_bus();
-
-void route(struct routing_matrix * mat, enum input_id inut, enum bus_id bus);
 
 struct bus {
-  enum input_id input;
+  int input;
+  int input_alt;
+  enum type_id type;
   enum state_id state;
+  float mix;
   float output;
 };
-
-float matrix_bus_output(struct routing_matrix * mat, enum bus_id bus, float default_value);
 
 struct routing_matrix * routing_matrix_init(void);
 
 void delete_routing_matrix(struct routing_matrix * mat);
 
-void matrix_update_input(struct routing_matrix * mat, enum input_id input, float value);
+float matrix_bus_output(struct routing_matrix * mat, int bus, float default_value);
+
+void matrix_route(struct routing_matrix * mat, int input, int bus);
+
+void matrix_route_mix(struct routing_matrix * mat, int input, int input_alt, float mix,  int bus);
+
+void matrix_set_bus_mix(struct routing_matrix * mat, int bus, float mix);
+
+void matrix_kill_bus(struct routing_matrix * mat, int bus);
+
+void matrix_update_input(struct routing_matrix * mat, int input, float value);
 
 void matrix_update_outputs(struct routing_matrix * mat);
 
