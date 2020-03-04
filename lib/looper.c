@@ -1,8 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "looper.h"
 
+/*
 
+Choses à implémenter :
+
+	1. La variation de la vitesse de lecture.
+	2. Un contrôle pour commencer à sauvegarder en mémoire la loop et un contrôle pour l'arrêter.
+	   Optimalement, on aurait donc pas à prédéfénir une longueur de "loop". Quand on repèse sur
+	   le contrôle pour enregistrer à nouveau, ça effacerait l'ancienne loop.
+	3. Un contrôle pour le changement de pitch également.
+	4. Que le input soit considéré seulement quand on enregistre un fragment. Sinon, il est off. 
+
+*/
 
   struct looper *looper_init(float lenloop, float sr)
   {
@@ -10,8 +22,9 @@
 	  looper_data->sr=sr;
 	  looper_data->lenloop=lenloop*sr; //Donc si lenloop = .5 alors looper_data->lenloop = 22050 => .5 seconde de loop.
 	  looper_data->writeloop = 0; //Initializing 
+	  looper_data->valOsc=0;
 	  looper_data->buffer = calloc(looper_data->lenloop,sizeof(float)); //We are using calloc because he can keep in memory a large enough space to hold lensize elements.
-	  looper_data->sin=sinosc_init(0.1,sr);
+	  //looper_data->sin=sinosc_init(10,sr);
 	  return looper_data;
   }
   
@@ -36,10 +49,11 @@
 	  i=position;
 	  previous = data->buffer[i];
 	  next=data->buffer[i+1];
+	  data->valOsc = previous + (data->valOsc - previous)*0.01;//expf(-2);//expf(-2.0 * M_PI * 8000 / data->sr);
 	  return previous;
   } 
   void looper_write(struct looper *data, float input){
-	  data->buffer[data->writeloop]=input+sinosc_process(data->sin); //On ecrit les valeurs donnees en input.
+	  data->buffer[data->writeloop]=input+data->valOsc;
 	  if (data->writeloop==0)
 	  {
 		  data->buffer[data->lenloop] = input;
@@ -51,10 +65,3 @@
 	  }
   }
   
-  /*float looper_process(struct looper *data) {
-    float value = sinf(2 * M_PI * data->angle);
-    data->angle += data->inc;
-    if (data->angle >= 1.0)
-        data->angle -= 1.0;
-    return value;
-}*/

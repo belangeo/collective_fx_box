@@ -3,16 +3,16 @@
  * embedded lowpass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example.c lib/lp1.c lib/looper.c lib/lp1.c -Ilib -lm -lportaudio -o main_example
+ *  gcc main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o main_MH_looper
  *
  * Compile on Windows with:
- *  gcc main_MH_looper.c lib/looper.c lib/sinosc.c -Ilib -lm -lportaudio -o main_MH_looper.exe
+ *  gcc main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o main_MH_looper.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example
+ *  ./main_MH_looper
  *
  * Run on Windows with:
- *  main_example.exe
+ *  main_MH_looper.exe
 */
 
 // System includes.
@@ -33,7 +33,7 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define DELTIME 1
+#define LOOPTIME 1
 #define FEEDBACK 0.75
 #define CUTOFF 8000
 #define PLAYRATE 0.5
@@ -41,7 +41,6 @@
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
     struct looper *looperline[NUMBER_OF_CHANNELS];
-	//struct lp1 *filter[NUMBER_OF_CHANNELS];
 };
 
 // This function allocates memory and intializes all dsp structures.
@@ -49,8 +48,7 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->looperline[i] = looper_init(DELTIME, SAMPLE_RATE);
-		//dsp->filter[i] = lp1_init(CUTOFF, SAMPLE_RATE);
+        dsp->looperline[i] = looper_init(LOOPTIME, SAMPLE_RATE);
     }
     return dsp;
 }
@@ -60,7 +58,6 @@ void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         looper_delete(dsp->looperline[i]);
-		//lp1_delete(dsp->filter[i]);
     }
     free(dsp);
 }
@@ -74,8 +71,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
     for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-			//filtered = lp1_process(dsp->filter[j], readval);
-			readval = looper_read(dsp->looperline[j], DELTIME);
+			readval = looper_read(dsp->looperline[j], LOOPTIME);
             looper_write(dsp->looperline[j], in[index]);
             out[index] = in[index] + readval;
         }

@@ -1,15 +1,17 @@
 #ifndef __LOOPER_H__
 #define __LOOPER_H__
 
-#include "sinosc.h"
+//#include "sinosc.h"
 
   
   struct looper {
 	  float sr;
 	  long lenloop;
 	  long writeloop;
+	  float valOsc; //Pour que la loop n arrete jamasi
+	  
 	  float *buffer; //It s in memory so we want a location and not directly the float.
-	  struct sinosc *sin;
+	  //struct sinosc *sin;
   };
   
   struct looper *looper_init(float lenloop,float sr);
