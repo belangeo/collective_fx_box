@@ -10,6 +10,8 @@
 /*
 http://www.musicdsp.org/en/latest/Effects/114-waveshaper-simple-description.html
 
+http://sites.music.columbia.edu/cmc/music-dsp/FAQs/guitar_distortion_FAQ.html
+
 abs --> return absolute value of int. always positive. flip into positive value.
 
 */
@@ -18,20 +20,15 @@ abs --> return absolute value of int. always positive. flip into positive value.
 #define __WSHAPER_H__
 
 struct waveshaper {
-	float sr;
-	float lastout;
-	float coeff;
 	float drive;
 };
 
-struct waveshaper* waveshaper_init(float drive, float sr);
+struct waveshaper* waveshaper_init(float drive);
 
 void waveshaper_delete(struct waveshaper* data);
 
-float waveshaper_process(struct waveshaper* data, float input, float drive);
+float waveshaper_process(struct waveshaper* data, float input);
 
-//void waveshaper_set_drive(struct waveshaper* data, float drive);
-
-
+void waveshaper_set_drive(struct waveshaper* data);
 
 #endif

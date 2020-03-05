@@ -24,7 +24,7 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define AMOUT 1
+#define AMOUT 1.0
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -36,7 +36,7 @@ struct DSP* dsp_init() {
     int i;
     struct DSP* dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->waveshaper[i] = waveshaper_init(AMOUT, SAMPLE_RATE);
+        dsp->waveshaper[i] = waveshaper_init(AMOUT);
     }
     return dsp;
 }
@@ -53,14 +53,12 @@ void dsp_delete(struct DSP* dsp) {
 // This function does the actual processing chain.
 void dsp_process(const float* in, float* out, unsigned long framesPerBuffer, struct DSP* dsp) {
     unsigned int i, j, index;
-    float readval, filtered;
     for (i = 0; i < framesPerBuffer; i++) {
         for (j = 0; j < NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            readval = delay_read(dsp->delayline[j], DELTIME);
-            filtered = lp1_process(dsp->filter[j], readval * FEEDBACK);
-            delay_write(dsp->delayline[j], in[index] + filtered);
-            out[index] = in[index] + readval;
+            
+
+            out[index] = in[index] * waveshaper_process(dsp->waveshaper[j], in[index]);
         }
     }
 }
