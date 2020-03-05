@@ -29,6 +29,6 @@ void waveshaper_delete(struct waveshaper* data);
 
 float waveshaper_process(struct waveshaper* data, float input);
 
-void waveshaper_set_drive(struct waveshaper* data);
+void waveshaper_set_drive(struct waveshaper* data, float drive);
 
 #endif
