@@ -82,16 +82,16 @@ static void parametricEQ_compute_vars(struct parametricEQ *data, float freq, flo
     float w0 = data->twopi * data->freq / data->sr;
     data->c = cos(w0);
     data->alpha = sin(w0) / (2 * data->q);
-    switch (data->type)
-    {
+    switch (data->type){
     case PEAK:
         parametricEQ_compute_peak_coeffs(data);
         break;
     case LOWSHELF:
         parametricEQ_compute_ls_coeffs(data);
+        break;
     case HIGHSHELF:
         parametricEQ_compute_hs_coeffs(data);
-    
+        break;
     default:
         break;
     }

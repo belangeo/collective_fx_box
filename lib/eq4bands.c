@@ -29,14 +29,13 @@ dampdelay_delete(struct eq4Bands *data) {
 }
 
 void eq4Bands_process(struct eq4Bands *data, float input){
-    float v1, v2, v3, v4;
-    
-    v1 = parametricEQ_process(data->lsBand, input);
-    v2 = parametricEQ_process(data->n1Band, input);
-    v3 = parametricEQ_process(data->n2Band, input);
-    v4 = parametricEQ_process(data->hsBand, input);
+    float value;
+    value = parametricEQ_process(data->lsBand, input);
+    value = parametricEQ_process(data->n1Band, value);
+    value = parametricEQ_process(data->n2Band, value);
+    value = parametricEQ_process(data->hsBand, value);
 
-    return v1 + v2 + v3 + v4;
+    return value;
 }
 
 void eq4Bands_set_freq(struct parametricEQ *data, float freq){
