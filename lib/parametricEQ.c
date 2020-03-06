@@ -103,7 +103,8 @@ static void parametricEQ_compute_vars(struct parametricEQ *data, float freq, flo
 struct parametricEQ *parametricEQ_init(float freq, float q, float gain, filterT type, float sr)
 {
     struct parametricEQ *data = malloc(sizeof(struct parametricEQ));
-    data->nyquist = data->sr * 0.49;
+    data->nyquist = sr * 0.49;
+    data->sr = sr;
 
     if (freq < 1.0)
     {
@@ -112,10 +113,6 @@ struct parametricEQ *parametricEQ_init(float freq, float q, float gain, filterT 
     else if (freq > data->nyquist)
     {
         freq = data->nyquist;
-    }
-    else
-    {
-        freq = freq;
     }
 
     if (q < 0.1)
@@ -168,6 +165,6 @@ void parametricEQ_set_gain(struct parametricEQ *data, float gain){
 }
 
 void parametricEQ_set_filterT(struct parametricEQ *data, filterT type){
-    data->type;
+    data->type = type;
     parametricEQ_compute_vars(data, data->freq, data->q, data->gain);
 }
