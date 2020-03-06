@@ -19,7 +19,8 @@ struct eq4Bands * eq4Bands_init(float freq_ls, float q_ls, float gain_ls,
 
 }
 
-dampdelay_delete(struct eq4Bands *data) {
+void eq4Bands_delete(struct eq4Bands *data)
+{
     parametricEQ_delete(data->lsBand);
     parametricEQ_delete(data->n1Band);
     parametricEQ_delete(data->n2Band);
@@ -28,7 +29,7 @@ dampdelay_delete(struct eq4Bands *data) {
     free(data);
 }
 
-void eq4Bands_process(struct eq4Bands *data, float input){
+float eq4Bands_process(struct eq4Bands *data, float input){
     float value;
     value = parametricEQ_process(data->lsBand, input);
     value = parametricEQ_process(data->n1Band, value);

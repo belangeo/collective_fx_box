@@ -20,7 +20,7 @@ struct eq4Bands * eq4Bands_init(float freq_ls, float q_ls, float gain_ls,
 
 void eq4Bands_delete(struct eq4Bands *data);
 
-void eq4Bands_process(struct eq4Bands *data, float input);
+float eq4Bands_process(struct eq4Bands *data, float input);
 
 void eq4Bands_set_freq(struct parametricEQ *data, float freq);
 
