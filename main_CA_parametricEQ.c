@@ -35,10 +35,10 @@
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
-#define FREQUENCY   5000 //Hz
-#define Q           5
+#define FREQUENCY   3000 //Hz
+#define Q           1
 #define GAIN        -18  //dB
-#define FILTER_TYPE NOTCH
+#define FILTER_TYPE LOWSHELF
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP
