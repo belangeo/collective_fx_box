@@ -165,6 +165,8 @@ void parametricEQ_set_gain(struct parametricEQ *data, float gain){
 }
 
 void parametricEQ_set_filterT(struct parametricEQ *data, filterT type){
-    data->type = type;
-    parametricEQ_compute_vars(data, data->freq, data->q, data->gain);
+    if (type != data->type){
+        data->type = type;
+        parametricEQ_compute_vars(data, data->freq, data->q, data->gain);
+    }
 }

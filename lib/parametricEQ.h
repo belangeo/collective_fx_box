@@ -14,12 +14,12 @@ typedef enum {
  *  float q;                    q
  *  float gain;                 Makup gain (boost)
  *  float nyquist;              calculate Nyquist frequency
- *  float x1, x2, y1, y2;
- *  float twopi;
- *  float alpha;
+ *  float x1, x2, y1, y2;       input and output delayed
+ *  float twopi;                two times pi
+ *  float alpha;                constant
  *  float c;                    constant = cos(w0)
  *  float a;                    constant = pow(10, gain/40)
- *  float a0, a1, a2, b0, b1, b2;
+ *  float a0, a1, a2, b0, b1, b2; constants
  *  float sr;                   samplerate
  *  enum filterT ft;            Filter Type
  *                              PEAK=0, 
@@ -92,7 +92,7 @@ void parametricEQ_set_gain(struct parametricEQ *data, float gain);
 /* Change the type of filter.
  *
  * struct parametricEQ *data:  The structure for which to set a new frequency.
- * float type  :               New type value.
+ * filter type  :              New type value.
  * 
  * Choices :
  * PEAK=0, NOTCH=0, LOWSHELF=1, HIGHSHELF=2
