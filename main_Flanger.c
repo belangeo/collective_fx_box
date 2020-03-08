@@ -22,9 +22,7 @@
 #include "portmidi.h"
 
 // Program-specific includes.
-#include "delay.h"
-#include "sinosc.h"
-#include "lp1.h"
+#include "Flanger.h"
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
@@ -89,7 +87,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             smoothed_delay_time = lp1_process(dsp->deltimeramp[j], dsp->deltime);
             lfoval = sinosc_process(dsp->lfo[j]) * smoothed_delay_time + smoothed_delay_time;
             readval = delay_read(dsp->delayline[j], lfoval);
-            delay_write(dsp->delayline[j], in[index] /*+ readval * feedback*/);
+            delay_write(dsp->delayline[j], in[index] + readval * feedback);
             out[index] = in[index] + readval;
         }
     }
