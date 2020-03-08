@@ -1,10 +1,10 @@
 /*
  *
  * Compile on linux and MacOS with:
- *  gcc main_Flanger.c lib/lp1.c lib/sinosc.c lib/delay.c -Ilib -lm -lportaudio -o main_Flanger
+ *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
  *
  * Compile on Windows with:
- *  gcc main_Flanger.c lib/lp1.c lib/sinosc.c lib/delay.c -Ilib -lm -lportaudio -o main_Flanger.exe
+ *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger.exe
  *
  * Run on linux and MacOS with:
  *  ./main_Flanger
@@ -87,7 +87,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             smoothed_delay_time = lp1_process(dsp->deltimeramp[j], dsp->deltime);
             lfoval = sinosc_process(dsp->lfo[j]) * smoothed_delay_time + smoothed_delay_time;
             readval = delay_read(dsp->delayline[j], lfoval);
-            delay_write(dsp->delayline[j], in[index] + readval * feedback);
+            delay_write(dsp->delayline[j], in[index] + readval * dsp->feedback);
             out[index] = in[index] + readval;
         }
     }
