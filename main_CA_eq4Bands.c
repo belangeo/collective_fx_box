@@ -1,17 +1,18 @@
 /*
- * Parametric eqiing audio processing
+ * 4 Bands Parametric eqiing audio processing
  *
  * Compile on linux and MacOS with:
- *  gcc main_CA_parametricEQ.c lib/*.c -Ilib -lm -lportaudio -o main_CA_parametricEQ
+ *  gcc main_CA_eq4Bands.c lib/*.c -Ilib -lm -lportaudio -o main_CA_eq4Bands
+ *  gcc main_CA_eq4Bands.c lib/eq4Bands.c lib/parametricEQ.c -Ilib -lm -lportaudio -o ../app/main_CA_eq4Bands
  *
  * Compile on Windows with:
- *  gcc main_CA_parametricEQ.c lib/*.c -Ilib -lm -lportaudio -o main_CA_parametricEQ.exe
+ *  gcc main_CA_eq4Bands.c lib/*.c -Ilib -lm -lportaudio -o main_CA_eq4Bands.exe
  *
  * Run on linux and MacOS with:
- *  ./main_CA_parametricEQ
+ *  ./main_CA_eq4Bands
  *
  * Run on Windows with:
- *  main_CA_parametricEQ.exe
+ *  main_CA_eq4Bands.exe
 */
 
 /* System includes. */
@@ -31,14 +32,22 @@
 
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
-#include "parametricEQ.h"
+#include "eq4Bands.h"
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
-#define FREQUENCY   3000 //Hz
-#define Q           1
-#define GAIN        -18  //dB
-#define FILTER_TYPE LOWSHELF
+#define FREQ_LS         400 //Hz
+#define Q_LS            5
+#define GAIN_LS         -12  //dB
+#define FREQ_N1         1200 //Hz
+#define Q_N1            2
+#define GAIN_N1         -18  //dB
+#define FREQ_N2         2000 //Hz
+#define Q_N2            1
+#define GAIN_N2         10  //dB
+#define FREQ_HS         6000 //Hz
+#define Q_HS            6
+#define GAIN_HS         -5  //dB
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP
@@ -46,7 +55,7 @@ struct DSP
     // This is where you declare the specific processing structures
     // needed by your program... Each declaration should have the form:
 
-    struct parametricEQ *paraEQ[NUMBER_OF_CHANNELS];
+    struct eq4Bands *eq4B[NUMBER_OF_CHANNELS];
 
     // Which means a "multi-channel" pointer to the processing structure.
 };
@@ -61,7 +70,11 @@ struct DSP *dsp_init()
         // This is where you setup the specific processing structures needed by your program,
         // using the provided xxx_init functions. Something like:
 
-        dsp->paraEQ[i] = parametricEQ_init(FREQUENCY, Q, GAIN, FILTER_TYPE, SAMPLE_RATE);
+        dsp->eq4B[i] = eq4Bands_init(FREQ_LS, Q_LS, GAIN_LS,
+                                    FREQ_N1, Q_N1, GAIN_N1,
+                                    FREQ_N2, Q_N2, GAIN_N2,
+                                    FREQ_HS, Q_HS, GAIN_HS,                                        
+                                    SAMPLE_RATE);
     }
     return dsp;
 }
@@ -75,7 +88,7 @@ void dsp_delete(struct DSP *dsp)
         // This is where you release the memory used by the specific processing structure
         // used in the program. Something like:
 
-        parametricEQ_delete(dsp->paraEQ[i]);
+        eq4Bands_delete(dsp->eq4B[i]);
     }
     free(dsp);
 }
@@ -95,7 +108,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 
             // This is where you want to put your processing logic... A simple thru is:
             // out[index] = in[index];
-            out[index] = parametricEQ_process(dsp->paraEQ[j], in[index]);
+            out[index] = eq4Bands_process(dsp->eq4B[j], in[index]);
         }
     }
 }
