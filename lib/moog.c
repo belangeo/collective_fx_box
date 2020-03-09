@@ -10,8 +10,8 @@ static void moog_compute_coeffs(struct moog *data)
         data->freq = data->nyquist;
     if (data->res < 0.0)
         data->res = 0.0;
-    else if (data->res > 1.0)
-        data->res = 1.0;
+    else if (data->res > 2.0)
+        data->res = 2.0;
 
     float f = 2.0 * data->freq / data->sr;
     float fi = 1.0 - f;

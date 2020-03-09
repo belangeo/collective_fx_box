@@ -4,7 +4,7 @@
 /*	Moog Low Pass Filter
 
 	float sr, nyquist;					Sampling rate, Nyquist frequency					
-	float freq, res;					Cutoff frequency, Resonance (0 to 1)
+	float freq, res;					Cutoff frequency, Resonance (0 to 2)
 	float p, k, r;						Filter coefficients
 	float x1, y1, y2, y3, y4;			Stored signal values
 	float oldx1. oldy1, oldy2, oldy3;	,,
@@ -20,7 +20,7 @@ struct moog {
 /* Initialize the Moog Low Pass Filter's structure.
  
  	freq:				Filter's cutoff frequency.
- 	res:				Filter's resonance.
+ 	res:				Filter's resonance (0 to 2).
  	sr:					Sampling rate in Hz.
  */
 struct moog * moog_init(float freq, float res, float sr);
@@ -45,7 +45,7 @@ float moog_process(struct moog *data, float input);
  */
 void moog_set_freq(struct moog *data, float freq);
 
-/* Change the resonance of the Moog Low Pass Filter (0 to 1).
+/* Change the resonance of the Moog Low Pass Filter (0 to 2).
  
  	struct moog *data:	The structure for which to set a new frequency.
  	float res:			The new resonnance value.
