@@ -1,17 +1,17 @@
 /*
- * Template file to create a live audio processing program with portaudio AND portmidi.
- *
+ * Template file to create a live audio processing program with portaudio.
+ * Choose an lfo type and add variables.
  * Compile on linux and MacOS with:
- *  gcc main_template_midi.c lib/*.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi
+ *  gcc main_LFO.c lib/*.c -Ilib -lm -lportaudio -o main_LFO
  *
  * Compile on Windows with:
- *  gcc main_template_midi.c lib/*.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi.exe
+ *  gcc main_LFO.c lib/*.c -Ilib -lm -lportaudio -o main_LFO.exe
  *
  * Run on linux and MacOS with:
- *  ./main_template_midi
+ *  ./main_LFO
  *
  * Run on Windows with:
- *  main_template_midi.exe
+ *  main_LFO.exe
 */
 
 /* System includes. */
@@ -25,9 +25,6 @@
 /* Include all portaudio functions. */
 #include "portaudio.h"
 
-/* Include all portmidi functions. */
-#include "portmidi.h"
-
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
@@ -36,18 +33,26 @@
 
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
-
+#include "sinosc.h"
+#include "carre.h"
+#include "triangle.h"
+#include "saw.h"
+#include "phas.h"
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
-
+#define LFO_FREQ 5
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
     // This is where you declare the specific processing structures
     // needed by your program... Each declaration should have the form:
 
-    // struct delay *delayline[NUMBER_OF_CHANNELS];
+    struct sinosc *lfo[NUMBER_OF_CHANNELS];
+    struct carre *lfo[NUMBER_OF_CHANNELS];
+    struct triangle *lfo[NUMBER_OF_CHANNELS];
+    struct saw *lfo[NUMBER_OF_CHANNELS];
+    struct phasor *lfo[NUMBER_OF_CHANNELS];
 
     // Which means a "multi-channel" pointer to the processing structure.
 
@@ -60,8 +65,13 @@ struct DSP * dsp_init() {
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you setup the specific processing structures needed by your program,
         // using the provided xxx_init functions. Something like:
-
-        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
+        
+        // Choose an lfo type
+        dsp->lfo[i] = sinosc_init(LFO_FREQ, SAMPLE_RATE);
+        dsp->lfo[i] = carre_init(LFO_FREQ, SAMPLE_RATE);
+        dsp->lfo[i] = triangle_init(LFO_FREQ, SAMPLE_RATE);
+        dsp->lfo[i] = saw_init(LFO_FREQ, SAMPLE_RATE);
+        dsp->lfo[i] = phasor_init(LFO_FREQ, SAMPLE_RATE);
 
     }
     return dsp;
@@ -74,8 +84,12 @@ void dsp_delete(struct DSP *dsp) {
         // This is where you release the memory used by the specific processing structure
         // used in the program. Something like:
 
-        // delay_delete(dsp->delayline[i]);
-
+        // Choose an lfo type
+        sinosc_delete(dsp->lfo[i]);
+        carre_delete(dsp->lfo[i]);
+        triangle_delete(dsp->lfo[i]);
+        saw_delete(dsp->lfo[i]);
+        phasor_delete(dsp->lfo[i]);
     }
     free(dsp);
 }
@@ -91,15 +105,30 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
             // This is where you want to put your processing logic... A simple thru is:
+
+            // Choose an lfo type
+            lfoval = sinosc_process(dsp->lfo[j]);
+            lfoval = carre_process(dsp->lfo[j]);
+            lfoval = triangle_process(dsp->lfo[j]);
+            lfoval = saw_process(dsp->lfo[j]);
+            lfoval = phasor_process(dsp->lfo[j]);
+
+            // Choose a type and add any variables 
+            sinosc_set_freq();
+            carre_set_freq();
+            triangle_set_freq();
+            saw_set_freq();
+            phasor_set_freq();
+
+            out[index] = in[index] + sinosc_process();
+            out[index] = in[index] + carre_process();
+            out[index] = in[index] + triangle_process();
+            out[index] = in[index] + saw_process();
+            out[index] = in[index] + phasor_process();
+
             // out[index] = in[index];
         }
     }
-}
-
-/* This function maps midi controller values to our dsp variables. */
-void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
-    // print it!
-    printf("%d %d\n", ctlnum, value);
 }
 
 /**********************************************************************************************
@@ -108,36 +137,6 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
  *
  *********************************************************************************************/
 
-/* Portmidi global variables (not the best way to do it, but clearly the simpler for now! */
-PmStream *pm_input_streams[32];
-static int pm_initialized = 0;
-static int pm_num_of_devices = 0;
-
-/* Portmidi input handler (only continuous controllers). */
-static void handle_midi_input(struct DSP *dsp) {
-    int i;
-    PmError result, length;
-    PmEvent buffer;
-
-    for (i=0; i<pm_num_of_devices; i++) {
-        do {
-            result = Pm_Poll(pm_input_streams[i]);
-            if (result) {
-                length = Pm_Read(pm_input_streams[i], &buffer, 1);
-                if (length > 0) {
-                    int status = Pm_MessageStatus(buffer.message);
-                    if ((status & 0xF0) == 0xB0) {
-                        int ctlnum = Pm_MessageData1(buffer.message);
-                        int value = Pm_MessageData2(buffer.message);
-                        dsp_midi_ctl_in(dsp, ctlnum, value);
-                    }
-                }
-            }
-        } while (result);
-    }
-}
-
-/* Portaudio realtime callback. */
 static int callback(const void *inputBuffer, void *outputBuffer,
                     unsigned long framesPerBuffer,
                     const PaStreamCallbackTimeInfo* timeInfo,
@@ -151,11 +150,7 @@ static int callback(const void *inputBuffer, void *outputBuffer,
 
     struct DSP *dsp = (struct DSP *) userData;
 
-    if (inputBuffer == NULL) { return paAbort; } // mmm...?
-
-    if (pm_initialized == 1) {
-        handle_midi_input(dsp);
-    }
+    if (inputBuffer == NULL) { return paAbort; }
 
     dsp_process(in, out, framesPerBuffer, dsp);
     
@@ -184,44 +179,12 @@ int paDefaultDeviceCheck(PaDeviceIndex device, char *direction)
 
 int main(void)
 {
-    int i;
     PaStreamParameters inputParameters, outputParameters;
     PaStream *stream;
     PaError err;
-    PmError pmerr;
 
     struct DSP *dsp = dsp_init();
-
-    /********* Portmidi initialization *********/
-    pmerr = Pm_Initialize();
-    if (pmerr) {
-        printf("Can't initialize portmidi...\n");
-    } else {
-        int num_devices = Pm_CountDevices();
-        if (num_devices > 0) {
-            for (i=0; i<num_devices; i++) {
-                const PmDeviceInfo *info = Pm_GetDeviceInfo(i);
-                if (info != NULL) {
-                    if (info->input) {
-                        pmerr = Pm_OpenInput(&pm_input_streams[pm_num_of_devices], i, NULL, 100, NULL, NULL);
-                        if (pmerr) {
-                            printf("Portmidi warning: could not open midi input %d (%s): %s\n",
-                                   0, info->name, Pm_GetErrorText(pmerr));
-                        }
-                        else {
-                            Pm_SetFilter(pm_input_streams[pm_num_of_devices], PM_FILT_ACTIVE | PM_FILT_CLOCK);
-                            pm_num_of_devices++;
-                        }
-                    }
-                }
-            }
-        }
-        if (pm_num_of_devices > 0) {
-            pm_initialized = 1;
-        }
-    }
-
-    /********* Portaudio initialization *********/
+    
     err = Pa_Initialize();
     if (paErrorCheck(err)) { return -1; }
 
@@ -257,13 +220,6 @@ int main(void)
     dsp_delete(dsp);
 
     Pa_Terminate();
-
-    if (pm_initialized == 1) {
-        for (i=0; i<pm_num_of_devices; i++) {
-            Pm_Close(pm_input_streams[i]);
-        }
-        Pm_Terminate();
-    }
 
     return 0;
 }
