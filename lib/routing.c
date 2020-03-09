@@ -7,7 +7,7 @@
 #include "utils.h"
 
 struct routing_matrix * routing_matrix_init() {
-  struct routing_matrix * matrix = malloc(sizeof(struct routing_matrix));
+  struct routing_matrix * matrix = calloc(1, sizeof(struct routing_matrix));
   for (int i = 0; i < MAX_BUSSES; i++){
     matrix->bus[i].state = OFF; 
   }
