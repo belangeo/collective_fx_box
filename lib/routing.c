@@ -2,7 +2,6 @@
    Fabien Lamarche-Filion, 02 March 2020
 */
 
-#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "routing.h"
