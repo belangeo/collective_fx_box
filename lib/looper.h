@@ -12,6 +12,7 @@
 	  
 	  float *buffer; //It s in memory so we want a location and not directly the float.
 	  //struct sinosc *sin;
+	  int record;
   };
   
   struct looper *looper_init(float lenloop,float sr);
@@ -20,7 +21,7 @@
   
   float looper_read(struct looper *data, float time); //To know how many samples we are keeping in memory.
   
-  void looper_write(struct looper *data, float input);
+  void looper_write(struct looper *data,int record, float input);
   
   //float looper_process(struct looper *data);
 

@@ -25,6 +25,7 @@ Choses à implémenter :
 	  looper_data->valOsc=0;
 	  looper_data->buffer = calloc(looper_data->lenloop,sizeof(float)); //We are using calloc because he can keep in memory a large enough space to hold lensize elements.
 	  //looper_data->sin=sinosc_init(10,sr);
+	  looper_data->record=0;
 	  return looper_data;
   }
   
@@ -52,16 +53,25 @@ Choses à implémenter :
 	  data->valOsc = previous + (data->valOsc - previous)*0.01;//expf(-2);//expf(-2.0 * M_PI * 8000 / data->sr);
 	  return previous;
   } 
-  void looper_write(struct looper *data, float input){
-	  data->buffer[data->writeloop]=input+data->valOsc;
-	  if (data->writeloop==0)
-	  {
-		  data->buffer[data->lenloop] = input;
-	  }
-	  data->writeloop=data->writeloop+1;
-	  if (data->writeloop == data->lenloop)
-	  {
-		  data->writeloop=0;
-	  }
+  void looper_write(struct looper *data,int record, float input){
+	   
+	  if (record==1)
+		{	
+		  data->buffer[data->writeloop]=input+data->valOsc;
+		if (data->writeloop==0)
+			{
+		
+			data->buffer[data->lenloop] = input;
+			}
+		data->writeloop=data->writeloop+1;
+		if (data->writeloop == data->lenloop)
+			{
+			data->writeloop=0;
+			} 
+		}
+	 
+	  
+	  
+
   }
   
