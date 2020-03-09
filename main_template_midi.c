@@ -189,7 +189,6 @@ int main(void)
     PaStream *stream;
     PaError err;
     PmError pmerr;
-    int withMidi = 1, num_midi_devices = 0;
 
     struct DSP *dsp = dsp_init();
 
