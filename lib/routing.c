@@ -63,10 +63,10 @@ void matrix_update_input(struct routing_matrix * mat, int input, float value) {
 void matrix_update_outputs(struct routing_matrix * mat) {
   for (int i = 0; i < MAX_BUSSES; i++) {
     if (mat->bus[i]->state == OFF) continue;
-    if (mat->bus[i]->type == SINGLE) {
+    else if (mat->bus[i]->type == SINGLE) {
       mat->bus[i]->output = mat->inputs[mat->bus[i]->input];
     }
-    if (mat->bus[i]->type == MIX) {
+    else if (mat->bus[i]->type == MIX) {
       mat->bus[i]->output = interp(mat->inputs[mat->bus[i]->input],
 				   mat->inputs[mat->bus[i]->input_alt],
 				   mat->bus[i]->mix);
