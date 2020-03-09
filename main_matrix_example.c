@@ -27,6 +27,7 @@
 
 #include "sinosc.h"
 #include "routing.h"
+#include "noise.h"
 
 
 // the frequencies that will used for the LFOs sent to routing matrix input
@@ -37,7 +38,9 @@ struct DSP {
 
     // 2 LFOs     
     struct sinosc *lfo1;
-    struct sinosc *lfo2;
+  //    struct sinosc *lfo2;
+
+    struct noise *noise;
 
     // sine (stereo)  
     struct sinosc *sin1[NUMBER_OF_CHANNELS];
@@ -70,11 +73,12 @@ struct DSP * dsp_init() {
     // (used if the route is not yet defined
     // with matrix_route|matrix_route_mix or
     // has been killed by matrix_kill_bus)
-    matrix_route_mix(dsp->matrix, 0, 1, 0.5, 0);
+    matrix_route_mix(dsp->matrix, 0, 1, 0.82, 0);
 
     // initialize the LFOs
     dsp->lfo1 = sinosc_init(LFO_FREQ1, SAMPLE_RATE);
-    dsp->lfo2 = sinosc_init(LFO_FREQ2, SAMPLE_RATE);
+    //dsp->lfo2 = sinosc_init(LFO_FREQ2, SAMPLE_RATE);
+    dsp->noise = noise_init();
     
     /* Memory allocation for DSP structure. */
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
@@ -89,7 +93,8 @@ void dsp_delete(struct DSP *dsp) {
     int i;
 
     sinosc_delete(dsp->lfo1);
-    sinosc_delete(dsp->lfo2);
+    //sinosc_delete(dsp->lfo2);
+    noise_delete(dsp->noise);
     
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         sinosc_delete(dsp->sin1[i]);
@@ -111,7 +116,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 
 	    // process the next sample for each LFO
             lfoval1 = sinosc_process(dsp->lfo1);
-	    lfoval2 = sinosc_process(dsp->lfo2);
+	    lfoval2 = noise_process(dsp->noise);
 
 	    // copy the results into two matrix input 0 and 1
 	    matrix_update_input(dsp->matrix, 0, lfoval1);	    

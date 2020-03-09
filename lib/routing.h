@@ -42,6 +42,8 @@ void matrix_kill_bus(struct routing_matrix * mat, int bus);
 
 void matrix_update_input(struct routing_matrix * mat, int input, float value);
 
-void matrix_update_outputs(struct routing_matrix * mat);
+void matrix_update_output(struct routing_matrix * mat, int bus);
+
+void matrix_update_all_outputs(struct routing_matrix * mat);
 
 #endif

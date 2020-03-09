@@ -88,17 +88,26 @@ void matrix_update_input(struct routing_matrix * mat, int input, float value) {
   mat->inputs[input] = value;
 }
 
-void matrix_update_outputs(struct routing_matrix * mat) {
+void matrix_update_all_outputs(struct routing_matrix * mat) {
   for (int i = 0; i < MAX_BUSSES; i++) {
-    if (mat->bus[i].state == OFF) continue;
-    else if (mat->bus[i].type == SINGLE) {
-      mat->bus[i].output = mat->inputs[mat->bus[i].input];
-    }
-    else if (mat->bus[i].type == MIX) {
-      mat->bus[i].output = interp(mat->inputs[mat->bus[i].input],
-				   mat->inputs[mat->bus[i].input_alt],
-				   mat->bus[i].mix);
-    }
+    matrix_update_output(mat, i);
+  }
+}
+
+void matrix_update_output(struct routing_matrix * mat, int bus){
+  if (bus < 0 || bus >= MAX_BUSSES) {    
+    printf("[ROUTING MATRIX WARNING] Invalid matrix_update_output:\n\tbus: %d\n", bus);
+    return;
+  }
+
+  if (mat->bus[bus].state == OFF) return;
+  else if (mat->bus[bus].type == SINGLE) {
+    mat->bus[bus].output = mat->inputs[mat->bus[bus].input];
+  }
+  else if (mat->bus[bus].type == MIX) {
+    mat->bus[bus].output = interp(mat->inputs[mat->bus[bus].input],
+				mat->inputs[mat->bus[bus].input_alt],
+				mat->bus[bus].mix);
   }
 }
 
