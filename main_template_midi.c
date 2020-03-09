@@ -2,10 +2,10 @@
  * Template file to create a live audio processing program with portaudio AND portmidi.
  *
  * Compile on linux and MacOS with:
- *  gcc main_template_midi.c lib/*.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi
+ *  gcc main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi
  *
  * Compile on Windows with:
- *  gcc main_template_midi.c lib/*.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi.exe
+ *  gcc main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi.exe
  *
  * Run on linux and MacOS with:
  *  ./main_template_midi
@@ -16,7 +16,7 @@
 
 /* System includes. */
 #include <stdlib.h>     /* malloc, free */
-#include <stdio.h>      /* printf, fprintf, getchar, stderr */    
+#include <stdio.h>      /* printf, fprintf, getchar, stderr */
 
 //== Program-specific system includes. ==
 // This is where you include the program-specific system headers (if needed) by your program...
@@ -27,6 +27,9 @@
 
 /* Include all portmidi functions. */
 #include "portmidi.h"
+
+/* Include midi mapping functions. */
+#include "midimap.h"
 
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
@@ -99,7 +102,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 /* This function maps midi controller values to our dsp variables. */
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     // print it!
-    printf("%d %d\n", ctlnum, value);
+    printf("%d %d %d\n", ctlnum, value, midimap_get("2") == ctlnum);
 }
 
 /**********************************************************************************************
@@ -218,6 +221,7 @@ int main(void)
         }
         if (pm_num_of_devices > 0) {
             pm_initialized = 1;
+            midimap_init();
         }
     }
 

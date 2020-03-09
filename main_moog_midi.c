@@ -3,10 +3,10 @@
  * A stereo Moog inspired low pass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_moog_midi.c lib/moog.c -Ilib -lm -lportaudio -lportmidi -o main_moog_midi
+ *  gcc main_moog_midi.c lib/midimap.c lib/moog.c -Ilib -lm -lportaudio -lportmidi -o main_moog_midi
  *
  * Compile on Windows with:
- *  gcc main_moog_midi.c lib/moog.c -Ilib -lm -lportaudio -lportmidi -o main_moog_midi.exe
+ *  gcc main_moog_midi.c lib/midimap.c lib/moog.c -Ilib -lm -lportaudio -lportmidi -o main_moog_midi.exe
  *
  * Run on linux and MacOS with:
  *  ./main_moog_midi
@@ -17,11 +17,16 @@
 
 // System includes.
 #include <stdlib.h>     /* malloc, free */
-#include <stdio.h>      /* printf, fprintf, getchar, stderr */    
+#include <stdio.h>      /* printf, fprintf, getchar, stderr */
 
 // Include all portaudio functions.
 #include "portaudio.h"
+
+/* Include all portmidi functions. */
 #include "portmidi.h"
+
+/* Include midi mapping functions. */
+#include "midimap.h"
 
 // Program-specific includes.
 #include "moog.h"
@@ -74,11 +79,11 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 // This function maps midi controller values to our dsp variables.
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     int j;
-    if (ctlnum == 0) {          // Cutoff
+    if (ctlnum == midimap_get("cutoff")) {          // Cutoff
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             moog_set_freq(dsp->filter[j], value / 127. * 5000 + 100);
         }
-    } else if (ctlnum == 1) {   // Resonance
+    } else if (ctlnum == midimap_get("resonance")) {   // Resonance
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             moog_set_res(dsp->filter[j], value / 127. * 2);
         }
@@ -172,7 +177,6 @@ int main(void)
     PaStream *stream;
     PaError err;
     PmError pmerr;
-    int withMidi = 1, num_midi_devices = 0;
 
     struct DSP *dsp = dsp_init();
 
@@ -202,6 +206,7 @@ int main(void)
         }
         if (pm_num_of_devices > 0) {
             pm_initialized = 1;
+            midimap_init();
         }
     }
 
