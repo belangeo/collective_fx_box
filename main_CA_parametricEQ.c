@@ -3,7 +3,8 @@
  *
  * Compile on linux and MacOS with:
  *  gcc main_CA_parametricEQ.c lib/*.c -Ilib -lm -lportaudio -o main_CA_parametricEQ
- *
+ *  gcc main_CA_parametricEQ.c lib/parametricEQ.c -Ilib -lm -lportaudio -o ../app/main_CA_parametricEQ
+ * 
  * Compile on Windows with:
  *  gcc main_CA_parametricEQ.c lib/*.c -Ilib -lm -lportaudio -o main_CA_parametricEQ.exe
  *

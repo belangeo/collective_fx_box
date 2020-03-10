@@ -39,22 +39,78 @@ float eq4Bands_process(struct eq4Bands *data, float input){
     return value;
 }
 
-void eq4Bands_set_freq(struct parametricEQ *data, float freq){
-    if (freq != data->freq)
-        parametricEQ_set_freq(data, freq);
+void eq4Bands_set_freq(struct eq4Bands *data, float freq, bandSelect band)
+{
+    switch (band){
+    case BAND_LOWSHELF:
+        if (freq != data->lsBand->freq)
+            parametricEQ_set_freq(data->lsBand, freq);
+        break;
+    case BAND_NOTCH1:
+        if (freq != data->n1Band->freq)
+            parametricEQ_set_freq(data->n1Band, freq);
+        break;
+    case BAND_NOTCH2:
+        if (freq != data->n2Band->freq)
+            parametricEQ_set_freq(data->n2Band, freq);
+        break;
+    case BAND_HIGHSHELF:
+        if (freq != data->hsBand->freq)
+            parametricEQ_set_freq(data->hsBand, freq);
+        break;
+    default:
+        break;
+    }
+    
 }
 
-void eq4Bands_set_q(struct parametricEQ *data, float q){
-    if (q != data->q)
-        parametricEQ_set_q(data, q);
+void eq4Bands_set_q(struct eq4Bands *data, float q, bandSelect band)
+{
+    switch (band)
+    {
+    case BAND_LOWSHELF:
+        if (q != data->lsBand->q)
+            parametricEQ_set_q(data->lsBand, q);
+        break;
+    case BAND_NOTCH1:
+        if (q != data->n1Band->q)
+            parametricEQ_set_q(data->n1Band, q);
+        break;
+    case BAND_NOTCH2:
+        if (q != data->n2Band->q)
+            parametricEQ_set_q(data->n2Band, q);
+        break;
+    case BAND_HIGHSHELF:
+        if (q != data->hsBand->q)
+            parametricEQ_set_q(data->hsBand, q);
+        break;
+    default:
+        break;
+    }
 }
 
-void eq4Bands_set_gain(struct parametricEQ *data, float gain){
-    if (gain != data->gain)
-        parametricEQ_set_q(data, gain);
+void eq4Bands_set_gain(struct eq4Bands *data, float gain, bandSelect band)
+{
+    switch (band)
+    {
+    case BAND_LOWSHELF:
+        if (gain != data->lsBand->gain)
+            parametricEQ_set_gain(data->lsBand, gain);
+        break;
+    case BAND_NOTCH1:
+        if (gain != data->n1Band->gain)
+            parametricEQ_set_gain(data->n1Band, gain);
+        break;
+    case BAND_NOTCH2:
+        if (gain != data->n2Band->gain)
+            parametricEQ_set_gain(data->n2Band, gain);
+        break;
+    case BAND_HIGHSHELF:
+        if (gain != data->hsBand->gain)
+            parametricEQ_set_gain(data->hsBand, gain);
+        break;
+    default:
+        break;
+    }
 }
 
-void eq4Bands_set_filterT(struct parametricEQ *data, filterT type){
-    if (type != data->type)
-        parametricEQ_set_q(data, type);
-}

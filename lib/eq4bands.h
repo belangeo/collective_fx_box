@@ -3,6 +3,13 @@
 
 #include "parametricEQ.h"
 
+typedef enum {
+    BAND_LOWSHELF,
+    BAND_NOTCH1,
+    BAND_NOTCH2,
+    BAND_HIGHSHELF
+} bandSelect;
+
 /* 
  *  EQ with 4 bands parametric object
  *  struct eq4Bands{
@@ -67,7 +74,7 @@ float eq4Bands_process(struct eq4Bands *data, float input);
  * float freq :         New frequency value.
  * 
  */
-void eq4Bands_set_freq(struct parametricEQ *data, float freq);
+void eq4Bands_set_freq(struct eq4Bands *data, float freq, bandSelect band);
 
 /* Change the q of filter.
  *
@@ -75,7 +82,7 @@ void eq4Bands_set_freq(struct parametricEQ *data, float freq);
  * float q :                    New q value.
  * 
  */
-void eq4Bands_set_q(struct parametricEQ *data, float q);
+void eq4Bands_set_q(struct eq4Bands *data, float q, bandSelect band);
 
 /* Change the gain/boost of filter.
  *
@@ -83,17 +90,6 @@ void eq4Bands_set_q(struct parametricEQ *data, float q);
  * float gain :                 New gain value.
  * 
  */
-void eq4Bands_set_gain(struct parametricEQ *data, float gain);
-
-/* Change the type of filter if needed
- *
- * struct parametricEQ *data:  The structure for which to set a new frequency.
- * filter type  :              New type value.
- * 
- * Choices :
- * PEAK=0, NOTCH=0, LOWSHELF=1, HIGHSHELF=2
- * 
- */
-void eq4Bands_set_filterT(struct parametricEQ *data, filterT type);
+void eq4Bands_set_gain(struct eq4Bands *data, float gain, bandSelect band);
 
 #endif
