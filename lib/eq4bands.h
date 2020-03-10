@@ -72,6 +72,11 @@ float eq4Bands_process(struct eq4Bands *data, float input);
  *
  * struct parametricEQ *data:  The structure for which to set a new frequency.
  * float freq :         New frequency value.
+ * bandSelect:          Which band to compute
+ *                      BAND_LOWSHELF,
+ *                      BAND_NOTCH1,
+ *                      BAND_NOTCH2,
+ *                      BAND_HIGHSHELF
  * 
  */
 void eq4Bands_set_freq(struct eq4Bands *data, float freq, bandSelect band);
@@ -80,6 +85,11 @@ void eq4Bands_set_freq(struct eq4Bands *data, float freq, bandSelect band);
  *
  * struct parametricEQ *data:   The structure for which to set a new frequency.
  * float q :                    New q value.
+ * bandSelect:                  Which band to compute
+ *                              BAND_LOWSHELF,
+ *                              BAND_NOTCH1,
+ *                              BAND_NOTCH2,
+ *                              BAND_HIGHSHELF
  * 
  */
 void eq4Bands_set_q(struct eq4Bands *data, float q, bandSelect band);
@@ -88,7 +98,11 @@ void eq4Bands_set_q(struct eq4Bands *data, float q, bandSelect band);
  *
  * struct parametricEQ *data:   The structure for which to set a new frequency.
  * float gain :                 New gain value.
- * 
+ * bandSelect:                  Which band to compute
+ *                              BAND_LOWSHELF,
+ *                              BAND_NOTCH1,
+ *                              BAND_NOTCH2,
+ *                              BAND_HIGHSHELF
  */
 void eq4Bands_set_gain(struct eq4Bands *data, float gain, bandSelect band);
 
