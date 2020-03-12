@@ -34,15 +34,11 @@
 
 // Program-specific parameters.
 #define LOOPTIME 1
-#define FEEDBACK 0.75
-#define CUTOFF 8000
 #define PLAYRATE 0.5
-#define RECORD 0
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
     struct looper *looperline[NUMBER_OF_CHANNELS];
-	int record;
 };
 
 // This function allocates memory and intializes all dsp structures.
@@ -51,7 +47,6 @@ struct DSP * dsp_init() {
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         dsp->looperline[i] = looper_init(LOOPTIME, SAMPLE_RATE);
-		dsp->record=1;
     }
     return dsp;
 }
@@ -69,7 +64,6 @@ void dsp_delete(struct DSP *dsp) {
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
     float readval, filtered;
-	//int input = getchar();
 
 	//if (input==0x20)
 	//	{  
@@ -79,9 +73,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
     for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-			readval = looper_read(dsp->looperline[j], LOOPTIME);
-            looper_write(dsp->looperline[j],dsp->record, in[index]);
-            out[index] = in[index] + readval;
+            out[index] = looper_process(dsp->looperline[j], in[index]);
         }
     }
 
@@ -165,9 +157,20 @@ int main(void)
 
     err = Pa_StartStream(stream);
     if (paErrorCheck(err)) { return -1; }
-
+	
+	/*SECTION MH*/
+	int input=getchar();
+	if (input==0x20)
+	{  
+		for (int i = 0; i < NUMBER_OF_CHANNELS; i++) {
+        looper_record(dsp->looperline[i]);
+    } 
+		printf("blabla");
+	} 
+	getchar();
+	getchar();
     printf("Hit ENTER to stop program.\n");
-    getchar();
+    /*FIn section MH*/
 	
     err = Pa_CloseStream(stream);
     if (paErrorCheck(err)) { return -1; }

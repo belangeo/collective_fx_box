@@ -7,21 +7,22 @@
   struct looper {
 	  float sr;
 	  long lenloop;
+	  float pitch;
 	  long writeloop;
-	  float valOsc; //Pour que la loop n arrete jamasi
-	  
+	  long readpos;
 	  float *buffer; //It s in memory so we want a location and not directly the float.
 	  //struct sinosc *sin;
-	  int record;
   };
   
   struct looper *looper_init(float lenloop,float sr);
   
-  void looper_delete(struct looper *data);
+  void looper_delete(struct looper *loop);
   
-  float looper_read(struct looper *data, float time); //To know how many samples we are keeping in memory.
+  float looper_record(struct looper *loop);
   
-  void looper_write(struct looper *data,int record, float input);
+  float looper_process(struct looper *loop, float input);
+  
+  
   
   //float looper_process(struct looper *data);
 
