@@ -16,7 +16,7 @@
 #include "portaudio.h"
 
 // Program-specific includes.
-#include "waveshaper.h"
+#include "../lib/waveshaper.h"
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
@@ -24,7 +24,9 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define AMOUT 1.0
+#define AMOUNT 0.9
+#define FREQ 7000
+#define Q 3
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -36,7 +38,7 @@ struct DSP* dsp_init() {
     int i;
     struct DSP* dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->waveshaper[i] = waveshaper_init(AMOUT);
+        dsp->waveshaper[i] = waveshaper_init(AMOUNT, FREQ, SAMPLE_RATE, Q);
     }
     return dsp;
 }

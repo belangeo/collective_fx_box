@@ -19,16 +19,23 @@ abs --> return absolute value of int. always positive. flip into positive value.
 #ifndef __WSHAPER_H__
 #define __WSHAPER_H__
 
+#include "distoFiltr.h"
+
 struct waveshaper {
-	float drive;
+	float drive, k;
+	float freq, sr;
+	struct distoFltr* filter;
 };
 
-struct waveshaper* waveshaper_init(float drive);
+struct waveshaper* waveshaper_init(float drive, float cutoff, float sr, float q);
+//struct filter* distoFltr_init(float freq, float sr);
 
 void waveshaper_delete(struct waveshaper* data);
 
 float waveshaper_process(struct waveshaper* data, float input);
 
 void waveshaper_set_drive(struct waveshaper* data, float drive);
+
+void waveshaper_set_cutoff(struct waveshaper* data, float freq, float q);
 
 #endif

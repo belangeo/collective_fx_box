@@ -11,7 +11,7 @@
 #include <math.h>
 #include "distoFiltr.h"
 
-struct distoFltr* distoFltr_init(float freq, float sr){
+struct distoFltr* distoFltr_init(float freq, float sr, float q){
 	struct distoFltr* data = malloc(sizeof(struct distoFltr));
 	data->sr = sr;
 	data->nyquist = sr * 0.499;
@@ -21,7 +21,8 @@ struct distoFltr* distoFltr_init(float freq, float sr){
 	data->in2 = 0;
 	data->out1 = 0;
 	data->out2 = 0;
-	data->res = 2;
+	data->q = q;
+	data->norm;
 
 	return data;
 }
@@ -30,7 +31,7 @@ void distoFltr_delete(struct distoFltr* data){
 	free(data);
 }
 
-static void coeff_process(struct distoFltr* data, float freq) {
+static void coeff_process(struct distoFltr* data, float freq, float q) {
 	// cutoff verification
 	if (freq > data->nyquist) {
 		data->cutoff = data->nyquist;
@@ -41,22 +42,34 @@ static void coeff_process(struct distoFltr* data, float freq) {
 	else {
 		data->cutoff = freq;
 	}
+
+	// cutoff verification
+	if (q > 7) {
+		data->q = 7;
+	}
+	else if (q < 0.5) {
+		data->q = 0.5;
+	}
+	else {
+		data->q = q;
+	}
 	// calculation of coefficients
 	float c = 1.0 / tan(M_PI * data->cutoff / data->sr);
-	data->a1 = 1.0 / (1.0 + data->res * c + (c * c));
-	data->a2 = 2.0 * data->a1;
-	data->a3 = data->a1;
-	data->b1 = 2.0 * (1.0 - (c * c)) * data->a1;
-	data->b2 = (1.0 - (data->res * c) + (c * c));
+	data->norm = 1.0 / (1.0 + data->q / data->q + (c * c));
+	data->a0 = c * c * data->norm;
+	data->a1 = 2.0 * data->a0;
+	data->a2 = data->a0;
+	data->b1 = 2.0 * (c * c - 1) * data->norm;
+	data->b2 = (1 - c / data->q + c * c) * data->norm;
 }
 
 float distoFltr_process(struct distoFltr* data, float input){
-	float dataA1 = data->a1 * input;
-	float dataA2 = data->a2 * data->in1;
-	float dataA3 = data->a3 * data->in2;
-	float dataB1 = data->b1 * data->out1;
-	float dataB2 = data->b2 * data->out2;
-	float output = dataA1 + dataA2 + dataA3 - dataB1 - dataB2;
+	double dataA0 = data->a0 * input;
+	double dataA1 = data->a1 * data->in1;
+	double dataA2 = data->a2 * data->in2;
+	double dataB1 = data->b1 * data->out1;
+	double dataB2 = data->b2 * data->out2;
+	double output = dataA0 + dataA1 + dataA2 - dataB1 - dataB2;
 
 	data->in2 = data->in1;
 	data->in1 = input;
@@ -66,6 +79,6 @@ float distoFltr_process(struct distoFltr* data, float input){
 	return output;
 }
 
-void distoFltr_set_params(struct distoFltr* data, float freq){
-	coeff_process(data, freq);
+void distoFltr_set_params(struct distoFltr* data, float freq, float q){
+	coeff_process(data, freq, q);
 }
