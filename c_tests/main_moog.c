@@ -3,16 +3,16 @@
  * A stereo Moog inspired low pass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_moog.c lib/moog.c -Ilib -lm -lportaudio -o main_moog
+ *  gcc c_tests/main_moog.c lib/moog.c -Ilib -lm -lportaudio -o c_apps/main_moog
  *
  * Compile on Windows with:
- *  gcc main_moog.c lib/moog.c -Ilib -lm -lportaudio -o main_moog.exe
+ *  gcc c_tests/main_moog.c lib/moog.c -Ilib -lm -lportaudio -o c_apps/main_moog.exe
  *
  * Run on linux and MacOS with:
- *  ./main_moog
+ *  ./c_apps/main_moog
  *
  * Run on Windows with:
- *  main_moog.exe
+ *  c_apps/main_moog.exe
 */
 
 // System includes.

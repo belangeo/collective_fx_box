@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio.
  *
  * Compile on linux and MacOS with:
- *  gcc main_MH_hardclip.c lib/hardclip.c -Ilib -lm -lportaudio -o main_hardclip
+ *  gcc c_tests/main_MH_hardclip.c lib/hardclip.c -Ilib -lm -lportaudio -o c_apps/main_hardclip
  *
  * Compile on Windows with:
- *  gcc main_MH_hardclip.c lib/hardclip.c -Ilib -lm -lportaudio -o main_hardclip.exe
+ *  gcc c_tests/main_MH_hardclip.c lib/hardclip.c -Ilib -lm -lportaudio -o c_apps/main_hardclip.exe
  *
  * Run on linux and MacOS with:
- *  ./main_hardclip
+ *  ./c_apps/main_hardclip
  *
  * Run on Windows with:
- *  main_hardclip.exe
+ *  c_apps/main_hardclip.exe
  
  Notes : Pour l'instant ce main_template ne fait que créer un phasor.
 */

@@ -1,16 +1,16 @@
 /*
  *
  * Compile on linux and MacOS with:
- *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
+ *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger
  *
  * Compile on Windows with:
- *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger.exe
+ *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger.exe
  *
  * Run on linux and MacOS with:
- *  ./main_Flanger
+ *  ./c_apps/main_Flanger
  *
  * Run on Windows with:
- *  main_Flanger.exe
+ *  c_apps/main_Flanger.exe
 */
 
 // System includes.

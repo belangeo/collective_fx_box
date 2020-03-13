@@ -3,16 +3,16 @@
  * embedded lowpass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o main_MH_looper
+ *  gcc c_tests/main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o c_apps/main_MH_looper
  *
  * Compile on Windows with:
- *  gcc main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o main_MH_looper.exe
+ *  gcc c_tests/main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o c_apps/main_MH_looper.exe
  *
  * Run on linux and MacOS with:
- *  ./main_MH_looper
+ *  ./c_apps/main_MH_looper
  *
  * Run on Windows with:
- *  main_MH_looper.exe
+ *  c_apps/main_MH_looper.exe
 */
 
 // System includes.

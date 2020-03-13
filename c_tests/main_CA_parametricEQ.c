@@ -2,17 +2,16 @@
  * Parametric eqiing audio processing
  *
  * Compile on linux and MacOS with:
- *  gcc main_CA_parametricEQ.c lib/*.c -Ilib -lm -lportaudio -o main_CA_parametricEQ
- *  gcc main_CA_parametricEQ.c lib/parametricEQ.c -Ilib -lm -lportaudio -o ../app/main_CA_parametricEQ
+ *  gcc c_tests/main_CA_parametricEQ.c lib/parametricEQ.c -Ilib -lm -lportaudio -o c_apps/main_CA_parametricEQ
  * 
  * Compile on Windows with:
- *  gcc main_CA_parametricEQ.c lib/*.c -Ilib -lm -lportaudio -o main_CA_parametricEQ.exe
+ *  gcc c_tests/main_CA_parametricEQ.c lib/parametricEQ.c -Ilib -lm -lportaudio -o c_apps/main_CA_parametricEQ.exe
  *
  * Run on linux and MacOS with:
- *  ./main_CA_parametricEQ
+ *  ./c_apps/main_CA_parametricEQ
  *
  * Run on Windows with:
- *  main_CA_parametricEQ.exe
+ *  c_apps/main_CA_parametricEQ.exe
 */
 
 /* System includes. */

@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio.
  * Choose an lfo type and add variables.
  * Compile on linux and MacOS with:
- *  gcc main_LFO.c lib/*.c -Ilib -lm -lportaudio -o main_LFO
+ *  gcc c_tests/main_LFO.c lib/sinosc.c lib/carre.c lib/triangle.c lib/saw.c lib/phas.c -Ilib -lm -lportaudio -o c_apps/main_LFO
  *
  * Compile on Windows with:
- *  gcc main_LFO.c lib/*.c -Ilib -lm -lportaudio -o main_LFO.exe
+ *  gcc c_tests/main_LFO.c lib/sinosc.c lib/carre.c lib/triangle.c lib/saw.c lib/phas.c -Ilib -lm -lportaudio -o c_apps/main_LFO.exe
  *
  * Run on linux and MacOS with:
- *  ./main_LFO
+ *  ./c_apps/main_LFO
  *
  * Run on Windows with:
- *  main_LFO.exe
+ *  c_apps/main_LFO.exe
 */
 
 /* System includes. */

@@ -2,16 +2,16 @@
  * This program modulates the frequency of a sine based on an interpolation of two lfos
  *
  * Compile on linux and MacOS with:
- *  gcc main_matrix_example.c lib/routing.c lib/sinosc.c lib/utils.c -Ilib -lm -lportaudio -o main_matrix_example
+ *  gcc c_tests/main_matrix_example.c lib/routing.c lib/sinosc.c lib/utils.c -Ilib -lm -lportaudio -o c_apps/main_matrix_example
  *
  * Compile on Windows with:
- *  gcc main_matrix_example.c lib/routing.c lib/sinosc.c lib/utils.c -Ilib -lm -lportaudio -o main_matrix_example.exe
+ *  gcc c_tests/main_matrix_example.c lib/routing.c lib/sinosc.c lib/utils.c -Ilib -lm -lportaudio -o c_apps/main_matrix_example.exe
  *
  * Run on linux and MacOS with:
- *  ./main_matrix_example
+ *  ./c_apps/main_matrix_example
  *
  * Run on Windows with:
- *  main_matrix_example.exe
+ *  c_apps/main_matrix_example.exe
 */
 
 #include <stdlib.h>

@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio.
  *
  * Compile on linux and MacOS with:
- *  gcc main_MH_phasor.c lib/phasor.c -Ilib -lm -lportaudio -o main_phasor
+ *  gcc c_tests/main_MH_phasor.c lib/phasor.c -Ilib -lm -lportaudio -o c_apps/main_phasor
  *
  * Compile on Windows with:
- *  gcc main_MH_phasor.c lib/phasor.c -Ilib -lm -lportaudio -o main_phasor.exe
+ *  gcc c_tests/main_MH_phasor.c lib/phasor.c -Ilib -lm -lportaudio -o c_apps/main_phasor.exe
  *
  * Run on linux and MacOS with:
- *  ./main_phasor
+ *  ./c_apps/main_phasor
  *
  * Run on Windows with:
- *  main_phasor.exe
+ *  c_apps/main_phasor.exe
  
  Notes : Pour l'instant ce main_template ne fait que créer un phasor.
 */

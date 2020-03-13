@@ -2,16 +2,16 @@
  * Compressor audio processing
  *
  * Compile on linux and MacOS with:
- *  gcc main_CA_compress.c lib/*.c -Ilib -lm -lportaudio -o main_CA_compress
+ *  gcc c_tests/main_CA_compress.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_CA_compress
  *
  * Compile on Windows with:
- *  gcc main_CA_compress.c lib/*.c -Ilib -lm -lportaudio -o main_CA_compress.exe
+ *  gcc c_tests/main_CA_compress.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_CA_compress.exe
  *
  * Run on linux and MacOS with:
- *  ./main_CA_compress
+ *  ./c_apps/main_CA_compress
  *
  * Run on Windows with:
- *  main_CA_compress.exe
+ *  c_apps/main_CA_compress.exe
 */
 
 /* System includes. */

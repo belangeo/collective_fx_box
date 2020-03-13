@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio.
  *
  * Compile on linux and MacOS with:
- *  gcc main_CA_butlp.c lib/*.c -Ilib -lm -lportaudio -o main_CA_butlp
+ *  gcc c_tests/main_CA_butlp.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_CA_butlp
  *
  * Compile on Windows with:
- *  gcc main_CA_butlp.c lib/*.c -Ilib -lm -lportaudio -o main_CA_butlp.exe
+ *  gcc c_tests/main_CA_butlp.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_CA_butlp.exe
  *
  * Run on linux and MacOS with:
- *  ./main_CA_butlp
+ *  ./c_apps/main_CA_butlp
  *
  * Run on Windows with:
- *  main_CA_butlp.exe
+ *  c_apps/main_CA_butlp.exe
 */
 
 /* System includes. */

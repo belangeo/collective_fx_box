@@ -2,17 +2,16 @@
  * 4 Bands Parametric eqiing audio processing
  *
  * Compile on linux and MacOS with:
- *  gcc main_CA_eq4Bands.c lib/*.c -Ilib -lm -lportaudio -o main_CA_eq4Bands
- *  gcc main_CA_eq4Bands.c lib/eq4Bands.c lib/parametricEQ.c -Ilib -lm -lportaudio -o ../app/main_CA_eq4Bands
+ *  gcc c_tests/main_CA_eq4Bands.c lib/eq4Bands.c lib/parametricEQ.c -Ilib -lm -lportaudio -o c_apps/main_CA_eq4Bands
  *
  * Compile on Windows with:
- *  gcc main_CA_eq4Bands.c lib/*.c -Ilib -lm -lportaudio -o main_CA_eq4Bands.exe
+ *  gcc c_tests/main_CA_eq4Bands.c lib/eq4Bands.c lib/parametricEQ.c -Ilib -lm -lportaudio -o c_apps/main_CA_eq4Bands.exe
  *
  * Run on linux and MacOS with:
- *  ./main_CA_eq4Bands
+ *  ./c_apps/main_CA_eq4Bands
  *
  * Run on Windows with:
- *  main_CA_eq4Bands.exe
+ *  c_apps/main_CA_eq4Bands.exe
 */
 
 /* System includes. */
