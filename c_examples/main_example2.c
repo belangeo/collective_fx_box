@@ -1,5 +1,5 @@
 /*
- * This program adds an FM-synthesis background to the input sound.
+ * This program plays an LFOed FM-synthesis.
  *
  * Compile on linux and MacOS with:
  *  gcc c_examples/main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o c_apps/main_example2
@@ -102,7 +102,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             modamp = CARRIER * RATIO * INDEX * (lfoval * 0.5 + 0.5);
             carfreq = CARRIER + (sinosc_process(dsp->mod[j]) * modamp);
             sinosc_set_freq(dsp->car[j], carfreq);
-            out[index] = in[index] + sinosc_process(dsp->car[j]) * 0.01;
+            out[index] = sinosc_process(dsp->car[j]) * 0.1;
         }
     }
 }
