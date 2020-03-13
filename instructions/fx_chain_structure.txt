@@ -4,7 +4,9 @@ Structure globale de la chaîne d'effet
 [lfo 1] -> | [mic]
 [lfo 2] -> | | \
 [randi] -> | | [loop 1] - [loop 2] - [loop 3] - [loop 4]
-[randh] -> | | /
+           | | |          |          |          |
+           | | [panner] - [panner] - [panner] - [panner]
+[randh] -> | | /          /          /          /
            | [2 stereo delays (parallel or serial)]
 [control   | |
  routing   | [disto + simple lowpass]
@@ -30,7 +32,9 @@ Outils à développer
 - Les 2 types de random (interpolation, hold) => Marwan Laroussi
 
 - sampler/looper avec contrôle sur la vitesse de lecture (vitesse négative pour lire à reculons)
-    => Marie-Hélène Vallières-Riendeau et Frédérick Lévesque
+    => Marie-Hélène Vallières-Riendeau
+
+- panner (sin/cos) => Frédérick Lévesque
 
 - 2 délais stéréo avec interpolation entre un routing en parallèle et un routing en série => Louis-Thomas Pineault
 
