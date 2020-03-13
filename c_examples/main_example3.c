@@ -2,16 +2,16 @@
  * This program adds an FM-synthesis background to the input sound.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example3.c lib/lp1.c lib/delay.c lib/dampdelay.c -Ilib -lm -lportaudio -o main_example3
+ *  gcc c_examples/main_example3.c lib/lp1.c lib/delay.c lib/dampdelay.c -Ilib -lm -lportaudio -o c_apps/main_example3
  *
  * Compile on Windows with:
- *  gcc main_example3.c lib/lp1.c lib/delay.c lib/dampdelay.c -Ilib -lm -lportaudio -o main_example3.exe
+ *  gcc c_examples/main_example3.c lib/lp1.c lib/delay.c lib/dampdelay.c -Ilib -lm -lportaudio -o c_apps/main_example3.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example3
+ *  ./c_apps/main_example3
  *
  * Run on Windows with:
- *  main_example3.exe
+ *  c_apps/main_example3.exe
 */
 
 /* System includes. */

@@ -2,16 +2,16 @@
  * An example of live processing with portaudio. Outputs a sine wave signal.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example_sinus
+ *  gcc c_examples/main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o c_apps/main_example_sinus
  *
  * Compile on Windows with:
- *  gcc main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example_sinus.exe
+ *  gcc c_examples/main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o c_apps/main_example_sinus.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example_sinus
+ *  ./c_apps/main_example_sinus
  *
  * Run on Windows with:
- *  main_example_sinus.exe
+ *  c_apps/main_example_sinus.exe
 */
 
 // System includes.

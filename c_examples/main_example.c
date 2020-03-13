@@ -3,16 +3,16 @@
  * embedded lowpass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example
+ *  gcc c_examples/main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o c_apps/main_example
  *
  * Compile on Windows with:
- *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example.exe
+ *  gcc c_examples/main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o c_apps/main_example.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example
+ *  ./c_apps/main_example
  *
  * Run on Windows with:
- *  main_example.exe
+ *  c_apps/main_example.exe
 */
 
 // System includes.

@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio AND portmidi.
  *
  * Compile on linux and MacOS with:
- *  gcc main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi
+ *  gcc c_templates/main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_template_midi
  *
  * Compile on Windows with:
- *  gcc main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o main_template_midi.exe
+ *  gcc c_templates/main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_template_midi.exe
  *
  * Run on linux and MacOS with:
- *  ./main_template_midi
+ *  ./c_apps/main_template_midi
  *
  * Run on Windows with:
- *  main_template_midi.exe
+ *  c_apps/main_template_midi.exe
 */
 
 /* System includes. */

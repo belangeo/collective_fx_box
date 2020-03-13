@@ -2,16 +2,16 @@
  * This program adds an FM-synthesis background to the input sound.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example2
+ *  gcc c_examples/main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o c_apps/main_example2
  *
  * Compile on Windows with:
- *  gcc main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example2.exe
+ *  gcc c_examples/main_example2.c lib/sinosc.c -Ilib -lm -lportaudio -o c_apps/main_example2.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example2
+ *  ./c_apps/main_example2
  *
  * Run on Windows with:
- *  main_example2.exe
+ *  c_apps/main_example2.exe
 */
 
 /* System includes. */

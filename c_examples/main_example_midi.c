@@ -3,16 +3,16 @@
  * with an embedded lowpass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o main_example_midi
+ *  gcc c_examples/main_example_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_example_midi
  *
  * Compile on Windows with:
- *  gcc main_example_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o main_example_midi.exe
+ *  gcc c_examples/main_example_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_example_midi.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example_midi
+ *  ./c_apps/main_example_midi
  *
  * Run on Windows with:
- *  main_example_midi.exe
+ *  c_apps/main_example_midi.exe
 */
 
 /* System includes. */
