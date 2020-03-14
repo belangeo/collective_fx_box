@@ -5,26 +5,25 @@
  *  gcc c_templates/main_template_midi_stdin.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lcurses -o c_apps/main_template_midi_stdin
  *
  * Compile on Windows with:
- *  gcc c_templates/main_template_midi_stdin.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lcurses -o c_apps/main_template_midi_stdin.exe
+ *  gcc c_templates/main_template_midi_stdin.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_template_midi_stdin.exe
  *
  * Run on linux and MacOS with:
  *  ./c_apps/main_template_midi_stdin
  *
  * Run on Windows with:
- *  c_apps/main_template_midi_stdin.exe
+ *  c_apps\main_template_midi_stdin.exe
 */
 
 /* System includes. */
 #include <stdlib.h>     /* malloc, free */
 #include <stdio.h>      /* printf, fprintf, getchar, stderr */
 
-#include <curses.h>     /* all ncurses functions. */
-
-
 #ifdef _WIN32
-#include <Windows.h>    /* Sleep */
+#include <Windows.h>            /* Sleep */
+#include <ncurses/curses.h>     /* all ncurses functions. */
 #else
 #include <unistd.h>     /* usleep */
+#include <curses.h>     /* all ncurses functions. */
 #endif
 
 //== Program-specific system includes. ==
@@ -194,7 +193,7 @@ int paDefaultDeviceCheck(PaDeviceIndex device, char *direction)
     return 0;
 }
 
-void interface(struct DSP *dsp) {
+void create_window(struct DSP *dsp) {
     int running, key, polltime = 20;
     WINDOW *w;
 
@@ -310,7 +309,7 @@ int main(void)
     err = Pa_StartStream(stream);
     if (paErrorCheck(err)) { return -1; }
 
-    interface(dsp);
+    create_window(dsp);
 
     err = Pa_CloseStream(stream);
     if (paErrorCheck(err)) { return -1; }
