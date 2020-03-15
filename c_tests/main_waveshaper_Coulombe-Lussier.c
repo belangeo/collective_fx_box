@@ -16,7 +16,7 @@
 #include "portaudio.h"
 
 // Program-specific includes.
-#include "../lib/waveshaper.h"
+#include "waveshaper.h"
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
@@ -24,7 +24,7 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define AMOUNT 0.9
+#define DRIVE 0.7
 #define FREQ 7000
 #define Q 3
 
@@ -38,7 +38,7 @@ struct DSP* dsp_init() {
     int i;
     struct DSP* dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->waveshaper[i] = waveshaper_init(AMOUNT, FREQ, SAMPLE_RATE, Q);
+        dsp->waveshaper[i] = waveshaper_init(DRIVE, FREQ, SAMPLE_RATE, Q);
     }
     return dsp;
 }
@@ -58,8 +58,6 @@ void dsp_process(const float* in, float* out, unsigned long framesPerBuffer, str
     for (i = 0; i < framesPerBuffer; i++) {
         for (j = 0; j < NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            
-
             out[index] = in[index] * waveshaper_process(dsp->waveshaper[j], in[index]);
         }
     }
