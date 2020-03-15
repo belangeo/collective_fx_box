@@ -7,7 +7,8 @@
 #endif
 
 /*sinosc*/
-struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr) {
+struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr);
+ {
     struct flanger *data = malloc(sizeof(struct flanger));
 	data->lfo = sinosc_init(lfofreq, sr);
     data->delayline/*delaymax*/ = delay_init(0.1, sr);
