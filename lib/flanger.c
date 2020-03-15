@@ -7,8 +7,8 @@
 #endif
 
 /*sinosc*/
-struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr);
- {
+struct flanger * 
+flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr) {
     struct flanger *data = malloc(sizeof(struct flanger));
 	data->lfo = sinosc_init(lfofreq, sr);
     data->delayline/*delaymax*/ = delay_init(0.1, sr);
@@ -27,7 +27,7 @@ flanger_delete(struct flanger *data) {
 
 float
 flanger_process(struct flanger *data) {
-    delaytime=centerdelay * lfodepth + centerdelay
+    data->centerdelay = data->centerdelay * data->depth + data->centerdelay;
     readval = delay_read(dsp->delayline[j], delaytime);
     delay_write(dsp->delayline[j], in[index] + readval * dsp->feedback);
     out[index] = in[index] + readval;
@@ -35,22 +35,22 @@ flanger_process(struct flanger *data) {
 }
 
 void
-flanger_set_freq(struct flanger *data, float freq) {
+flanger_set_freq(struct flanger *data, float freq){
 	sinosc_set_freq(data->lfo, freq);
 }
 
 void 
-flanger_set_depth(struct flanger * data, float depth);{
+flanger_set_depth(struct flanger * data, float depth){
     data->depth = depth;
 }
 
 void 
-flanger_set_centerdelay(struct flanger * data, float centerdelay);{
+flanger_set_centerdelay(struct flanger * data, float centerdelay){
 	data->centerdelay = centerdelay;
 }
 
 void 
-flanger_set_feedback(struct flanger * data, float feedback);{
+flanger_set_feedback(struct flanger * data, float feedback){
 	data->feedback = feedback;
 }
 
