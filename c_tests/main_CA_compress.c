@@ -1,17 +1,17 @@
 /*
- * Template file to create a live audio processing program with portaudio.
+ * Compressor audio processing
  *
  * Compile on linux and MacOS with:
- *  gcc main_CA_butlp.c lib/*.c -Ilib -lm -lportaudio -o main_CA_butlp
+ *  gcc c_tests/main_CA_compress.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_CA_compress
  *
  * Compile on Windows with:
- *  gcc main_CA_butlp.c lib/*.c -Ilib -lm -lportaudio -o main_CA_butlp.exe
+ *  gcc c_tests/main_CA_compress.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_CA_compress.exe
  *
  * Run on linux and MacOS with:
- *  ./main_CA_butlp
+ *  ./c_apps/main_CA_compress
  *
  * Run on Windows with:
- *  main_CA_butlp.exe
+ *  c_apps/main_CA_compress.exe
 */
 
 /* System includes. */
@@ -32,19 +32,22 @@
 
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
-#include "butlp.h"
+#include "compress.h"
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
-#define FREQ           800
+#define THRESHOLD           -30 //db
+#define RATIO               3   
+#define ATTACK              20  //ms
+#define RELEASE             100 //ms
+#define LOOKAHEAD           5   //ms
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
     // This is where you declare the specific processing structures
     // needed by your program... Each declaration should have the form:
 
-    // struct delay *delayline[NUMBER_OF_CHANNELS];
-    struct butlp *filter[NUMBER_OF_CHANNELS];
+    struct compress *comp[NUMBER_OF_CHANNELS];
 
     // Which means a "multi-channel" pointer to the processing structure.
 
@@ -58,8 +61,7 @@ struct DSP * dsp_init() {
         // This is where you setup the specific processing structures needed by your program,
         // using the provided xxx_init functions. Something like:
 
-        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
-        dsp->filter[i] = butlp_init(FREQ, SAMPLE_RATE);
+        dsp->comp[i] = compress_init(THRESHOLD, RATIO, ATTACK, RELEASE, LOOKAHEAD, SAMPLE_RATE);
 
     }
     return dsp;
@@ -72,8 +74,7 @@ void dsp_delete(struct DSP *dsp) {
         // This is where you release the memory used by the specific processing structure
         // used in the program. Something like:
 
-        // delay_delete(dsp->delayline[i]);
-        butlp_delete(dsp->filter[i]);
+        compress_delete(dsp->comp[i]);
 
     }
     free(dsp);
@@ -91,7 +92,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 
             // This is where you want to put your processing logic... A simple thru is:
             // out[index] = in[index];
-            out[index] = butlp_process(dsp->filter[j],in[index]);
+            out[index] = compress_process(dsp->comp[j],in[index]);
         }
     }
 }

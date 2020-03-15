@@ -1,115 +1,108 @@
 /*
+ * Template file to create a live audio processing program with portaudio AND portmidi.
  *
  * Compile on linux and MacOS with:
- *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
+ *  gcc c_templates/main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_template_midi
  *
  * Compile on Windows with:
- *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger.exe
+ *  gcc c_templates/main_template_midi.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_template_midi.exe
  *
  * Run on linux and MacOS with:
- *  ./main_Flanger
+ *  ./c_apps/main_template_midi
  *
  * Run on Windows with:
- *  main_Flanger.exe
+ *  c_apps/main_template_midi.exe
 */
 
-// System includes.
+/* System includes. */
 #include <stdlib.h>     /* malloc, free */
-#include <stdio.h>      /* printf, fprintf, getchar, stderr */    
+#include <stdio.h>      /* printf, fprintf, getchar, stderr */
 
-// Include all portaudio functions.
+//== Program-specific system includes. ==
+// This is where you include the program-specific system headers (if needed) by your program...
+
+
+/* Include all portaudio functions. */
 #include "portaudio.h"
+
+/* Include all portmidi functions. */
 #include "portmidi.h"
 
-// Program-specific includes.
-#include "flanger.h"
+/* Include midi mapping functions. */
+#include "midimap.h"
 
-// Define global audio parameters.
+/* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
-#define MAXDELTIME  0.1
-#define CENTERDELAY 0.01
-#define FEEDBACK    0.2
-#define LFO_FREQ    0.1
-#define LFO_DEPTH   0.3
-#define CUTOFF      1000
+
+//== Program-specific includes. ==
+// This is where you include the specific headers needed by your program...
 
 
-// The DSP structure contains all needed audio processing "objects". 
-struct DSP {/
-    struct flanger * flange[NUMBER_OF_CHANNELS];
-    struct sinosc *lfo[NUMBER_OF_CHANNELS];
-    struct delay *delayline[NUMBER_OF_CHANNELS];
-    struct lp1 *deltimeramp[NUMBER_OF_CHANNELS];
+//== Program-specific parameters. ==
+// This is where you define the specific parameters needed by your program...
 
-    // dynamic parameters.
-    float centerdelay;
-    float feedback;
-    float lfofreq;
-    float lfo_depth;
-    float cutoff;
+
+/* The DSP structure contains all needed audio processing "objects". */
+struct DSP {
+    // This is where you declare the specific processing structures
+    // needed by your program... Each declaration should have the form:
+
+    // struct delay *delayline[NUMBER_OF_CHANNELS];
+
+    // Which means a "multi-channel" pointer to the processing structure.
+
 };
 
-// This function allocates memory and intializes all dsp structures.
+/* This function allocates memory and intializes all dsp structures. */
 struct DSP * dsp_init() {
     int i;
-    struct DSP *dsp = malloc(sizeof(struct DSP));
-    // Initialize dynamic parameters with default values.
-    dsp->centerdelay = CENTERDELAY;
-    dsp->feedback = FEEDBACK;
-    dsp->lfofreq = LFO_FREQ;
-    dsp->lfo_depth = LFO_DEPTH; 
-    dsp->cutoff = CUTOFF;
-    
-    // Initialize audio objects.
-    for (i = 0; i < NUMBER_OF_CHANNELS; i++) { 
-         dsp->flange[i] = flanger_init(CENTERDELAY,LFO_DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
+    struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
+    for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
+        // This is where you setup the specific processing structures needed by your program,
+        // using the provided xxx_init functions. Something like:
+
+        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
+
     }
     return dsp;
 }
 
-// This function releases memory used by all dsp structures.
+/* This function releases memory used by all dsp structures. */
 void dsp_delete(struct DSP *dsp) {
-    int i; 
+    int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        flanger_delete(dsp->flange[i]);
-   }
+        // This is where you release the memory used by the specific processing structure
+        // used in the program. Something like:
+
+        // delay_delete(dsp->delayline[i]);
+
+    }
     free(dsp);
 }
 
-// This function does the actual processing chain.
-
+/* This function does the actual processing chain. */
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
-    unsigned int i, j, index;
+    unsigned int i, j, index;   /* Variables used to compute the index of samples in input/output arrays. */
 
-    for (i=0; i<framesPerBuffer; i++) {
+    // Add any variables useful to your processing logic here...
 
-        for (j=0; j<NUMBER_OF_CHANNELS; j++) {
+    for (i=0; i<framesPerBuffer; i++) {             /* For each sample frame in a buffer size... */
+        for (j=0; j<NUMBER_OF_CHANNELS; j++) {      /* For each channel in a frame... */
+            index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
-            index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = flanger_process(dsp->flange[j], in[index]);
+            // This is where you want to put your processing logic... A simple thru is:
+            // out[index] = in[index];
         }
     }
 }
 
-// This function maps midi controller values to our dsp variables.
+/* This function maps midi controller values to our dsp variables. */
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
-    if (ctlnum == 0) {          // CC 0  => delay time
-        dsp->centerdelay = value / 127. * MAXDELTIME;
-    } else if (ctlnum == 1) {   // CC 1 => lfo
-        dsp->lfofreq = value / 127. * LFO_FREQ;
-        }
-     else if (ctlnum == 2) {   // CC 2 => feedback
-        dsp->feedback = value / 127.;
-        }
-     else if (ctlnum == 3) {   // CC 3 => lfo_depth
-        dsp->lfo_depth = value / 127.;
-        }
-
-        //if (ctlnum == 0) {          // CC 0  => flange_freq
-        //dsp->flanger_set_freq = value / 127.;
+    // print it!
+    printf("%d %d %d\n", ctlnum, value, midimap_get("2") == ctlnum);
 }
 
 /**********************************************************************************************
@@ -118,7 +111,7 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
  *
  *********************************************************************************************/
 
-/* Portmidi global variables (not the best way to do it, but clearly the simplest for now! */
+/* Portmidi global variables (not the best way to do it, but clearly the simpler for now! */
 PmStream *pm_input_streams[32];
 static int pm_initialized = 0;
 static int pm_num_of_devices = 0;
@@ -199,7 +192,6 @@ int main(void)
     PaStream *stream;
     PaError err;
     PmError pmerr;
-    int withMidi = 1, num_midi_devices = 0;
 
     struct DSP *dsp = dsp_init();
 
@@ -229,6 +221,7 @@ int main(void)
         }
         if (pm_num_of_devices > 0) {
             pm_initialized = 1;
+            midimap_init();
         }
     }
 

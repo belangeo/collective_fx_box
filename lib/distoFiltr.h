@@ -15,20 +15,21 @@ struct distoFltr {
     float sr;
     float nyquist;
 	float cutoff;
-	float a1, a2, a3;
-	float b1, b2, b3;
+	double a0, a1, a2;
+	double b1, b2;
 	float in0, in1, in2;
 	float out0, out1, out2;
-	float res;
+	float norm;
 	float lastout;
+	float q;
 };
 
-struct distoFltr* distoFltr_init(float freq, float sr);
+struct distoFltr* distoFltr_init(float freq, float sr, float q);
 
 void distoFltr_delete(struct distoFltr* data);
 
 float distoFltr_process(struct distoFltr* data, float input);
 
-void distoFltr_set_params(struct distoFltr* data, float freq);
+void distoFltr_set_params(struct distoFltr* data, float freq, float q);
 
 #endif

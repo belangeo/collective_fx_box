@@ -1,79 +1,102 @@
 /*
- * An example of live processing with portaudio. A stereo delay line with an
- * embedded lowpass filter.
+ * Template file to create a live audio processing program with portaudio.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example
+ *  gcc c_tests/main_MH_phasor.c lib/phasor.c -Ilib -lm -lportaudio -o c_apps/main_phasor
  *
  * Compile on Windows with:
- *  gcc main_example.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -o main_example.exe
+ *  gcc c_tests/main_MH_phasor.c lib/phasor.c -Ilib -lm -lportaudio -o c_apps/main_phasor.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example
+ *  ./c_apps/main_phasor
  *
  * Run on Windows with:
- *  main_example.exe
+ *  c_apps/main_phasor.exe
+ 
+ Notes : Pour l'instant ce main_template ne fait que créer un phasor.
 */
 
-// System includes.
+/* System includes. */
 #include <stdlib.h>     /* malloc, free */
 #include <stdio.h>      /* printf, fprintf, getchar, stderr */    
 
-// Include all portaudio functions.
+//== Program-specific system includes. ==
+// This is where you include the program-specific system headers (if needed) by your program...
+#include "phasor.h"
+
+
+/* Include all portaudio functions. */
 #include "portaudio.h"
 
-// Program-specific includes.
-#include "delay.h"
-#include "lp1.h"
-
-// Define global audio parameters.
+/* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
-// Program-specific parameters.
-#define DELTIME 0.25
-#define FEEDBACK 0.75
-#define CUTOFF 1000
 
-// The DSP structure contains all needed audio processing "objects". 
+//== Program-specific includes. ==
+// This is where you include the specific headers needed by your program...
+#define FREQ 800
+
+//== Program-specific parameters. ==
+// This is where you define the specific parameters needed by your program...
+
+
+/* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
-    struct delay *delayline[NUMBER_OF_CHANNELS];
-    struct lp1 *filter[NUMBER_OF_CHANNELS];
+    // This is where you declare the specific processing structures
+    // needed by your program... Each declaration should have the form:
+
+    // struct delay *delayline[NUMBER_OF_CHANNELS];
+	struct phasor *phasortest[NUMBER_OF_CHANNELS];
+
+    // Which means a "multi-channel" pointer to the processing structure.
+
 };
 
-// This function allocates memory and intializes all dsp structures.
+/* This function allocates memory and intializes all dsp structures. */
 struct DSP * dsp_init() {
     int i;
-    struct DSP *dsp = malloc(sizeof(struct DSP));
+    struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
-        dsp->filter[i] = lp1_init(CUTOFF, SAMPLE_RATE);
+        // This is where you setup the specific processing structures needed by your program,
+        // using the provided xxx_init functions. Something like:
+
+        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
+		dsp->phasortest[i]=phasor_init(FREQ, SAMPLE_RATE);
+	
+
     }
     return dsp;
 }
 
-// This function releases memory used by all dsp structures.
+/* This function releases memory used by all dsp structures. */
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        delay_delete(dsp->delayline[i]);
-        lp1_delete(dsp->filter[i]);
+        // This is where you release the memory used by the specific processing structure
+        // used in the program. Something like:
+
+        // delay_delete(dsp->delayline[i]);
+		phasor_delete(dsp->phasortest[i]);
+
     }
     free(dsp);
 }
 
-// This function does the actual processing chain.
+/* This function does the actual processing chain. */
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
-    unsigned int i, j, index;
-    float readval, filtered;
-    for (i=0; i<framesPerBuffer; i++) {
-        for (j=0; j<NUMBER_OF_CHANNELS; j++) {
-            index = i * NUMBER_OF_CHANNELS + j;
-            readval = delay_read(dsp->delayline[j], DELTIME);
-            filtered = lp1_process(dsp->filter[j], readval * FEEDBACK);
-            delay_write(dsp->delayline[j], in[index] + filtered);
-            out[index] = in[index] + readval;
+    unsigned int i, j, index;   /* Variables used to compute the index of samples in input/output arrays. */
+
+    // Add any variables useful to your processing logic here...
+	float phasorVal;
+
+    for (i=0; i<framesPerBuffer; i++) {             /* For each sample frame in a buffer size... */
+        for (j=0; j<NUMBER_OF_CHANNELS; j++) {      /* For each channel in a frame... */
+            index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
+			
+            // This is where you want to put your processing logic... A simple thru is:
+            out[index] = in[index]*phasor_process(dsp->phasortest[j]);;
         }
     }
 }

@@ -1,62 +1,55 @@
 /*
- * An example of live processing with portaudio AND portmidi. A stereo delay line
- * with an embedded lowpass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o main_example_midi
+ *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger
  *
  * Compile on Windows with:
- *  gcc main_example_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o main_example_midi.exe
+ *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example_midi
+ *  ./c_apps/main_Flanger
  *
  * Run on Windows with:
- *  main_example_midi.exe
+ *  c_apps/main_Flanger.exe
 */
 
-/* System includes. */
+// System includes.
 #include <stdlib.h>     /* malloc, free */
 #include <stdio.h>      /* printf, fprintf, getchar, stderr */    
 
-//== Program-specific system includes. ==
-// This is where you include the program-specific system headers (if needed) by your program...
-
-
-/* Include all portaudio functions. */
+// Include all portaudio functions.
 #include "portaudio.h"
-
-/* Include all portmidi functions. */
 #include "portmidi.h"
 
-/* Define global audio parameters, used to setup portaudio. */
+// Program-specific includes.
+#include "flanger.h"
+
+// Define global audio parameters.
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
+#define MAXDELTIME  0.1
+#define CENTERDELAY 0.01
+#define FEEDBACK    0.2
+#define LFO_FREQ    0.1
+#define LFO_DEPTH   0.3
+#define CUTOFF      1000
 
-//== Program-specific includes. ==
-// This is where you include the specific headers needed by your program...
-#include "delay.h"
-#include "lp1.h"
 
-//== Program-specific parameters. ==
-// This is where you define the specific constant parameters needed by your program...
-#define MAXDELTIME 1.0
-#define DELTIME 0.1
-#define CUTOFF 1000
-#define FEEDBACK 0.5
-
-// The DSP structure contains all needed audio processing "objects" and parameters. 
-struct DSP {
-    // audio objects.
+// The DSP structure contains all needed audio processing "objects". 
+struct DSP {/
+    struct flanger * flange[NUMBER_OF_CHANNELS];
+    struct sinosc *lfo[NUMBER_OF_CHANNELS];
     struct delay *delayline[NUMBER_OF_CHANNELS];
-    struct lp1 *filter[NUMBER_OF_CHANNELS];
     struct lp1 *deltimeramp[NUMBER_OF_CHANNELS];
+
     // dynamic parameters.
-    float deltime;
-    float cutoff;
+    float centerdelay;
     float feedback;
+    float lfofreq;
+    float lfo_depth;
+    float cutoff;
 };
 
 // This function allocates memory and intializes all dsp structures.
@@ -64,41 +57,39 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     // Initialize dynamic parameters with default values.
-    dsp->deltime = DELTIME;
-    dsp->cutoff = CUTOFF;
+    dsp->centerdelay = CENTERDELAY;
     dsp->feedback = FEEDBACK;
+    dsp->lfofreq = LFO_FREQ;
+    dsp->lfo_depth = LFO_DEPTH; 
+    dsp->cutoff = CUTOFF;
+    
     // Initialize audio objects.
-    for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->delayline[i] = delay_init(MAXDELTIME, SAMPLE_RATE);
-        dsp->filter[i] = lp1_init(dsp->cutoff, SAMPLE_RATE);
-        dsp->deltimeramp[i] = lp1_init(0.5, SAMPLE_RATE);
+    for (i = 0; i < NUMBER_OF_CHANNELS; i++) { 
+         dsp->flange[i] = flanger_init(CENTERDELAY,LFO_DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
     }
     return dsp;
 }
 
 // This function releases memory used by all dsp structures.
 void dsp_delete(struct DSP *dsp) {
-    int i;
+    int i; 
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        delay_delete(dsp->delayline[i]);
-        lp1_delete(dsp->filter[i]);
-        lp1_delete(dsp->deltimeramp[i]);
-    }
+        flanger_delete(dsp->flange[i]);
+   }
     free(dsp);
 }
 
 // This function does the actual processing chain.
+
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
-    float readval, filtered, smoothed_delay_time;
+
     for (i=0; i<framesPerBuffer; i++) {
+
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
+
             index = i * NUMBER_OF_CHANNELS + j;
-            smoothed_delay_time = lp1_process(dsp->deltimeramp[j], dsp->deltime);
-            readval = delay_read(dsp->delayline[j], smoothed_delay_time);
-            filtered = lp1_process(dsp->filter[j], readval * dsp->feedback);
-            delay_write(dsp->delayline[j], in[index] + filtered);
-            out[index] = in[index] + readval;
+            out[index] = flanger_process(dsp->flange[j], in[index]);
         }
     }
 }
@@ -106,16 +97,19 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 // This function maps midi controller values to our dsp variables.
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     if (ctlnum == 0) {          // CC 0  => delay time
-        dsp->deltime = value / 127. * MAXDELTIME;
-    } else if (ctlnum == 1) {   // CC 1 => filter cutoff
-        dsp->cutoff = value / 127. * 18000. + 100.;
-        int j;
-        for (j=0; j<NUMBER_OF_CHANNELS; j++) {
-            lp1_set_freq(dsp->filter[j], dsp->cutoff);
+        dsp->centerdelay = value / 127. * MAXDELTIME;
+    } else if (ctlnum == 1) {   // CC 1 => lfo
+        dsp->lfofreq = value / 127. * LFO_FREQ;
         }
-    } else if (ctlnum == 2) {   // CC 2 => feedback
+     else if (ctlnum == 2) {   // CC 2 => feedback
         dsp->feedback = value / 127.;
-    }
+        }
+     else if (ctlnum == 3) {   // CC 3 => lfo_depth
+        dsp->lfo_depth = value / 127.;
+        }
+
+        //if (ctlnum == 0) {          // CC 0  => flange_freq
+        //dsp->flanger_set_freq = value / 127.;
 }
 
 /**********************************************************************************************

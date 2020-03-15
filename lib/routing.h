@@ -12,11 +12,6 @@
 enum state_id {ON, OFF};
 enum type_id {SINGLE, MIX};
 
-struct routing_matrix {
-  float inputs[MAX_INPUTS];
-  struct bus * bus[MAX_BUSSES];
-};
-
 struct bus {
   int input;
   int input_alt;
@@ -24,6 +19,11 @@ struct bus {
   enum state_id state;
   float mix;
   float output;
+};
+
+struct routing_matrix {
+  float inputs[MAX_INPUTS];
+  struct bus bus[MAX_BUSSES];
 };
 
 struct routing_matrix * routing_matrix_init(void);
@@ -42,6 +42,8 @@ void matrix_kill_bus(struct routing_matrix * mat, int bus);
 
 void matrix_update_input(struct routing_matrix * mat, int input, float value);
 
-void matrix_update_outputs(struct routing_matrix * mat);
+void matrix_update_output(struct routing_matrix * mat, int bus);
+
+void matrix_update_all_outputs(struct routing_matrix * mat);
 
 #endif

@@ -1,17 +1,18 @@
 /*
- * An example of live processing with portaudio. Outputs a sine wave signal.
+ * An example of live processing with portaudio. A stereo looper line with an
+ * embedded lowpass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example_sinus
+ *  gcc c_tests/main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o c_apps/main_MH_looper
  *
  * Compile on Windows with:
- *  gcc main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example_sinus.exe
+ *  gcc c_tests/main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o c_apps/main_MH_looper.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example_sinus
+ *  ./c_apps/main_MH_looper
  *
  * Run on Windows with:
- *  main_example_sinus.exe
+ *  c_apps/main_MH_looper.exe
 */
 
 // System includes.
@@ -22,7 +23,9 @@
 #include "portaudio.h"
 
 // Program-specific includes.
-#include "sinosc.h"
+#include "looper.h"
+//#include "lp1.h"
+
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
@@ -30,11 +33,12 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define FREQUENCY 440
+#define LOOPTIME 1
+#define PLAYRATE 0.5
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
-    struct sinosc *osc[NUMBER_OF_CHANNELS];
+    struct looper *looperline[NUMBER_OF_CHANNELS];
 };
 
 // This function allocates memory and intializes all dsp structures.
@@ -42,7 +46,7 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->osc[i] = sinosc_init(FREQUENCY, SAMPLE_RATE);
+        dsp->looperline[i] = looper_init(LOOPTIME, SAMPLE_RATE);
     }
     return dsp;
 }
@@ -51,7 +55,7 @@ struct DSP * dsp_init() {
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        sinosc_delete(dsp->osc[i]);
+        looper_delete(dsp->looperline[i]);
     }
     free(dsp);
 }
@@ -60,12 +64,19 @@ void dsp_delete(struct DSP *dsp) {
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
     float readval, filtered;
-    for (i=0; i<framesPerBuffer; i++) {
+
+	//if (input==0x20)
+	//	{  
+		//dsp->record=0;	 
+		//printf("blabla");
+		//} 
+    for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = sinosc_process(dsp->osc[j]) * 0.25;
+            out[index] = looper_process(dsp->looperline[j], in[index]);
         }
     }
+
 }
 
 /**********************************************************************************************
@@ -119,11 +130,10 @@ int main(void)
     PaStreamParameters inputParameters, outputParameters;
     PaStream *stream;
     PaError err;
-
     struct DSP *dsp = dsp_init();
     
     err = Pa_Initialize();
-    if (paErrorCheck(err)) { return -1; }
+    if (paErrorCheck(err)) { return  -1; }
 
     inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
     if (paDefaultDeviceCheck(inputParameters.device, "input")) { return -1; }
@@ -147,10 +157,21 @@ int main(void)
 
     err = Pa_StartStream(stream);
     if (paErrorCheck(err)) { return -1; }
-
+	
+	/*SECTION MH*/
+	int input=getchar();
+	if (input==0x20)
+	{  
+		for (int i = 0; i < NUMBER_OF_CHANNELS; i++) {
+        looper_record(dsp->looperline[i]);
+    } 
+		printf("blabla");
+	} 
+	getchar();
+	getchar();
     printf("Hit ENTER to stop program.\n");
-    getchar();
-
+    /*FIn section MH*/
+	
     err = Pa_CloseStream(stream);
     if (paErrorCheck(err)) { return -1; }
 

@@ -1,82 +1,141 @@
 /*
- * An example of live processing with portaudio. A stereo looper line with an
- * embedded lowpass filter.
+ * This program modulates the frequency of a sine based on an interpolation of two lfos
  *
  * Compile on linux and MacOS with:
- *  gcc main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o main_MH_looper
+ *  gcc c_tests/main_matrix_example.c lib/routing.c lib/sinosc.c lib/utils.c -Ilib -lm -lportaudio -o c_apps/main_matrix_example
  *
  * Compile on Windows with:
- *  gcc main_MH_looper.c lib/looper.c -Ilib -lm -lportaudio -o main_MH_looper.exe
+ *  gcc c_tests/main_matrix_example.c lib/routing.c lib/sinosc.c lib/utils.c -Ilib -lm -lportaudio -o c_apps/main_matrix_example.exe
  *
  * Run on linux and MacOS with:
- *  ./main_MH_looper
+ *  ./c_apps/main_matrix_example
  *
  * Run on Windows with:
- *  main_MH_looper.exe
+ *  c_apps/main_matrix_example.exe
 */
 
-// System includes.
-#include <stdlib.h>     /* malloc, free */
-#include <stdio.h>      /* printf, fprintf, getchar, stderr */    
+#include <stdlib.h>
+#include <stdio.h>
 
-// Include all portaudio functions.
 #include "portaudio.h"
 
-// Program-specific includes.
-#include "looper.h"
-//#include "lp1.h"
-
-
-// Define global audio parameters.
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
-// Program-specific parameters.
-#define LOOPTIME 1
-#define FEEDBACK 0.75
-#define CUTOFF 8000
-#define PLAYRATE 0.5
+#define OSC_FREQ            440
 
-// The DSP structure contains all needed audio processing "objects". 
+#include "sinosc.h"
+#include "routing.h"
+#include "noise.h"
+
+
+// the frequencies that will used for the LFOs sent to routing matrix input
+#define LFO_FREQ1 8
+#define LFO_FREQ2 0.1
+
 struct DSP {
-    struct looper *looperline[NUMBER_OF_CHANNELS];
+
+    // 2 LFOs     
+    struct sinosc *lfo1;
+  //    struct sinosc *lfo2;
+
+    struct noise *noise;
+
+    // sine (stereo)  
+    struct sinosc *sin1[NUMBER_OF_CHANNELS];
+
+    // routing matrix
+    struct routing_matrix * matrix;   
 };
 
-// This function allocates memory and intializes all dsp structures.
 struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
+
+    // Create and initialize the routing matrix
+    struct routing_matrix * matrix = routing_matrix_init();
+
+    // assign the routing matrix to the dsp struct
+    dsp->matrix = matrix;
+
+    
+    
+    // select two input "port" from 0 to MAX_INPUTS - 1
+    // and copy the interpolated result in
+    // a bus identified from 0 to MAX_BUSSES - 1
+
+    // in this case, the signals sent to inputs
+    // 0 and 1 are interpolated by a factor
+    // of 0.5 (or 50% from each signal)
+    
+    // the last argument is the default value
+    // (used if the route is not yet defined
+    // with matrix_route|matrix_route_mix or
+    // has been killed by matrix_kill_bus)
+    matrix_route_mix(dsp->matrix, 0, 1, 0.82, 0);
+
+    // initialize the LFOs
+    dsp->lfo1 = sinosc_init(LFO_FREQ1, SAMPLE_RATE);
+    //dsp->lfo2 = sinosc_init(LFO_FREQ2, SAMPLE_RATE);
+    dsp->noise = noise_init();
+    
+    /* Memory allocation for DSP structure. */
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->looperline[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+
+      // initialize the sine (stereo)
+      dsp->sin1[i] = sinosc_init(OSC_FREQ, SAMPLE_RATE);
     }
     return dsp;
 }
 
-// This function releases memory used by all dsp structures.
 void dsp_delete(struct DSP *dsp) {
     int i;
+
+    sinosc_delete(dsp->lfo1);
+    //sinosc_delete(dsp->lfo2);
+    noise_delete(dsp->noise);
+    
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        looper_delete(dsp->looperline[i]);
+        sinosc_delete(dsp->sin1[i]);
     }
+
+    // the routing matrix must be correctly dealocated.
+    delete_routing_matrix(dsp->matrix);
     free(dsp);
 }
 
-// This function does the actual processing chain.
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
-    float readval, filtered;
-	//ch=fgetc(stdin);
-	//if
-    for (i=0; i<framesPerBuffer; i=i+1) {
+    float freq, lfoval1, lfoval2;
+    
+
+    for (i=0; i<framesPerBuffer; i++) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-			readval = looper_read(dsp->looperline[j], LOOPTIME);
-            looper_write(dsp->looperline[j], in[index]);
-            out[index] = in[index] + readval;
+
+	    // process the next sample for each LFO
+            lfoval1 = sinosc_process(dsp->lfo1);
+	    lfoval2 = noise_process(dsp->noise);
+
+	    // copy the results into two matrix input 0 and 1
+	    matrix_update_input(dsp->matrix, 0, lfoval1);	    
+	    matrix_update_input(dsp->matrix, 1, lfoval2);
+
+	    // Once the modulations are processed and stored in the matrix,
+	    // they are then copied into their respective  active outputs
+	    matrix_update_outputs(dsp->matrix);
+	    
+	    // the sine frequency is modulated by the value now contained
+	    // in the bus 0
+	    freq = matrix_bus_output(dsp->matrix, 0, 0) * 100 + OSC_FREQ;
+	    
+	    // the sine's frequency is updated with the modulated frequency
+	    sinosc_set_freq(dsp->sin1[j], freq);	    
+	    
+            out[index] = sinosc_process(dsp->sin1[j]) * 0.3;
         }
     }
-
 }
 
 /**********************************************************************************************

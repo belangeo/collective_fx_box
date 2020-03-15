@@ -1,94 +1,71 @@
 /*
- * Template file to create a live audio processing program with portaudio.
+ * An example of live processing with portaudio. 
+ * A stereo Moog inspired low pass filter.
  *
  * Compile on linux and MacOS with:
- *  gcc main_template.c lib/*.c -Ilib -lm -lportaudio -o main_template
+ *  gcc c_tests/main_moog.c lib/moog.c -Ilib -lm -lportaudio -o c_apps/main_moog
  *
  * Compile on Windows with:
- *  gcc main_template.c lib/*.c -Ilib -lm -lportaudio -o main_template.exe
+ *  gcc c_tests/main_moog.c lib/moog.c -Ilib -lm -lportaudio -o c_apps/main_moog.exe
  *
  * Run on linux and MacOS with:
- *  ./main_template
+ *  ./c_apps/main_moog
  *
  * Run on Windows with:
- *  main_template.exe
+ *  c_apps/main_moog.exe
 */
 
-/* System includes. */
+// System includes.
 #include <stdlib.h>     /* malloc, free */
 #include <stdio.h>      /* printf, fprintf, getchar, stderr */    
 
-//== Program-specific system includes. ==
-// This is where you include the program-specific system headers (if needed) by your program...
-
-
-/* Include all portaudio functions. */
+// Include all portaudio functions.
 #include "portaudio.h"
 
-/* Define global audio parameters, used to setup portaudio. */
+// Program-specific includes.
+#include "moog.h"
+
+// Define global audio parameters.
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
+// Program-specific parameters.
+#define CUTOFF 600
+#define RESONANCE 0.4
 
-//== Program-specific includes. ==
-// This is where you include the specific headers needed by your program...
-
-
-//== Program-specific parameters. ==
-// This is where you define the specific parameters needed by your program...
-
-
-/* The DSP structure contains all needed audio processing "objects". */
+// The DSP structure contains all needed audio processing "objects". 
 struct DSP {
-    // This is where you declare the specific processing structures
-    // needed by your program... Each declaration should have the form:
-
-    // struct delay *delayline[NUMBER_OF_CHANNELS];
-
-    // Which means a "multi-channel" pointer to the processing structure.
-
+    struct moog *filter[NUMBER_OF_CHANNELS];
 };
 
-/* This function allocates memory and intializes all dsp structures. */
+// This function allocates memory and intializes all dsp structures.
 struct DSP * dsp_init() {
     int i;
-    struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
+    struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        // This is where you setup the specific processing structures needed by your program,
-        // using the provided xxx_init functions. Something like:
-
-        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
-
+        dsp->filter[i] = moog_init(CUTOFF, RESONANCE, SAMPLE_RATE);
     }
     return dsp;
 }
 
-/* This function releases memory used by all dsp structures. */
+// This function releases memory used by all dsp structures.
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        // This is where you release the memory used by the specific processing structure
-        // used in the program. Something like:
-
-        // delay_delete(dsp->delayline[i]);
-
+        moog_delete(dsp->filter[i]);
     }
     free(dsp);
 }
 
-/* This function does the actual processing chain. */
+// This function does the actual processing chain.
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
-    unsigned int i, j, index;   /* Variables used to compute the index of samples in input/output arrays. */
-
-    // Add any variables useful to your processing logic here...
-
-    for (i=0; i<framesPerBuffer; i++) {             /* For each sample frame in a buffer size... */
-        for (j=0; j<NUMBER_OF_CHANNELS; j++) {      /* For each channel in a frame... */
-            index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
-
-            // This is where you want to put your processing logic... A simple thru is:
-            // out[index] = in[index];
+    unsigned int i, j, index;
+    for (i=0; i<framesPerBuffer; i++) {
+        for (j=0; j<NUMBER_OF_CHANNELS; j++) {
+            index = i * NUMBER_OF_CHANNELS + j;
+ 
+            out[index] = moog_process(dsp->filter[j], in[index]);
         }
     }
 }
