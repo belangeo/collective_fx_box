@@ -22,28 +22,33 @@
 #include "portmidi.h"
 
 // Program-specific includes.
-#include "Flanger.h"
+#include "flanger.h"
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
-#define MAXDELTIME 0.1
-#define DELTIME 0.01
-#define LFO_1 0.1
-#define CUTOFF 1000
+#define MAXDELTIME  0.1
+#define CENTERDELAY 0.01
+#define FEEDBACK    0.2
+#define LFO_FREQ    0.1
+#define LFO_DEPTH   0.3
+#define CUTOFF      1000
+
 
 // The DSP structure contains all needed audio processing "objects". 
-struct DSP {
+struct DSP {/
+    struct flanger * flange[NUMBER_OF_CHANNELS];
     struct sinosc *lfo[NUMBER_OF_CHANNELS];
     struct delay *delayline[NUMBER_OF_CHANNELS];
     struct lp1 *deltimeramp[NUMBER_OF_CHANNELS];
 
     // dynamic parameters.
-    float deltime;
+    float centerdelay;
     float feedback;
-    float lfo1;
+    float lfofreq;
+    float lfo_depth;
     float cutoff;
 };
 
@@ -52,43 +57,39 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     // Initialize dynamic parameters with default values.
-    dsp->deltime = DELTIME;
-    dsp->feedback = 0.5;
-    dsp->lfo1 = LFO_1;
+    dsp->centerdelay = CENTERDELAY;
+    dsp->feedback = FEEDBACK;
+    dsp->lfofreq = LFO_FREQ;
+    dsp->lfo_depth = LFO_DEPTH; 
     dsp->cutoff = CUTOFF;
+    
     // Initialize audio objects.
-    for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->lfo[i] = sinosc_init(LFO_1, SAMPLE_RATE);
-        dsp->delayline[i] = delay_init(MAXDELTIME, SAMPLE_RATE);
-        dsp->deltimeramp[i] = lp1_init(0.5, SAMPLE_RATE);
+    for (i = 0; i < NUMBER_OF_CHANNELS; i++) { 
+         dsp->flange[i] = flanger_init(CENTERDELAY,LFO_DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
     }
     return dsp;
 }
 
 // This function releases memory used by all dsp structures.
 void dsp_delete(struct DSP *dsp) {
-    int i;
+    int i; 
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        sinosc_delete(dsp->lfo[i]);
-        delay_delete(dsp->delayline[i]);
-        lp1_delete(dsp->deltimeramp[i]);
-    }
+        flanger_delete(dsp->flange[i]);
+   }
     free(dsp);
 }
 
 // This function does the actual processing chain.
+
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
-    float lfoval, readval, smoothed_delay_time;
-    for (i=0; i<framesPerBuffer; i++) {
-        for (j=0; j<NUMBER_OF_CHANNELS; j++) {
-            index = i * NUMBER_OF_CHANNELS + j;
 
-            smoothed_delay_time = lp1_process(dsp->deltimeramp[j], dsp->deltime);
-            lfoval = sinosc_process(dsp->lfo[j]) * smoothed_delay_time + smoothed_delay_time;
-            readval = delay_read(dsp->delayline[j], lfoval);
-            delay_write(dsp->delayline[j], in[index] + readval * dsp->feedback);
-            out[index] = in[index] + readval;
+    for (i=0; i<framesPerBuffer; i++) {
+
+        for (j=0; j<NUMBER_OF_CHANNELS; j++) {
+
+            index = i * NUMBER_OF_CHANNELS + j;
+            out[index] = flanger_process(dsp->flange[j], in[index]);
         }
     }
 }
@@ -96,13 +97,19 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 // This function maps midi controller values to our dsp variables.
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     if (ctlnum == 0) {          // CC 0  => delay time
-        dsp->deltime = value / 127. * MAXDELTIME;
+        dsp->centerdelay = value / 127. * MAXDELTIME;
     } else if (ctlnum == 1) {   // CC 1 => lfo
-        dsp->lfo1 = value / 127. * LFO_1;
+        dsp->lfofreq = value / 127. * LFO_FREQ;
         }
      else if (ctlnum == 2) {   // CC 2 => feedback
         dsp->feedback = value / 127.;
-    }
+        }
+     else if (ctlnum == 3) {   // CC 3 => lfo_depth
+        dsp->lfo_depth = value / 127.;
+        }
+
+        //if (ctlnum == 0) {          // CC 0  => flange_freq
+        //dsp->flanger_set_freq = value / 127.;
 }
 
 /**********************************************************************************************
