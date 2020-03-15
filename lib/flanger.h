@@ -5,10 +5,11 @@
 #include "sinosc.h"
 
 struct flanger {
-	struct delay * delayline;
-	struct sinosc * lfo;
+	struct centerdelay;
+	struct depth;
+	float lfofreq;
+	float sr;
 	float feedback;
-	float depth;
 }
 
 struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr);
