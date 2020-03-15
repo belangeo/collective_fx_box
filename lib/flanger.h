@@ -9,7 +9,9 @@ struct flanger {
 	struct sinosc * lfo;
 	float feedback;
 	float depth;
-}
+	float sr;
+	float centerdelay;
+};
 
 struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr);
 
