@@ -1,10 +1,10 @@
 /*
  *
  * Compile on linux and MacOS with:
- *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
+ *  gcc c_apps/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
  *
  * Compile on Windows with:
- *  gcc main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger.exe
+ *  gcc c_apps/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger.exe
  *
  * Run on linux and MacOS with:
  *  ./main_Flanger
@@ -38,7 +38,7 @@
 
 
 // The DSP structure contains all needed audio processing "objects". 
-struct DSP {/
+struct DSP {
     struct flanger * flange[NUMBER_OF_CHANNELS];
     struct sinosc *lfo[NUMBER_OF_CHANNELS];
     struct delay *delayline[NUMBER_OF_CHANNELS];
