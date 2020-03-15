@@ -20,8 +20,8 @@ flanger_init(float centerdelay, float depth, float lfofreq, float feedback, floa
 
 void
 flanger_delete(struct flanger *data) {
-	sinosc_delete(dsp->lfo);
-    delay_delete(dsp->delayline);
+	sinosc_delete(data->lfo);
+    delay_delete(data->delayline);
     free(data);
 }
 
