@@ -23,17 +23,11 @@
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
 #define FREQ 200
+#define Q 3
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
-    // This is where you declare the specific processing structures
-    // needed by your program... Each declaration should have the form:
-
-    // struct delay *delayline[NUMBER_OF_CHANNELS];
     struct distoFltr *filter[NUMBER_OF_CHANNELS];
-
-    // Which means a "multi-channel" pointer to the processing structure.
-
 };
 
 /* This function allocates memory and intializes all dsp structures. */
@@ -42,7 +36,7 @@ struct DSP * dsp_init() {
     struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // initialisation
-        dsp->filter[i] = distoFltr_init(FREQ, SAMPLE_RATE);
+        dsp->filter[i] = distoFltr_init(FREQ, SAMPLE_RATE, Q);
     }
     return dsp;
 }
@@ -51,7 +45,6 @@ struct DSP * dsp_init() {
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        // delete scrap
         distoFltr_delete(dsp->filter[i]);
     }
     free(dsp);

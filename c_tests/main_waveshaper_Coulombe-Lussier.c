@@ -24,9 +24,9 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define DRIVE 0.7
-#define FREQ 7000
-#define Q 3
+#define DRIVE 0.75
+#define FREQ 8000
+#define Q 4
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
