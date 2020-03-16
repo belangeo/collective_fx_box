@@ -11,16 +11,22 @@
 #define __WSHAPER_H__
 
 #include "distoFiltr.h"
-
+/*
+drive = amount of drive
+cutoff = cut frequency 
+sr = sample rate
+q = Q for resonnance
+dw = Dry Wet
+*/
 struct waveshaper {
 	// disto
-	float drive, k;
+	float drive, k, dry, wet, dw;
 	// filter
 	float freq, sr;
 	struct distoFltr* filter;
 };
 
-struct waveshaper* waveshaper_init(float drive, float cutoff, float sr, float q);
+struct waveshaper* waveshaper_init(float drive, float cutoff, float sr, float q, float dw);
 
 void waveshaper_delete(struct waveshaper* data);
 
@@ -32,4 +38,5 @@ void waveshaper_set_Cutoff(struct waveshaper* data, float freq);
 
 void waveshaper_set_Q(struct waveshaper* data, float q);
 
+void waveshaper_set_DryWet(struct waveshaper* data, float dw);
 #endif

@@ -27,6 +27,7 @@
 #define DRIVE 0.75
 #define FREQ 8000
 #define Q 4
+#define DRYWET 100
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -38,7 +39,7 @@ struct DSP* dsp_init() {
     int i;
     struct DSP* dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->waveshaper[i] = waveshaper_init(DRIVE, FREQ, SAMPLE_RATE, Q);
+        dsp->waveshaper[i] = waveshaper_init(DRIVE, FREQ, SAMPLE_RATE, Q, DRYWET);
     }
     return dsp;
 }

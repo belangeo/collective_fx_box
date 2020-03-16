@@ -62,13 +62,7 @@ void distoFltr_delete(struct distoFltr* data){
 }
 
 float distoFltr_process(struct distoFltr* data, float input){
-	double dataA0 = data->a0 * input;
-	double dataA1 = data->a1 * data->in1;
-	double dataA2 = data->a2 * data->in2;
-	double dataB1 = data->b1 * data->out1;
-	double dataB2 = data->b2 * data->out2;
-	double output = dataA0 + dataA1 + dataA2 - dataB1 - dataB2;
-
+	double output = (data->a0* input)+(data->a1 * data->in1)+(data->a2 * data->in2)-(data->b1 * data->out1)-(data->b2 * data->out2);
 	data->in2 = data->in1;
 	data->in1 = input;
 	data->out2 = data->out1;

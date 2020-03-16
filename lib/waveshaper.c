@@ -13,10 +13,13 @@
 #include "waveshaper.h"
 
 
-struct waveshaper* waveshaper_init(float drive, float cutoff, float sr, float q) {
+struct waveshaper* waveshaper_init(float drive, float cutoff, float sr, float q, float dw) {
 	struct waveshaper *data = malloc(sizeof(struct waveshaper));
 	data->drive = drive;
 	data->filter = distoFltr_init(cutoff, sr, q);
+	data->dw = dw;
+	data->wet = data->dw / 100;
+	data->dry = 1 - data->wet;
 	return data;
 }
 
@@ -30,6 +33,7 @@ float waveshaper_process(struct waveshaper* data, float input) {
 	k = (2 * data->drive) / (1 - data->drive);
 	distoOut = (1.0 + k) * input / (1.0 + k * abs(input));
 	out = distoFltr_process(data->filter, distoOut);
+	//out = distoFltr_process(data->filter, distoOut) * data->wet + input*data->dry;
 	//printf("input: %f\nk: %f\ndata->drive: %f\nout: %f\n-----\n", input, k, data->drive, out);
 	return out;
 }
@@ -47,4 +51,10 @@ void waveshaper_set_Cutoff(struct waveshaper* data, float cutoff) {
 
 void waveshaper_set_Q(struct waveshaper* data, float q) {
 	distoFltr_set_Q(data->filter, q);
+}
+
+void waveshaper_set_DryWet(struct waveshaper* data, float dw) {
+	if (dw > 100) {data->dw = 100;}
+	else if (dw < 0) { data->dw = 0; }
+	else { data->dw = dw; }
 }
