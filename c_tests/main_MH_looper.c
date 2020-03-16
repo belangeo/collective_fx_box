@@ -38,7 +38,10 @@
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
-    struct looper *looperline[NUMBER_OF_CHANNELS];
+    struct looper *loop1[NUMBER_OF_CHANNELS];
+	struct looper *loop2[NUMBER_OF_CHANNELS];
+	struct looper *loop3[NUMBER_OF_CHANNELS];
+	struct looper *loop4[NUMBER_OF_CHANNELS];
 };
 
 // This function allocates memory and intializes all dsp structures.
@@ -46,7 +49,10 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->looperline[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+        dsp->loop1[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+		dsp->loop2[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+		dsp->loop3[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+		dsp->loop4[i] = looper_init(LOOPTIME, SAMPLE_RATE);
     }
     return dsp;
 }
@@ -55,7 +61,10 @@ struct DSP * dsp_init() {
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        looper_delete(dsp->looperline[i]);
+        looper_delete(dsp->loop1[i]);
+		looper_delete(dsp->loop2[i]);
+		looper_delete(dsp->loop3[i]);
+		looper_delete(dsp->loop4[i]);
     }
     free(dsp);
 }
@@ -64,16 +73,12 @@ void dsp_delete(struct DSP *dsp) {
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
     float readval, filtered;
-
-	//if (input==0x20)
-	//	{  
-		//dsp->record=0;	 
-		//printf("blabla");
-		//} 
+ 
     for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = looper_process(dsp->looperline[j], in[index]);
+            out[index] = looper_process(dsp->loop1[j], in[index])+looper_process(dsp->loop2[j], in[index])
+						+looper_process(dsp->loop3[j], in[index])+looper_process(dsp->loop4[j], in[index]);
         }
     }
 
@@ -159,19 +164,44 @@ int main(void)
     if (paErrorCheck(err)) { return -1; }
 	
 	/*SECTION MH*/
-	int input=getchar();
-	if (input==0x20)
-	{  
-		for (int i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        looper_record(dsp->looperline[i]);
-    } 
-		printf("blabla");
-	} 
-	getchar();
-	getchar();
-    printf("Hit ENTER to stop program.\n");
-    /*FIn section MH*/
+	int quit=0;
+	while (quit==0)
+	{
+		int input=getchar();
+	for (int i =0; i < NUMBER_OF_CHANNELS; i++)
+	{
+		if (input == 0x31)
+		{
+			looper_controls(dsp->loop1[i], input);
+			printf("loop1");
+		}
+		if (input == 0x32)
+		{
+			looper_controls(dsp->loop2[i], input);
+			printf("loop2");
+		}
+		if (input == 0x33)
+		{
+			looper_controls(dsp->loop3[i], input);
+			printf("loop3");
+		}
+		if (input == 0x34)
+		{
+			looper_controls(dsp->loop4[i], input);
+			printf("loop4");
+		}
+		if (input ==0x71)
+		{
+			quit=1;
+		}
+	}
+	}
 	
+	/*FIn section MH*/
+	
+    printf("Hit ENTER to stop program.\n");	
+ 
+
     err = Pa_CloseStream(stream);
     if (paErrorCheck(err)) { return -1; }
 

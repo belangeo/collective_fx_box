@@ -18,14 +18,9 @@
   
   void looper_delete(struct looper *loop);
   
-  float looper_record(struct looper *loop);
+  float looper_controls(struct looper *loop, int charInput);
   
   float looper_process(struct looper *loop, float input);
-  
-  
-  
-  //float looper_process(struct looper *data);
-
 	  
   
 #endif
