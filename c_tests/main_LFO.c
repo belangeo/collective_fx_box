@@ -1,11 +1,11 @@
 /*
  * Template file to create a live audio processing program with portaudio.
- * Choose an lfo type and add variables.
+ *
  * Compile on linux and MacOS with:
- *  gcc c_tests/main_LFO.c lib/sinosc.c lib/carre.c lib/triangle.c lib/saw.c lib/phas.c -Ilib -lm -lportaudio -o c_apps/main_LFO
+ *  gcc c_templates/main_LFO.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_LFO
  *
  * Compile on Windows with:
- *  gcc c_tests/main_LFO.c lib/sinosc.c lib/carre.c lib/triangle.c lib/saw.c lib/phas.c -Ilib -lm -lportaudio -o c_apps/main_LFO.exe
+ *  gcc c_templates/main_LFO.c lib/*.c -Ilib -lm -lportaudio -o c_apps/main_LFO.exe
  *
  * Run on linux and MacOS with:
  *  ./c_apps/main_LFO
@@ -21,7 +21,6 @@
 //== Program-specific system includes. ==
 // This is where you include the program-specific system headers (if needed) by your program...
 
-
 /* Include all portaudio functions. */
 #include "portaudio.h"
 
@@ -33,26 +32,23 @@
 
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
-#include "sinosc.h"
-#include "carre.h"
-#include "triangle.h"
-#include "saw.h"
-#include "phas.h"
+#include <lfo.h>
+
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
+#define phase 0.0
 #define LFO_FREQ 5
+#define LFO_TYPE 0
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
+
+    struct lfo *lfotest[NUMBER_OF_CHANNELS]; 
     // This is where you declare the specific processing structures
     // needed by your program... Each declaration should have the form:
 
-    struct sinosc *lfo[NUMBER_OF_CHANNELS];
-    struct carre *lfo[NUMBER_OF_CHANNELS];
-    struct triangle *lfo[NUMBER_OF_CHANNELS];
-    struct saw *lfo[NUMBER_OF_CHANNELS];
-    struct phasor *lfo[NUMBER_OF_CHANNELS];
+    // struct delay *delayline[NUMBER_OF_CHANNELS];
 
     // Which means a "multi-channel" pointer to the processing structure.
 
@@ -65,14 +61,9 @@ struct DSP * dsp_init() {
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you setup the specific processing structures needed by your program,
         // using the provided xxx_init functions. Something like:
-        
-        // Choose an lfo type
-        dsp->lfo[i] = sinosc_init(LFO_FREQ, SAMPLE_RATE);
-        dsp->lfo[i] = carre_init(LFO_FREQ, SAMPLE_RATE);
-        dsp->lfo[i] = triangle_init(LFO_FREQ, SAMPLE_RATE);
-        dsp->lfo[i] = saw_init(LFO_FREQ, SAMPLE_RATE);
-        dsp->lfo[i] = phasor_init(LFO_FREQ, SAMPLE_RATE);
 
+        // dsp->delayline[i] = delay_init(DELTIME, SAMPLE_RATE);
+        dsp->lfotest[i] = lfo_init(LFO_FREQ, LFO_TYPE, SAMPLE_RATE);
     }
     return dsp;
 }
@@ -84,12 +75,8 @@ void dsp_delete(struct DSP *dsp) {
         // This is where you release the memory used by the specific processing structure
         // used in the program. Something like:
 
-        // Choose an lfo type
-        sinosc_delete(dsp->lfo[i]);
-        carre_delete(dsp->lfo[i]);
-        triangle_delete(dsp->lfo[i]);
-        saw_delete(dsp->lfo[i]);
-        phasor_delete(dsp->lfo[i]);
+        // delay_delete(dsp->delayline[i]);
+            lfo_delete(dsp->lfotest[i]);
     }
     free(dsp);
 }
@@ -105,28 +92,8 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
             // This is where you want to put your processing logic... A simple thru is:
+            out[index] = in[index] *lfo_process(dsp->lfotest[j]);
 
-            // Choose an lfo type
-            lfoval = sinosc_process(dsp->lfo[j]);
-            lfoval = carre_process(dsp->lfo[j]);
-            lfoval = triangle_process(dsp->lfo[j]);
-            lfoval = saw_process(dsp->lfo[j]);
-            lfoval = phasor_process(dsp->lfo[j]);
-
-            // Choose a type and add any variables 
-            sinosc_set_freq();
-            carre_set_freq();
-            triangle_set_freq();
-            saw_set_freq();
-            phasor_set_freq();
-
-            out[index] = in[index] + sinosc_process();
-            out[index] = in[index] + carre_process();
-            out[index] = in[index] + triangle_process();
-            out[index] = in[index] + saw_process();
-            out[index] = in[index] + phasor_process();
-
-            // out[index] = in[index];
         }
     }
 }
