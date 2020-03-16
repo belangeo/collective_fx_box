@@ -19,12 +19,14 @@ Choses à implémenter :
   struct looper *looper_init(float lenloop, float sr)
   {
 	  struct looper *looper_data =malloc(sizeof(struct looper));
+	  
 	  looper_data->sr=sr;
-	  looper_data->lenloop=lenloop*sr; //Donc si lenloop = .5 alors looper_data->lenloop = 22050 => .5 seconde de loop.
-	  looper_data->writeloop = looper_data->lenloop; //Initializing 
 	  looper_data->pitch=1;
+	  looper_data->lenloop=lenloop*sr;
+	  looper_data->writeloop = looper_data->lenloop;
 	  looper_data->readpos=0.0;
 	  looper_data->buffer = calloc(looper_data->lenloop,sizeof(float)); //We are using calloc because he can keep in memory a large enough space to hold lensize elements.
+
 	  return looper_data;
   }
   
@@ -33,10 +35,14 @@ Choses à implémenter :
 	  free(data);
   }
   
-  float looper_record(struct looper *data)
+  //Controle les differentes loops qu on enregistre.
+  float looper_controls(struct looper *data, int charInput) //Dans le cas du programme actuel ce n est pas necessaire de passer le charInput mais c est pour la prochaine etape ou je voudrais controler les choix dans la fonction.
   {
-	  data->readpos=0.0;
-	  data->writeloop=0;
+	if (charInput == 0x31|| charInput == 0x32 || charInput == 0x33 || charInput == 0x34 )
+	{
+		data->readpos=0.0;
+		data->writeloop=0;
+	} 
   }
   
 float looper_process(struct looper *data, float input)
@@ -72,3 +78,5 @@ float looper_process(struct looper *data, float input)
 	}
 	return output;
 }
+
+
