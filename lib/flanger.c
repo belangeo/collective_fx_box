@@ -15,7 +15,9 @@ flanger_init(float centerdelay, float depth, float lfofreq, float feedback, floa
     data->feedback = 0.1 ;
     data->depth = 0.3;
     data->centerdelay = 0.07;
-    float input, float readval, float delaytime, float output;
+
+    //OU VA CECI????
+   //float readval, float delaytime, float output;
     return data;
 }
 
@@ -27,7 +29,7 @@ flanger_delete(struct flanger *data) {
 }
 
 float
-flanger_process(struct flanger *data, float input) {
+flanger_process(struct flanger *data, float input), float readval, float delaytime, float output  {
     delaytime = sinosc_process(data->lfo) * data->centerdelay * data->depth + data->centerdelay;
     readval = delay_read(data->delayline, delaytime);
     delay_write(data->delayline, input + readval * data->feedback);
