@@ -33,8 +33,15 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define LOOPTIME 1
-#define PLAYRATE 0.5
+#define LOOPTIME1 1
+#define LOOPTIME2 2
+#define LOOPTIME3 2
+#define LOOPTIME4 1
+
+#define PLAYRATE1 1
+#define PLAYRATE2 1
+#define PLAYRATE3 1
+#define PLAYRATE4 1
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -49,10 +56,10 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->loop1[i] = looper_init(LOOPTIME, SAMPLE_RATE);
-		dsp->loop2[i] = looper_init(LOOPTIME, SAMPLE_RATE);
-		dsp->loop3[i] = looper_init(LOOPTIME, SAMPLE_RATE);
-		dsp->loop4[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+        dsp->loop1[i] = looper_init(LOOPTIME1, PLAYRATE1, SAMPLE_RATE);
+		dsp->loop2[i] = looper_init(LOOPTIME2, PLAYRATE2, SAMPLE_RATE);
+		dsp->loop3[i] = looper_init(LOOPTIME3, PLAYRATE3,SAMPLE_RATE);
+		dsp->loop4[i] = looper_init(LOOPTIME4, PLAYRATE4,SAMPLE_RATE);
     }
     return dsp;
 }
@@ -165,32 +172,37 @@ int main(void)
 	
 	/*SECTION MH*/
 	int quit=0;
+	
+	printf("Hit q to stop program.\n");
 	while (quit==0)
 	{
-		int input=getchar();
+	int input=getchar();
+	Sleep(100); //Pour eviter le clics d enregistrement
+
 	for (int i =0; i < NUMBER_OF_CHANNELS; i++)
 	{
-		if (input == 0x31)
+		if (input == 0x31 ||input == 0x20 )
 		{
 			looper_controls(dsp->loop1[i], input);
 			printf("loop1");
+			
 		}
-		if (input == 0x32)
-		{
+		if (input == 0x32||input == 0x20)
+		{	
 			looper_controls(dsp->loop2[i], input);
 			printf("loop2");
 		}
-		if (input == 0x33)
+		if (input == 0x33||input == 0x20)
 		{
 			looper_controls(dsp->loop3[i], input);
 			printf("loop3");
 		}
-		if (input == 0x34)
-		{
+		if (input == 0x34||input == 0x20)
+		{	
 			looper_controls(dsp->loop4[i], input);
 			printf("loop4");
 		}
-		if (input ==0x71)
+		else if (input ==0x71)
 		{
 			quit=1;
 		}
@@ -199,7 +211,7 @@ int main(void)
 	
 	/*FIn section MH*/
 	
-    printf("Hit ENTER to stop program.\n");	
+    //printf("Hit ENTER to stop program.\n");	
  
 
     err = Pa_CloseStream(stream);
