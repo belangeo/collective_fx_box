@@ -11,6 +11,9 @@ struct flanger {
 	float depth;
 	float sr;
 	float centerdelay;
+	float readval;
+	float delaytime;
+	float output;
 };
 
 struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr);
