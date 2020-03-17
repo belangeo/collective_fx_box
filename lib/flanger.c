@@ -15,8 +15,7 @@ flanger_init(float centerdelay, float depth, float lfofreq, float feedback, floa
     data->feedback = 0.2;
     data->depth = 0.3;
     data->centerdelay = 0.01;
-    float delaytime;
-    float realval;
+    float readval, delaytime, output;
     return data;
 }
 
@@ -32,7 +31,7 @@ flanger_process(struct flanger *data) {
     delaytime = sinosc_process(data->lfo) * data->centerdelay * data->depth + data->centerdelay;
     readval = delay_read(data->delayline, delaytime);
     delay_write(data->delayline, input + readval * data->feedback);
-    output = flanger_process(flanger, input) + readval;
+    output = flanger_process() + readval;
     return output;
 }
 
