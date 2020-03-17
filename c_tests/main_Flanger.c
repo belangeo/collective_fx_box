@@ -103,8 +103,8 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
      else if (ctlnum == 2) {   // CC 2 => feedback
         dsp->feedback = value / 127.;
         }
-     else if (ctlnum == 3) {   // CC 3 => lfo_depth
-        dsp->lfo_depth = value / 127.;
+     else if (ctlnum == 3) {   // CC 3 => depth
+        dsp->depth = value / 127.;
         }
 
         //if (ctlnum == 0) {          // CC 0  => flange_freq
