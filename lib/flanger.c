@@ -15,6 +15,8 @@ flanger_init(float centerdelay, float depth, float lfofreq, float feedback, floa
     data->feedback = 0.2;
     data->depth = 0.3;
     data->centerdelay = 0.01;
+    float delaytime;
+    float realval;
     return data;
 }
 
