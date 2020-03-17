@@ -11,7 +11,6 @@ struct flanger {
 	float depth;
 	float sr;
 	float centerdelay;
-	float readval, delaytime, output;
 	
 };
 
@@ -19,7 +18,7 @@ struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, flo
 
 void flanger_delete(struct flanger * data);
 
-float flanger_process(struct flanger * data, float input);
+float flanger_process(struct flanger *data, float input, float readval, float delaytime, float output);
 
 void flanger_set_depth(struct flanger * data, float depth);
 
