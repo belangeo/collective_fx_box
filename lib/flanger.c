@@ -12,12 +12,9 @@ flanger_init(float centerdelay, float depth, float lfofreq, float feedback, floa
     struct flanger *data = malloc(sizeof(struct flanger));
 	data->lfo = sinosc_init(lfofreq, sr);
     data->delayline/*delaymax*/ = delay_init(0.1, sr);
-    data->feedback = 0.1 ;
-    data->depth = 0.3;
-    data->centerdelay = 0.07;
-
-    //OU VA CECI????
-   //float readval, float delaytime, float output;
+    data->feedback = feedback ;
+    data->depth = depth;
+    data->centerdelay = centerdelay;
     return data;
 }
 
