@@ -33,7 +33,7 @@
 #define CENTERDELAY 0.01
 #define FEEDBACK    0.2
 #define LFO_FREQ    0.1
-#define DEPTH   0.3
+#define DEPTH       0.3
 #define CUTOFF      1000
 
 
@@ -107,8 +107,7 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
         dsp->depth = value / 127.;
         }
 
-        //if (ctlnum == 0) {          // CC 0  => flange_freq
-        //dsp->flanger_set_freq = value / 127.;
+    
 }
 
 /**********************************************************************************************
