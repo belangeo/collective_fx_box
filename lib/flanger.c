@@ -26,12 +26,12 @@ flanger_delete(struct flanger *data) {
 }
 
 float
-flanger_process1(struct flanger *data) {
-    data->centerdelay = data->centerdelay * data->depth + data->centerdelay;
+flanger_process(struct flanger *data) {
+    delaytime = sinosc_process(data->lfo) * data->centerdelay * data->depth + data->centerdelay;
     readval = delay_read(data->delayline, delaytime);
     delay_write(data->delayline, input + readval * data->feedback);
-    output = input + readval;
-    return value;
+    output = flanger_process(flanger, input) + readval;
+    return output;
 }
 
 void
