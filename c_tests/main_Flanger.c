@@ -33,7 +33,7 @@
 #define CENTERDELAY 0.01
 #define FEEDBACK    0.2
 #define LFO_FREQ    0.1
-#define LFO_DEPTH   0.3
+#define DEPTH   0.3
 #define CUTOFF      1000
 
 
@@ -47,7 +47,7 @@ struct DSP {
     float centerdelay;
     float feedback;
     float lfofreq;
-    float lfo_depth;
+    float depth;
     float cutoff;
 };
 
@@ -59,12 +59,12 @@ struct DSP * dsp_init() {
     dsp->centerdelay = CENTERDELAY;
     dsp->feedback = FEEDBACK;
     dsp->lfofreq = LFO_FREQ;
-    dsp->lfo_depth = LFO_DEPTH; 
+    dsp->depth = DEPTH; 
     dsp->cutoff = CUTOFF;
     
     // Initialize audio objects.
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) { 
-         dsp->flange[i] = flanger_init(CENTERDELAY,LFO_DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
+         dsp->flange[i] = flanger_init(CENTERDELAY,DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
     }
     return dsp;
 }
