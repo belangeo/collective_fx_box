@@ -1,16 +1,16 @@
 /*
  *
  * Compile on linux and MacOS with:
- *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger
+ *  gcc c_apps/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
  *
  * Compile on Windows with:
  *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger.exe
  *
  * Run on linux and MacOS with:
- *  ./c_apps/main_Flanger
+ *  ./main_Flanger
  *
  * Run on Windows with:
- *  c_apps/main_Flanger.exe
+ *  main_Flanger.exe
 */
 
 // System includes.
@@ -33,22 +33,21 @@
 #define CENTERDELAY 0.01
 #define FEEDBACK    0.2
 #define LFO_FREQ    0.1
-#define LFO_DEPTH   0.3
+#define DEPTH       0.3
 #define CUTOFF      1000
 
 
 // The DSP structure contains all needed audio processing "objects". 
-struct DSP {/
+struct DSP {
     struct flanger * flange[NUMBER_OF_CHANNELS];
     struct sinosc *lfo[NUMBER_OF_CHANNELS];
-    struct delay *delayline[NUMBER_OF_CHANNELS];
-    struct lp1 *deltimeramp[NUMBER_OF_CHANNELS];
+
 
     // dynamic parameters.
     float centerdelay;
     float feedback;
     float lfofreq;
-    float lfo_depth;
+    float depth;
     float cutoff;
 };
 
@@ -60,12 +59,12 @@ struct DSP * dsp_init() {
     dsp->centerdelay = CENTERDELAY;
     dsp->feedback = FEEDBACK;
     dsp->lfofreq = LFO_FREQ;
-    dsp->lfo_depth = LFO_DEPTH; 
+    dsp->depth = DEPTH; 
     dsp->cutoff = CUTOFF;
     
     // Initialize audio objects.
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) { 
-         dsp->flange[i] = flanger_init(CENTERDELAY,LFO_DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
+         dsp->flange[i] = flanger_init(CENTERDELAY,DEPTH,LFO_FREQ,FEEDBACK, SAMPLE_RATE);
     }
     return dsp;
 }
@@ -104,12 +103,11 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
      else if (ctlnum == 2) {   // CC 2 => feedback
         dsp->feedback = value / 127.;
         }
-     else if (ctlnum == 3) {   // CC 3 => lfo_depth
-        dsp->lfo_depth = value / 127.;
+     else if (ctlnum == 3) {   // CC 3 => depth
+        dsp->depth = value / 127.;
         }
 
-        //if (ctlnum == 0) {          // CC 0  => flange_freq
-        //dsp->flanger_set_freq = value / 127.;
+    
 }
 
 /**********************************************************************************************

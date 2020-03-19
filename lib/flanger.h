@@ -11,13 +11,14 @@ struct flanger {
 	float depth;
 	float sr;
 	float centerdelay;
+	
 };
 
 struct flanger * flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr);
 
 void flanger_delete(struct flanger * data);
 
-float flanger_process(struct flanger * data, float input);
+float flanger_process(struct flanger *data, float input);
 
 void flanger_set_depth(struct flanger * data, float depth);
 

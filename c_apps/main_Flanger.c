@@ -4,7 +4,7 @@
  *  gcc c_apps/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger
  *
  * Compile on Windows with:
- *  gcc c_apps/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o main_Flanger.exe
+ *  gcc c_tests/main_Flanger.c lib/flanger.c -Ilib -lm -lportaudio -o c_apps/main_Flanger.exe
  *
  * Run on linux and MacOS with:
  *  ./main_Flanger
@@ -41,8 +41,7 @@
 struct DSP {
     struct flanger * flange[NUMBER_OF_CHANNELS];
     struct sinosc *lfo[NUMBER_OF_CHANNELS];
-    struct delay *delayline[NUMBER_OF_CHANNELS];
-    struct lp1 *deltimeramp[NUMBER_OF_CHANNELS];
+
 
     // dynamic parameters.
     float centerdelay;

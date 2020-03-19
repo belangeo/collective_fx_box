@@ -6,15 +6,15 @@
 #define M_PI (3.14159265358979323846264338327950288)
 #endif
 
-/*sinosc*/
+
 struct flanger * 
 flanger_init(float centerdelay, float depth, float lfofreq, float feedback, float sr) {
     struct flanger *data = malloc(sizeof(struct flanger));
 	data->lfo = sinosc_init(lfofreq, sr);
     data->delayline/*delaymax*/ = delay_init(0.1, sr);
-    data->feedback = 0.2;
-    data->depth = 0.3;
-    data->centerdelay = 0.01;
+    data->feedback = feedback ;
+    data->depth = depth;
+    data->centerdelay = centerdelay;
     return data;
 }
 
@@ -26,12 +26,13 @@ flanger_delete(struct flanger *data) {
 }
 
 float
-flanger_process1(struct flanger *data) {
-    data->centerdelay = data->centerdelay * data->depth + data->centerdelay;
+flanger_process(struct flanger *data, float input) {
+	float readval, delaytime, output;
+    delaytime = sinosc_process(data->lfo) * data->centerdelay * data->depth + data->centerdelay;
     readval = delay_read(data->delayline, delaytime);
     delay_write(data->delayline, input + readval * data->feedback);
     output = input + readval;
-    return value;
+    return output;
 }
 
 void
