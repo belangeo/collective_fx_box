@@ -15,6 +15,7 @@
 
 struct modulationam {
 	float freq, sr;
+	float inc;
 	struct sinosc* osc;
 };
 
