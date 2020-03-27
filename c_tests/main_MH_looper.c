@@ -183,23 +183,23 @@ int main(void)
 	{
 		if (input == 0x31 ||input == 0x20 )
 		{
-			looper_controls(dsp->loop1[i], input);
+			looper_controls(dsp->loop1[i]);
 			printf("loop1");
 			
 		}
 		if (input == 0x32||input == 0x20)
 		{	
-			looper_controls(dsp->loop2[i], input);
+			looper_controls(dsp->loop2[i]);
 			printf("loop2");
 		}
 		if (input == 0x33||input == 0x20)
 		{
-			looper_controls(dsp->loop3[i], input);
+			looper_controls(dsp->loop3[i]);
 			printf("loop3");
 		}
 		if (input == 0x34||input == 0x20)
 		{	
-			looper_controls(dsp->loop4[i], input);
+			looper_controls(dsp->loop4[i]);
 			printf("loop4");
 		}
 		else if (input ==0x71)

@@ -21,7 +21,9 @@
   
   float looper_pitch(struct looper *loop, float newPitch);
   
-  float looper_controls(struct looper *loop, int charInput);
+  float looper_controls(struct looper *loop);
+  
+  //float looper_midi(struct looper *loop, int midiInput);
   
   float looper_process(struct looper *loop, float input);
 	  

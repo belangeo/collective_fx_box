@@ -1,23 +1,30 @@
 /*
- * An example of live processing with portaudio AND portmidi. A stereo delay line
- * with an embedded lowpass filter.
+ * Template file to create a live audio processing program with portaudio AND portmidi.
  *
  * Compile on linux and MacOS with:
- *  gcc c_tests/main_MH_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_MH_midi
+ *  gcc c_tests/main_MH_looper_midi.c lib/looper.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_midi
  *
  * Compile on Windows with:
- *  gcc c_tests/main_MH_midi.c lib/lp1.c lib/delay.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_MH_midi.exe
+ *  gcc c_tests/main_MH_looper_stdin.c lib/looper.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_stdin.exe
  *
  * Run on linux and MacOS with:
- *  ./c_apps/main_MH_midi
+ *  ./c_apps/main_MH_looper_midi
  *
  * Run on Windows with:
- *  c_apps/main_MH_midi.exe
+ *  c_apps/main_MH_looper_midi.exe
 */
 
 /* System includes. */
 #include <stdlib.h>     /* malloc, free */
-#include <stdio.h>      /* printf, fprintf, getchar, stderr */    
+#include <stdio.h>      /* printf, fprintf, getchar, stderr */
+
+#ifdef _WIN32
+#include <Windows.h>            /* Sleep */
+#include <ncurses/curses.h>     /* all ncurses functions. */
+#else
+#include <unistd.h>     /* usleep */
+#include <curses.h>     /* all ncurses functions. */
+#endif
 
 //== Program-specific system includes. ==
 // This is where you include the program-specific system headers (if needed) by your program...
@@ -29,74 +36,105 @@
 /* Include all portmidi functions. */
 #include "portmidi.h"
 
-// Program-specific includes.
-#include "looper.h"
-//#include "lp1.h"
+/* Include midi mapping functions. */
+#include "midimap.h"
 
-
-// Define global audio parameters.
+/* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
-// Program-specific parameters.
-#define LOOPTIME 1
-#define FEEDBACK 0.75
-#define CUTOFF 8000
-#define PLAYRATE 0.5
-#define RECORD 0
 
-// The DSP structure contains all needed audio processing "objects". 
+//== Program-specific includes. ==
+#include "looper.h"
+
+//== Program-specific parameters. ==
+#define LOOPTIME1 1
+#define LOOPTIME2 2
+#define LOOPTIME3 2
+#define LOOPTIME4 1
+
+#define PLAYRATE1 1
+#define PLAYRATE2 1
+#define PLAYRATE3 1
+#define PLAYRATE4 1
+
+/* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
-    struct looper *looperline[NUMBER_OF_CHANNELS];
-	int record;
+    struct looper *loop1[NUMBER_OF_CHANNELS];
+	struct looper *loop2[NUMBER_OF_CHANNELS];
+	struct looper *loop3[NUMBER_OF_CHANNELS];
+	struct looper *loop4[NUMBER_OF_CHANNELS];
+
 };
 
-// This function allocates memory and intializes all dsp structures.
+/* This function allocates memory and intializes all dsp structures. */
 struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->looperline[i] = looper_init(LOOPTIME, SAMPLE_RATE);
+        dsp->loop1[i] = looper_init(LOOPTIME1, PLAYRATE1, SAMPLE_RATE);
+		dsp->loop2[i] = looper_init(LOOPTIME2, PLAYRATE2, SAMPLE_RATE);
+		dsp->loop3[i] = looper_init(LOOPTIME3, PLAYRATE3,SAMPLE_RATE);
+		dsp->loop4[i] = looper_init(LOOPTIME4, PLAYRATE4,SAMPLE_RATE);
     }
     return dsp;
 }
 
-// This function releases memory used by all dsp structures.
+/* This function releases memory used by all dsp structures. */
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        looper_delete(dsp->looperline[i]);
+        looper_delete(dsp->loop1[i]);
+		looper_delete(dsp->loop2[i]);
+		looper_delete(dsp->loop3[i]);
+		looper_delete(dsp->loop4[i]);
     }
     free(dsp);
 }
 
-// This function does the actual processing chain.
+/* This function does the actual processing chain. */
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
     unsigned int i, j, index;
     float readval, filtered;
-	int record=1;
-	//if (fgetc(stdin)==0x20)
-		//{  
-		//record=1;	 
-		//printf("blabla");
-		//} 
+ 
     for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-			readval = looper_read(dsp->looperline[j], LOOPTIME);
-            looper_write(dsp->looperline[j],record, in[index]);
-            out[index] = in[index] + readval;
+            out[index] = looper_process(dsp->loop1[j], in[index])+looper_process(dsp->loop2[j], in[index])
+						+looper_process(dsp->loop3[j], in[index])+looper_process(dsp->loop4[j], in[index]);
         }
     }
-
 }
 
-// This function maps midi controller values to our dsp variables.
+/* This function maps midi controller values to our dsp variables. */
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
-    if (ctlnum == 0) {          // CC 0  => delay time
-        dsp->deltime = value / 127. * MAXDELTIME;
-    } 
+
+	/*for (int i =0; i < NUMBER_OF_CHANNELS; i++)
+	{
+		if (ctlnum == 60 ||ctlnum == 59 )
+		{
+			looper_midi(dsp->loop1[i], ctlnum);
+			printf("loop1");
+			
+		}
+		if (ctlnum == 61||ctlnum == 59)
+		{	
+			looper_midi(dsp->loop2[i], ctlnum);
+			printf("loop2");
+		}
+		if (ctlnum == 62||ctlnum == 59)
+		{
+			looper_midi(dsp->loop3[i], ctlnum);
+			printf("loop3");
+		}
+		if (ctlnum == 63||ctlnum == 59)
+		{	
+			looper_midi(dsp->loop4[i], ctlnum);
+			printf("loop4");
+		}
+	}*/
+    printf("%d %d %d\n", ctlnum, value, midimap_get("2") == ctlnum);
 }
 
 /**********************************************************************************************
@@ -105,7 +143,7 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
  *
  *********************************************************************************************/
 
-/* Portmidi global variables (not the best way to do it, but clearly the simplest for now! */
+/* Portmidi global variables (not the best way to do it, but clearly the simpler for now! */
 PmStream *pm_input_streams[32];
 static int pm_initialized = 0;
 static int pm_num_of_devices = 0;
@@ -179,14 +217,93 @@ int paDefaultDeviceCheck(PaDeviceIndex device, char *direction)
     return 0;
 }
 
+void create_window(struct DSP *dsp) {
+    int running, key, polltime = 20;
+    WINDOW *w;
+
+    /* Screen initialization. */
+    w = initscr();
+    cbreak();
+    noecho();
+    curs_set(0);
+    keypad(w, TRUE);
+    nodelay(w, TRUE);
+    mvaddstr(2, 2, "COLLECTIVE FX BOX !");
+    mvaddstr(3, 2, "-------------------");
+
+/*SECTION MH9************************************************************************************/
+
+    char tmp[32];
+    running = 1;
+    while (running) {
+        key = getch();
+        switch (key) {
+            case '1':
+				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
+				{
+					looper_controls(dsp->loop1[i]);
+				}	
+				sprintf(tmp, "Record loop %d...", key - 48);
+                mvaddstr(6, 2, tmp); refresh();
+                break;
+            case '2':
+				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
+					{
+						looper_controls(dsp->loop2[i]);
+					}
+					sprintf(tmp, "Record loop %d...", key - 48);
+                mvaddstr(6, 2, tmp); refresh();
+                break;
+            case '3':
+				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
+				{
+					looper_controls(dsp->loop3[i]);
+				}
+				sprintf(tmp, "Record loop %d...", key - 48);
+                mvaddstr(6, 2, tmp); refresh();
+                break;
+			
+            case '4':
+				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
+				{
+					looper_controls(dsp->loop1[i]);
+				}
+				
+                sprintf(tmp, "Record loop %d...", key - 48);
+                mvaddstr(6, 2, tmp); refresh();
+                break;
+            case 'q':
+                running = 0; 
+                mvaddstr(8, 2, "Quitting..."); refresh();
+                break;
+        }
+		
+/*FIN SECTION MH*********************************************************************************/
+#ifdef _WIN32
+        Sleep(polltime);
+#else
+        usleep(polltime * 1000);
+#endif
+    }
+
+    polltime = 1000;
+#ifdef _WIN32
+    Sleep(polltime);
+#else
+    usleep(polltime * 1000);
+#endif
+
+    endwin();
+}
+
 int main(void)
 {
     int i;
+        
     PaStreamParameters inputParameters, outputParameters;
     PaStream *stream;
     PaError err;
     PmError pmerr;
-    int withMidi = 1, num_midi_devices = 0;
 
     struct DSP *dsp = dsp_init();
 
@@ -216,6 +333,7 @@ int main(void)
         }
         if (pm_num_of_devices > 0) {
             pm_initialized = 1;
+            midimap_init();
         }
     }
 
@@ -246,8 +364,7 @@ int main(void)
     err = Pa_StartStream(stream);
     if (paErrorCheck(err)) { return -1; }
 
-    printf("Hit ENTER to stop program.\n");
-    getchar();
+    create_window(dsp);
 
     err = Pa_CloseStream(stream);
     if (paErrorCheck(err)) { return -1; }
