@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio AND portmidi.
  *
  * Compile on linux and MacOS with:
- *  gcc c_tests/main_MH_looper_midi.c lib/looper.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_midi
+ *  gcc c_tests/main_MH_looper_midi.c lib/looper.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_midi
  *
  * Compile on Windows with:
  *  gcc c_tests/main_MH_looper_stdin.c lib/looper.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_stdin.exe
  *
  * Run on linux and MacOS with:
- *  ./c_apps/main_MH_looper_midi
+ *  ./c_apps/main_MH_looper_stdin
  *
  * Run on Windows with:
- *  c_apps/main_MH_looper_midi.exe
+ *  c_apps/main_MH_looper_stdin.exe
 */
 
 /* System includes. */
@@ -231,7 +231,7 @@ void create_window(struct DSP *dsp) {
     mvaddstr(2, 2, "COLLECTIVE FX BOX !");
     mvaddstr(3, 2, "-------------------");
 
-/*SECTION MH9************************************************************************************/
+/*SECTION MH************************************************************************************/
 
     char tmp[32];
     running = 1;

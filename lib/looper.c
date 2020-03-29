@@ -59,21 +59,6 @@ Choses à implémenter :
 	}
   }
   
- /* float looper_midi(struct looper *data, int midiInput)
-  {
-	  if (midiInput == 60|| midiInput == 61 || midiInput == 62 || midiInput == 63 )
-	{
-		data->record=1;
-		data->readpos=0.0;
-		data->writeloop=0;
-	} 
-	if (midiInput ==59)
-	{
-		data->record=0;
-		
-	}
-  }*/
-  
 float looper_process(struct looper *data, float input)
 {
 	long partint;

@@ -11,7 +11,6 @@
 	  long writeloop;
 	  long readpos;
 	  float *buffer; //It s in memory so we want a location and not directly the float.
-	  //struct sinosc *sin;
 	  int record;
   };
   
@@ -22,8 +21,6 @@
   float looper_pitch(struct looper *loop, float newPitch);
   
   float looper_controls(struct looper *loop);
-  
-  //float looper_midi(struct looper *loop, int midiInput);
   
   float looper_process(struct looper *loop, float input);
 	  
