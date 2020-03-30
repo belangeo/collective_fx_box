@@ -6,10 +6,11 @@
   
   struct looper {
 	  float sr;
-	  int maxLoop;
+	  long maxLoop;
+    long loopLength;
 	  float pitch;
 	  long writeloop;
-	  long readpos;
+	  float readpos;
 	  float *buffer; //It s in memory so we want a location and not directly the float.
 	  int record;
   };
