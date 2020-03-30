@@ -309,6 +309,7 @@ void repl(struct DSP *dsp) {
 void output_log(char *msg) {
     char tmp[25];
     memset(tmp, ' ', 24);
+    tmp[24] = '\0';
     mvaddstr(23, 3, tmp);
     strncpy(tmp, msg, 24);
     mvaddstr(23, 3, tmp);
