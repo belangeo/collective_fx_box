@@ -102,7 +102,7 @@ struct DSP * dsp_init() {
 
     dsp->loop_gain_1 = dsp->loop_gain_2 = dsp->loop_gain_3 = dsp->loop_gain_4 = 1.0;
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you setup the specific processing structures needed by your program,
         // using the provided xxx_init functions.
 
@@ -165,8 +165,6 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
     }
 }
 
-// Ajouter dsp_midi_note_in !
-
 /* This function maps midi controller values to our dsp variables. */
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     int i;
@@ -197,6 +195,26 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
         for (i = 0; i < NUMBER_OF_CHANNELS; i++) { moog_set_freq(dsp->lowpass[i], fvalue / 127.0 * 8000 + 100); }
     } else if (ctlnum == midimap_get("lowpass_res")) {
         for (i = 0; i < NUMBER_OF_CHANNELS; i++) { moog_set_res(dsp->lowpass[i], fvalue / 64.0); }
+    }
+}
+
+/* This function maps midi noteon values to our dsp variables. */
+void dsp_midi_note_in(struct DSP *dsp, int pitch, int velocity) {
+    // You can compare with midi mapping defined in midimap.conf:
+    // if (midimap_get("rec_loop_1") == pitch) { ... }
+    int i;
+    if (pitch == midimap_get("rec_loop_1")) {
+        output_log("Recording loop 1...\0");
+        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { looper_controls(dsp->loop1[i]); }
+    } else if (pitch == midimap_get("rec_loop_2")) {
+        output_log("Recording loop 2...\0");
+        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { looper_controls(dsp->loop2[i]); }
+    } else if (pitch == midimap_get("rec_loop_3")) {
+        output_log("Recording loop 3...\0");
+        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { looper_controls(dsp->loop3[i]); }
+    } else if (pitch == midimap_get("rec_loop_4")) {
+        output_log("Recording loop 4...\0");
+        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { looper_controls(dsp->loop4[i]); }
     }
 }
 
@@ -256,6 +274,10 @@ static void handle_midi_input(struct DSP *dsp) {
                         int ctlnum = Pm_MessageData1(buffer.message);
                         int value = Pm_MessageData2(buffer.message);
                         dsp_midi_ctl_in(dsp, ctlnum, value);
+                    } else if ((status & 0xF0) == 0x90) {
+                        int pitch = Pm_MessageData1(buffer.message);
+                        int velocity = Pm_MessageData2(buffer.message);
+                        dsp_midi_note_in(dsp, pitch, velocity);
                     }
                 }
             }

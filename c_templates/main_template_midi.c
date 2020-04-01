@@ -105,6 +105,12 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     printf("%d %d %d\n", ctlnum, value, midimap_get("2") == ctlnum);
 }
 
+/* This function maps midi noteon values to our dsp variables. */
+void dsp_midi_note_in(struct DSP *dsp, int pitch, int velocity) {
+    // print it!
+    printf("%d %d %d\n", pitch, velocity, midimap_get("60") == pitch);
+}
+
 /**********************************************************************************************
  *
  * You shouldn't need to edit anything below here !
@@ -133,6 +139,10 @@ static void handle_midi_input(struct DSP *dsp) {
                         int ctlnum = Pm_MessageData1(buffer.message);
                         int value = Pm_MessageData2(buffer.message);
                         dsp_midi_ctl_in(dsp, ctlnum, value);
+                    } else if ((status & 0xF0) == 0x90) {
+                        int pitch = Pm_MessageData1(buffer.message);
+                        int velocity = Pm_MessageData2(buffer.message);
+                        dsp_midi_note_in(dsp, pitch, velocity);
                     }
                 }
             }

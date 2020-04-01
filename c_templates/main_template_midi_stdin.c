@@ -119,7 +119,23 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
 /* This function maps midi controller values to our dsp variables. */
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
     // print it!
-    printf("%d %d %d\n", ctlnum, value, midimap_get("2") == ctlnum);
+    char msg[25];
+    sprintf(msg, "cc: %d %d %d", ctlnum, value);
+    output_log(msg);
+
+    // You can compare with midi mapping defined in midimap.conf:
+    // if (midimap_get("freq") == ctlnum) { ... }
+}
+
+/* This function maps midi noteon values to our dsp variables. */
+void dsp_midi_note_in(struct DSP *dsp, int pitch, int velocity) {
+    // print it!
+    char msg[25];
+    sprintf(msg, "noteon: %d %d %d", pitch, velocity, midimap_get("60") == pitch);
+    output_log(msg);
+
+    // You can compare with midi mapping defined in midimap.conf:
+    // if (midimap_get("rec_loop_1") == pitch) { ... }
 }
 
 /* This function handles control signals sent by the interface. */
@@ -173,6 +189,10 @@ static void handle_midi_input(struct DSP *dsp) {
                         int ctlnum = Pm_MessageData1(buffer.message);
                         int value = Pm_MessageData2(buffer.message);
                         dsp_midi_ctl_in(dsp, ctlnum, value);
+                    } else if ((status & 0xF0) == 0x90) {
+                        int pitch = Pm_MessageData1(buffer.message);
+                        int velocity = Pm_MessageData2(buffer.message);
+                        dsp_midi_note_in(dsp, pitch, velocity);
                     }
                 }
             }
