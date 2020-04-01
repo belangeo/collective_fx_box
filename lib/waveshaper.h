@@ -1,14 +1,18 @@
 /*
 	waveshaper.h
 
-	Antoine Lussier - Rémi Coulombe
-	21 février 2020
+	Antoine Lussier - Rï¿½mi Coulombe
+	21 fï¿½vrier 2020
 	MUS3329
 
 */
 
 #ifndef __WSHAPER_H__
 #define __WSHAPER_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "distoFiltr.h"
 /*
@@ -39,4 +43,10 @@ void waveshaper_set_Cutoff(struct waveshaper* data, float freq);
 void waveshaper_set_Q(struct waveshaper* data, float q);
 
 void waveshaper_set_DryWet(struct waveshaper* data, float dw);
+
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

@@ -43,7 +43,7 @@
 
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
-#define FRAMES_PER_BUFFER   512
+#define FRAMES_PER_BUFFER   1024
 #define NUMBER_OF_CHANNELS  2
 
 /* Interface signal constants. */
@@ -156,8 +156,10 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
             // This is where you want to put your processing logic... A simple thru is:
-            loopmix = looper_process(dsp->loop1[j], in[index]) * dsp->loop_gain_1 + looper_process(dsp->loop2[j], in[index]) * dsp->loop_gain_2 +
-						 looper_process(dsp->loop3[j], in[index]) * dsp->loop_gain_3 + looper_process(dsp->loop4[j], in[index]) * dsp->loop_gain_4;
+            loopmix = looper_process(dsp->loop1[j], in[index]) * dsp->loop_gain_1 +
+                      looper_process(dsp->loop2[j], in[index]) * dsp->loop_gain_2 +
+					  looper_process(dsp->loop3[j], in[index]) * dsp->loop_gain_3 +
+                      looper_process(dsp->loop4[j], in[index]) * dsp->loop_gain_4;
 
             out[index] = flanger_process(dsp->flange[j], loopmix);
             out[index] = moog_process(dsp->lowpass[j], out[index]);
@@ -166,6 +168,8 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
         }
     }
 }
+
+// Ajouter dsp_midi_note_in !
 
 /* This function maps midi controller values to our dsp variables. */
 void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {

@@ -1,6 +1,10 @@
 #ifndef __MOOG_H__
 #define __MOOG_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*	Moog Low Pass Filter
 
 	float sr, nyquist;					Sampling rate, Nyquist frequency					
@@ -51,5 +55,9 @@ void moog_set_freq(struct moog *data, float freq);
  	float res:			The new resonnance value.
  */
 void moog_set_res(struct moog *data, float res);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

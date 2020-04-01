@@ -1,14 +1,18 @@
 /*
 	distoFiltr.h
 
-	Antoine Lussier - Rémi Coulombe
-	25 février 2020
+	Antoine Lussier - Rï¿½mi Coulombe
+	25 fï¿½vrier 2020
 	MUS3329
 
 	biquad filter for waveshaper
 */
 #ifndef __DISTO_FILTER__
 #define __DISTO_FILTER__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct distoFltr {
     float sr;
@@ -31,5 +35,9 @@ void distoFltr_delete(struct distoFltr* data);
 void distoFltr_set_Cutoff(struct distoFltr* data, float freq);
 
 void distoFltr_set_Q(struct distoFltr* data, float q);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
