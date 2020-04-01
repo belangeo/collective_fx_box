@@ -11,7 +11,6 @@ extern "C" {
   struct looper {
 	  float sr;
 	  long maxLoop;
-    long loopLength;
 	  float pitch;
 	  long writeloop;
 	  float readpos;

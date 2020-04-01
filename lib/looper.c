@@ -22,11 +22,6 @@ Choses à implémenter :
 	  looper_data->sr=sr;
 	  looper_data->pitch=playrate;
 	  looper_data->maxLoop=10*sr;
-	  if ((lenloop * sr) < (looper_data->maxLoop - 1)) {
-		  looper_data->loopLength = lenloop * sr;
-	  } else {
-		  looper_data->loopLength = looper_data->maxLoop - 1;
-	  }
 	  looper_data->writeloop = looper_data->maxLoop;
 	  looper_data->readpos=0.0;
 	  looper_data->buffer = calloc(looper_data->maxLoop,sizeof(float)); //We are using calloc because he can keep in memory a large enough space to hold lensize elements.
@@ -68,12 +63,12 @@ float looper_process(struct looper *data, float input)
 	long partint;
 	float partfloat, output = 0;
 	
-	if (data->writeloop < data->loopLength && data->record==1 )
+	if (data->writeloop < data->maxLoop && data->record==1 )
 	{
 		data->buffer[data->writeloop]=input;
 		if (data->writeloop == 0)
 		{
-			data->buffer[data->loopLength]=input;	
+			data->buffer[data->maxLoop]=input;	
 		}
 		data->writeloop=data->writeloop+1;
 		output=input;	
@@ -85,11 +80,11 @@ float looper_process(struct looper *data, float input)
 		data->readpos=data->readpos+data->pitch;
 		if (data->readpos < 0)
 		{
-			data->readpos=data->readpos+data->loopLength;
+			data->readpos=data->readpos+data->writeloop;
 		}
-		else if (data->readpos >= data->loopLength)
+		else if (data->readpos >= data->writeloop)
 		{
-			data->readpos=data->readpos-data->loopLength;
+			data->readpos=data->readpos-data->writeloop;
 		}
 			
 	}
