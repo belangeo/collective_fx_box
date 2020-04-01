@@ -3,8 +3,6 @@
 #include "randh.h"
 #include <time.h>   /* time */
 
-#endif
-
 struct randh * 
 randh_init(float freq, float sr) {
     struct randh *data = malloc(sizeof(struct randh));
