@@ -24,22 +24,17 @@
 #include <Windows.h>            /* Sleep */
 #include <ncurses/curses.h>     /* all ncurses functions. */
 #else
-#include <unistd.h>     /* usleep */
-#include <curses.h>     /* all ncurses functions. */
+#include <unistd.h>             /* usleep */
+#include <curses.h>             /* all ncurses functions. */
 #endif
 
 //== Program-specific system includes. ==
 // This is where you include the program-specific system headers (if needed) by your program...
 
 
-/* Include all portaudio functions. */
-#include "portaudio.h"
-
-/* Include all portmidi functions. */
-#include "portmidi.h"
-
-/* Include midi mapping functions. */
-#include "midimap.h"
+#include "portaudio.h"  /* Include all portaudio functions. */
+#include "portmidi.h"   /* Include all portmidi functions. */
+#include "midimap.h"    /* Include midi mapping functions. */
 
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
@@ -83,15 +78,13 @@ void output_log(char *msg);
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
     // This is where you declare the specific processing structures
-    // needed by your program... Each declaration should have the form:
+    // needed by your program...
 
     struct rms *amp[NUMBER_OF_CHANNELS];
     float amp_f[NUMBER_OF_CHANNELS];
 
-    float loop_gain_1;
-    float loop_gain_2;
-    float loop_gain_3;
-    float loop_gain_4;
+    float loop_gain_1, loop_gain_2, loop_gain_3, loop_gain_4;
+
     struct looper *loop1[NUMBER_OF_CHANNELS];
     struct looper *loop2[NUMBER_OF_CHANNELS];
     struct looper *loop3[NUMBER_OF_CHANNELS];
@@ -104,12 +97,14 @@ struct DSP {
 /* This function allocates memory and intializes all dsp structures. */
 struct DSP * dsp_init() {
     int i;
-    struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
-    for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        // This is where you setup the specific processing structures needed by your program,
-        // using the provided xxx_init functions. Something like:
 
-        dsp->loop_gain_1 = dsp->loop_gain_2 = dsp->loop_gain_3 = dsp->loop_gain_4 = 1.0;
+    struct DSP *dsp = malloc(sizeof(struct DSP));   /* Memory allocation for DSP structure. */
+
+    dsp->loop_gain_1 = dsp->loop_gain_2 = dsp->loop_gain_3 = dsp->loop_gain_4 = 1.0;
+
+    for (i = 0; i < 4; i++) {
+        // This is where you setup the specific processing structures needed by your program,
+        // using the provided xxx_init functions.
 
         dsp->amp[i] = rms_init(FRAMES_PER_BUFFER);
 
@@ -121,6 +116,7 @@ struct DSP * dsp_init() {
         dsp->flange[i] = flanger_init(FLANGE_CENTERDELAY, FLANGE_DEPTH, FLANGE_LFOFREQ, FLANGE_FEEDBACK, SAMPLE_RATE);
         dsp->lowpass[i] = moog_init(MOOG_FREQ, MOOG_RES, SAMPLE_RATE);
     }
+
     return dsp;
 }
 
@@ -129,7 +125,7 @@ void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
         // This is where you release the memory used by the specific processing structure
-        // used in the program. Something like:
+        // used in the program.
 
         rms_delete(dsp->amp[i]);
 
@@ -155,7 +151,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {      /* For each channel in a frame... */
             index = i * NUMBER_OF_CHANNELS + j;     /* Compute the index of the sample in the arrays... */
 
-            // This is where you want to put your processing logic... A simple thru is:
+            // This is where you want to put your processing logic...
             loopmix = looper_process(dsp->loop1[j], in[index]) * dsp->loop_gain_1 +
                       looper_process(dsp->loop2[j], in[index]) * dsp->loop_gain_2 +
                       looper_process(dsp->loop3[j], in[index]) * dsp->loop_gain_3 +
@@ -274,8 +270,7 @@ static void handle_midi_input(struct DSP *dsp) {
 static int callback(const void *inputBuffer, void *outputBuffer,
                     unsigned long framesPerBuffer,
                     const PaStreamCallbackTimeInfo* timeInfo,
-                    PaStreamCallbackFlags statusFlags, void *userData) 
-{
+                    PaStreamCallbackFlags statusFlags, void *userData) {
     const float *in = (const float *)inputBuffer;
     float *out = (float *)outputBuffer;
     /* Prevent unused variable warnings. */
@@ -283,8 +278,6 @@ static int callback(const void *inputBuffer, void *outputBuffer,
     (void) statusFlags;
 
     struct DSP *dsp = (struct DSP *) userData;
-
-    if (inputBuffer == NULL) { return paAbort; } // mmm...?
 
     if (pm_initialized == 1) {
         handle_midi_input(dsp);
@@ -295,8 +288,7 @@ static int callback(const void *inputBuffer, void *outputBuffer,
     return paContinue;
 }
 
-int paErrorCheck(PaError err)
-{
+int paErrorCheck(PaError err) {
     if (err != paNoError) {
         Pa_Terminate();
         fprintf(stderr,  Pa_GetErrorText(err));
@@ -305,8 +297,7 @@ int paErrorCheck(PaError err)
     return 0;
 }
 
-int paDefaultDeviceCheck(PaDeviceIndex device, char *direction)
-{
+int paDefaultDeviceCheck(PaDeviceIndex device, char *direction) {
     if (device == paNoDevice) {
         Pa_Terminate();
         fprintf(stderr, "Error: No default %s device.\n", direction);
