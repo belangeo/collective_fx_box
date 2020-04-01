@@ -43,7 +43,7 @@
 
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
-#define FRAMES_PER_BUFFER   1024
+#define FRAMES_PER_BUFFER   512
 #define NUMBER_OF_CHANNELS  2
 
 /* Interface signal constants. */
@@ -93,9 +93,9 @@ struct DSP {
     float loop_gain_3;
     float loop_gain_4;
     struct looper *loop1[NUMBER_OF_CHANNELS];
-	struct looper *loop2[NUMBER_OF_CHANNELS];
-	struct looper *loop3[NUMBER_OF_CHANNELS];
-	struct looper *loop4[NUMBER_OF_CHANNELS];
+    struct looper *loop2[NUMBER_OF_CHANNELS];
+    struct looper *loop3[NUMBER_OF_CHANNELS];
+    struct looper *loop4[NUMBER_OF_CHANNELS];
 
     struct flanger *flange[NUMBER_OF_CHANNELS];
     struct moog *lowpass[NUMBER_OF_CHANNELS];
@@ -158,7 +158,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
             // This is where you want to put your processing logic... A simple thru is:
             loopmix = looper_process(dsp->loop1[j], in[index]) * dsp->loop_gain_1 +
                       looper_process(dsp->loop2[j], in[index]) * dsp->loop_gain_2 +
-					  looper_process(dsp->loop3[j], in[index]) * dsp->loop_gain_3 +
+                      looper_process(dsp->loop3[j], in[index]) * dsp->loop_gain_3 +
                       looper_process(dsp->loop4[j], in[index]) * dsp->loop_gain_4;
 
             out[index] = flanger_process(dsp->flange[j], loopmix);
