@@ -1,6 +1,10 @@
 #ifndef __DELAY_H__
 #define __DELAY_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Delay line structure.
  *
  * sr:          Sampling rate in Hz.
@@ -45,5 +49,9 @@ float delay_read(struct delay *data, float deltime);
  * input:               The input signal as a float.
  */
 void delay_write(struct delay *data, float input);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

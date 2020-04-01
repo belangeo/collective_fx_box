@@ -10,6 +10,9 @@
 #ifndef __MODULATIONAM_H__
 #define __MODULATIONAM_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "sinosc.h"
 
@@ -24,5 +27,9 @@ struct modulationam * modulationam_init(float freq, float sr);
 void modulationam_delete(struct modulationam * data);
 
 float modulationam_process(struct modulationam * data, float input);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef __COMPRESS_H__
 #define __COMPRESS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "delay.h"
 /* Compressor : compress an audio signal that rise a given signal
  *
@@ -89,5 +93,9 @@ void compress_set_release(struct compress *data, float release);
 
  */
 void compress_set_lookahead(struct compress *data, float lookahead);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

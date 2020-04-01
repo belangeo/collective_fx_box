@@ -1,6 +1,10 @@
 #ifndef __PARAMETRICEQ_H__
 #define __PARAMETRICEQ_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     PEAK=0, 
     NOTCH=0, 
@@ -99,5 +103,9 @@ void parametricEQ_set_gain(struct parametricEQ *data, float gain);
  * 
  */
 void parametricEQ_set_filterT(struct parametricEQ *data, filterT type);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef __SINOSC_H__
 #define __SINOSC_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Sine oscillator structure.
  *
  * sr:      Sampling rate in Hz.
@@ -47,5 +51,9 @@ void sinosc_set_freq(struct sinosc *data, float freq);
  * struct sinosc *data: The structure for which to reset the angle to 0.
  */
 void sinosc_reset(struct sinosc *data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef __PHASOR_H__
 #define __PHASOR_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Phasor structure.
  *
  * sr:      Sampling rate in Hz.
@@ -42,5 +46,9 @@ void phasor_set_freq(struct phasor *data, float freq);
  * struct sinosc *data: The structure for which to reset the angle to 0.
  */
 void phasor_reset(struct phasor *data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

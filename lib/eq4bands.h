@@ -1,6 +1,10 @@
 #ifndef __EQ4BANDS_H__
 #define __EQ4BANDS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "parametricEQ.h"
 
 typedef enum {
@@ -105,5 +109,9 @@ void eq4Bands_set_q(struct eq4Bands *data, float q, bandSelect band);
  *                              BAND_HIGHSHELF
  */
 void eq4Bands_set_gain(struct eq4Bands *data, float gain, bandSelect band);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

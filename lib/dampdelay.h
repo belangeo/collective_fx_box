@@ -1,6 +1,10 @@
 #ifndef __DAMPDELAY_H__
 #define __DAMPDELAY_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // ne pas oublier d'inclure les headers appropriés.
 #include "delay.h"
 #include "lp1.h"
@@ -20,5 +24,9 @@ float dampdelay_read(struct dampdelay *data, float deltime);
 void dampdelay_write(struct dampdelay *data, float input);
 
 void dampdelay_set_freq(struct dampdelay *data, float freq);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

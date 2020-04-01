@@ -1,6 +1,10 @@
 #ifndef __NOISE_H__
 #define __NOISE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Noise structure */
 
 struct noise {
@@ -34,5 +38,9 @@ void noise_set_freq(struct noise *data, float freq);
  * struct noise *data: The structure for which to reset the angle to 0.
  */
 void noise_reset(struct noise *data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

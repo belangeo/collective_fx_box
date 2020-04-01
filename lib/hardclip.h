@@ -1,6 +1,10 @@
 #ifndef __HARDCLIP_H__
 #define __HARDCLIP_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* hardclip structure.
 
 0 < THRESH <= 1
@@ -34,5 +38,9 @@ void hardclip_delete(struct hardclip *data);
 	struct phasor *data: The structure for which to compute the next sample.
  */
 float hardclip_process(struct hardclip *data, float input, float thresh, int mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

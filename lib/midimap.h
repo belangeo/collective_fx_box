@@ -1,3 +1,10 @@
+#ifndef __MIDIMAP_H
+#define __MIDIMAP_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Allow the user to define a midi config file to map parameter
  * names to midi controller number. Config file must be located
@@ -15,3 +22,9 @@ void midimap_init();
 
 /* Retrieve a controller number from name mapping. */
 int midimap_get(char *name);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

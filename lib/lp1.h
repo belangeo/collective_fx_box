@@ -1,6 +1,10 @@
 #ifndef __LP1_H__
 #define __LP1_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct lp1 {
     float sr;
     float nyquist;
@@ -15,5 +19,9 @@ void lp1_delete(struct lp1 *data);
 float lp1_process(struct lp1 *data, float input);
 
 void lp1_set_freq(struct lp1 *data, float freq);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

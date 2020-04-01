@@ -6,6 +6,10 @@
 #ifndef __ROUTING_H__
 #define __ROUTING_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAX_BUSSES 32
 #define MAX_INPUTS 32
 
@@ -45,5 +49,9 @@ void matrix_update_input(struct routing_matrix * mat, int input, float value);
 void matrix_update_output(struct routing_matrix * mat, int bus);
 
 void matrix_update_all_outputs(struct routing_matrix * mat);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

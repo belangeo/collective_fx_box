@@ -1,6 +1,10 @@
 #ifndef __LOOPER_H__
 #define __LOOPER_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //#include "sinosc.h"
 
   
@@ -25,5 +29,8 @@
   
   float looper_process(struct looper *loop, float input);
 	  
-  
+#ifdef __cplusplus
+}
+#endif
+
 #endif

@@ -1,6 +1,10 @@
 #ifndef __RMS_H__
 #define __RMS_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Envelope follower structure.
  *
  * size:    Window size in samples (same as buffer size).
@@ -36,5 +40,9 @@ void rms_delete(struct rms *data);
  * Returns the current block amplitude value.
  */
 float rms_process(struct rms *data, float input);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

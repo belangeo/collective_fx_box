@@ -1,6 +1,10 @@
 #ifndef __BUTLP_H__
 #define __BUTLP_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Second-order Butterwoth lowpass filter
  *
  *  float freq;                 frequency in Hz
@@ -50,5 +54,8 @@ float butlp_process(struct butlp *data, float input);
  */
 void butlp_set_freq(struct butlp *data, float freq);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

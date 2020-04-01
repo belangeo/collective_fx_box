@@ -1,6 +1,10 @@
 #ifndef __Flanger_H__
 #define __Flanger_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "delay.h"
 #include "sinosc.h"
 
@@ -28,6 +32,8 @@ void flanger_set_freq(struct flanger * data, float freq);
 
 void flanger_set_feedback(struct flanger * data, float feedback);
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif
