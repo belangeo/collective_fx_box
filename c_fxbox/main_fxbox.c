@@ -50,6 +50,7 @@ void output_log(char *msg);
 //== Program-specific includes. ==
 // This is where you include the specific headers needed by your program...
 #include "rms.h"
+#include "utils.h"
 #include "looper.h"
 #include "flanger.h"
 #include "moog.h"
@@ -73,7 +74,7 @@ void output_log(char *msg);
 #define FLANGE_DEPTH       0.95
 
 #define MOOG_FREQ 2500
-#define MOOG_RES 0.25
+#define MOOG_RES 0.5
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
@@ -185,16 +186,15 @@ void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
         dsp->loop_gain_3 = fvalue / 64.0;
     } else if (ctlnum == midimap_get("loop_gain4")) {
         dsp->loop_gain_4 = fvalue / 64.0;
-    } else if (ctlnum == midimap_get("flange_freq")) {
-        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { flanger_set_freq(dsp->flange[i], fvalue / 255.0); }
-    } else if (ctlnum == midimap_get("flange_depth")) {
-        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { flanger_set_depth(dsp->flange[i], fvalue / 128.0); }
-    } else if (ctlnum == midimap_get("flange_feed")) {
-        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { flanger_set_feedback(dsp->flange[i], fvalue / 128.0); }
+    } else if (ctlnum == midimap_get("flange")) {
+        for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
+            flanger_set_freq(dsp->flange[i], (1 - (fvalue / 127.0)) * 0.2 + 0.005);
+            flanger_set_depth(dsp->flange[i], fvalue / 128.0);
+            flanger_set_feedback(dsp->flange[i], fvalue / 192.0);
+        }
     } else if (ctlnum == midimap_get("lowpass_freq")) {
-        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { moog_set_freq(dsp->lowpass[i], fvalue / 127.0 * 8000 + 100); }
-    } else if (ctlnum == midimap_get("lowpass_res")) {
-        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { moog_set_res(dsp->lowpass[i], fvalue / 64.0); }
+        fvalue = scale(fvalue, 0.0, 127.0, 100.0, 15000.0, 3.0);
+        for (i = 0; i < NUMBER_OF_CHANNELS; i++) { moog_set_freq(dsp->lowpass[i], fvalue); }
     }
 }
 

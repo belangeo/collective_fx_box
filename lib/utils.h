@@ -7,6 +7,8 @@ extern "C" {
 
 float interp(float val1, float val2, float mix);
 
+float scale(float x, float xmin, float xmax, float ymin, float ymax, float ex);
+
 #ifdef __cplusplus
 }
 #endif
