@@ -15,13 +15,7 @@ extern "C" {
 #endif
 
 #include "distoFiltr.h"
-/*
-drive = amount of drive
-cutoff = cut frequency 
-sr = sample rate
-q = Q for resonnance
-dw = Dry Wet
-*/
+
 struct waveshaper {
 	// disto
 	float drive, k, dry, wet, dw;

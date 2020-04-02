@@ -6,6 +6,8 @@
 	21 février 2020
 	MUS3329
 
+	gcc c_tests/main_Waveshaper_Coulombe-Lussier.c lib/waveshaper.c lib/distoFiltr.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_Waveshaper_Coulombe-Lussier
+
 */
 
 // System includes.
@@ -24,10 +26,10 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define DRIVE 0.75
-#define FREQ 8000
-#define Q 4
-#define DRYWET 100
+#define DRIVE 0.9
+#define FREQ 1000
+#define Q 1.0
+#define DRYWET 100.0
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {

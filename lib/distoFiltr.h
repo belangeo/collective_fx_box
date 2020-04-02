@@ -19,12 +19,10 @@ struct distoFltr {
     float nyquist;
 	float q;
 	float cutoff;
-	double a0, a1, a2, b1, b2;
-	float in0, in1, in2;
-	float out0, out1, out2;
-	float norm;
+	double a0, a1, a2, b0, b1, b2;
+	float x1, x2, y1, y2;
 	float lastout;
-	
+	float piFreqOversr;
 };
 float distoFltr_process(struct distoFltr* data, float input);
 
