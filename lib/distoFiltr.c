@@ -19,31 +19,30 @@
 
 static void coeff_process(struct distoFltr* data, float freq, float q) {
 	// cutoff verification
-	if (freq > data->nyquist){ data->cutoff = data->nyquist; }
-	else if (freq < 20) { data->cutoff = 20; }
-	else{ data->cutoff = freq; }
-		
-	// resonance verification
-	if (q > 7) {data->q = 7;}
-	else if (q < 0.5) {data->q = 0.5;}
-	else {data->q = q;}
-
-	float k = 1.0 / tan(M_PI * data->cutoff / data->sr);
-	/*---*/
-	data->a0 = 1.0 / (1.0 + data->q * k + k * k);
-	data->a1 = 2 * data->a0;
-	data->a2 = data->a0;
-	data->b1 = 2.0 * (1.0 - k * k) * data->a0;
-	data->b2 = (1.0 - data->q * k + k * k) * data->a0;
-	//float k = tan(M_PI * data->cutoff);
-	/*
-	data->norm = 1.0 / (1.0 + k / data->q + k * k);
-	data->a0 = k * k * data->norm;
-	data->a1 = 2.0 * data->a0;
-	data->a2 = data->a0;
-	data->b1 = 2.0 * (k * k - 1) * data->norm;
-	data->b2 = (1 - k / data->q + k * k) * data->norm;
-	*/
+	if (freq > data->nyquist){
+		data->cutoff = data->nyquist;
+	}else if (freq < 20.0) {
+		data->cutoff = 20.0;
+	}else{
+		data->cutoff = freq;
+	}
+	// Q verification
+	if (q > 4.0) {
+		data->q = 4.0;
+	}else if (q < 0.1) {
+		data->q = 0.1;
+	}else {
+		data->q = q;
+	}
+	// Coeff
+	float w0 = (2.0 * M_PI) * data->cutoff / data->sr;
+	float c = cos(w0);
+	float alpha = sin(w0) / (2.0 * data->q);
+	data->b0 = data->b2 = (1.0 - c) * 0.5;
+	data->b1 = 1.0 - c;
+	data->a0 = 1.0 + alpha;
+	data->a1 = -2.0 * c;
+	data->a2 = 1.0 - alpha;
 }
 
 struct distoFltr* distoFltr_init(float freq, float sr, float q){
@@ -51,8 +50,7 @@ struct distoFltr* distoFltr_init(float freq, float sr, float q){
 	data->sr = sr;
 	data->nyquist = sr * 0.499;
 	data->q = q;
-	data->norm;
-	data->in0 = data->in1 = data->in2 = data->out0 = data->out1 = data->out2 = 0.0;
+	data->x1 = data->x2 = data->y1 = data->y2 = 0.0;
 	coeff_process(data, freq, q);
 	return data;
 }
@@ -62,25 +60,25 @@ void distoFltr_delete(struct distoFltr* data){
 }
 
 float distoFltr_process(struct distoFltr* data, float input){
-	double output = (data->a0* input)+(data->a1 * data->in1)+(data->a2 * data->in2)-(data->b1 * data->out1)-(data->b2 * data->out2);
-	data->in2 = data->in1;
-	data->in1 = input;
-	data->out2 = data->out1;
-	data->out1 = output;
+	float output = (data->b0 * input + data->b1 * data->x1 + data->b2 * data->x2 - data->a1 * data->y1 - data->a2 * data->y2)/data->a0;
+	data->x2 = data->x1;
+	data->x1 = input;
+	data->y2 = data->y1;
+	data->y1 = output;
 	return output;
 }
 
 void distoFltr_set_Cutoff(struct distoFltr* data, float freq) {
 	if (freq != data->lastout) {
-		data->lastout = freq;
 		coeff_process(data, freq, data->q);
+		data->lastout = freq;
 	}
 }
 
 void distoFltr_set_Q(struct distoFltr* data, float q) {
 	if (q != data->q) {
-		data->q = q;
 		coeff_process(data, data->cutoff, q);
+		data->q = q;
 	}
 }
 

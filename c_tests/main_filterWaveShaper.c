@@ -1,5 +1,11 @@
 
+/*
 
+gcc c_tests/main_filterWaveShaper.c lib/distoFiltr.c -Ilib -lm -lportaudio -lportmidi -o c_apps/filterWS
+
+
+
+*/
 /* System includes. */
 #include <stdlib.h>     /* malloc, free */
 #include <stdio.h>      /* printf, fprintf, getchar, stderr */    
@@ -22,8 +28,8 @@
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
-#define FREQ 200
-#define Q 3
+#define FREQ 1000
+#define Q 4.0
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
