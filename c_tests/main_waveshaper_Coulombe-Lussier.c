@@ -26,10 +26,10 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define DRIVE 0.9
-#define FREQ 1000
-#define Q 1.0
-#define DRYWET 100.0
+#define DRIVE 0.99
+#define FREQ 8000
+#define Q 4.0
+#define DRYWET 10.0
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -61,7 +61,7 @@ void dsp_process(const float* in, float* out, unsigned long framesPerBuffer, str
     for (i = 0; i < framesPerBuffer; i++) {
         for (j = 0; j < NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = in[index] * waveshaper_process(dsp->waveshaper[j], in[index]);
+            out[index] = waveshaper_process(dsp->waveshaper[j], in[index]);
         }
     }
 }
