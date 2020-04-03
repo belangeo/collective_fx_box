@@ -69,11 +69,11 @@ void output_log(char *msg);
 
 #define FLANGE_MAXDELTIME  0.05
 #define FLANGE_CENTERDELAY 0.005
-#define FLANGE_FEEDBACK    0.5
+#define FLANGE_FEEDBACK    0.0
 #define FLANGE_LFOFREQ     0.1
-#define FLANGE_DEPTH       0.95
+#define FLANGE_DEPTH       0.5
 
-#define MOOG_FREQ 2500
+#define MOOG_FREQ 8000
 #define MOOG_RES 0.5
 
 /* The DSP structure contains all needed audio processing "objects". */

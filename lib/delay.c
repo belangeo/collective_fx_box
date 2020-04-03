@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "delay.h"
+#include "utils.h"
 
 struct delay * 
 delay_init(float maxdur, float sr) {
@@ -21,7 +22,7 @@ delay_delete(struct delay *data) {
 float
 delay_read(struct delay *data, float deltime) {
     int ipos;
-    float frac, samples, readpos, previous, next;
+    float frac, samples, readpos;
     samples = deltime * data->sr;
     readpos = data->writepos - samples;
     if (readpos < 0) {
@@ -31,9 +32,7 @@ delay_read(struct delay *data, float deltime) {
     }
     ipos = (int)readpos;
     frac = readpos - ipos;
-    previous = data->buffer[ipos];
-    next = data->buffer[ipos + 1];
-    return previous + (next - previous) * frac;
+    return cubic(data->buffer, ipos, frac, data->maxsize);
 }
 
 void
