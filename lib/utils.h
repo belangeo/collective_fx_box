@@ -11,7 +11,7 @@ float cubic(float *buf, int index, float frac, int size);
 
 float scale(float x, float xmin, float xmax, float ymin, float ymax, float ex);
 
-float mtof(int midiNote);
+float mtof(float midiNote);
 
 #ifdef __cplusplus
 }

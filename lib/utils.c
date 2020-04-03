@@ -42,6 +42,6 @@ float scale(float x, float xmin, float xmax, float ymin, float ymax, float ex) {
     return x;
 }
 
-float mtof(int midiNote) {
+float mtof(float midiNote) {
 	return 440.0 * pow(2.0, (midiNote - 69) / 12.0);
 }
