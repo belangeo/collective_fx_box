@@ -2,11 +2,11 @@
 	main.c
 	waveshaper
 
-	Antoine Lussier - Rémi Coulombe
-	21 février 2020
+	Antoine Lussier - Remi Coulombe
+	21 fevrier 2020
 	MUS3329
 
-	gcc c_tests/main_Waveshaper_Coulombe-Lussier.c lib/waveshaper.c lib/distoFiltr.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_Waveshaper_Coulombe-Lussier
+	gcc c_tests/main_waveshaper_Coulombe-Lussier.c lib/waveshaper.c lib/distoFiltr.c lib/utils.c -Ilib -lm -lportaudio -lportmidi -o c_apps/main_Waveshaper_Coulombe-Lussier
 
 */
 
@@ -16,8 +16,7 @@
 
 // Include all portaudio functions.
 #include "portaudio.h"
-
-// Program-specific includes.
+#include "portmidi.h"
 #include "waveshaper.h"
 
 // Define global audio parameters.
@@ -26,10 +25,11 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define DRIVE 0.99
+#define DRIVE 100.0
 #define FREQ 8000
 #define Q 4.0
-#define DRYWET 10.0
+#define DRYWET 100.0
+
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -61,6 +61,7 @@ void dsp_process(const float* in, float* out, unsigned long framesPerBuffer, str
     for (i = 0; i < framesPerBuffer; i++) {
         for (j = 0; j < NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
+
             out[index] = waveshaper_process(dsp->waveshaper[j], in[index]);
         }
     }

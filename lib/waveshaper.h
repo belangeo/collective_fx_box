@@ -38,7 +38,6 @@ void waveshaper_set_Q(struct waveshaper* data, float q);
 
 void waveshaper_set_DryWet(struct waveshaper* data, float dw);
 
-
 #ifdef __cplusplus
 }
 #endif

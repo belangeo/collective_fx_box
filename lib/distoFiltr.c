@@ -27,8 +27,8 @@ static void coeff_process(struct distoFltr* data, float freq, float q) {
 		data->cutoff = freq;
 	}
 	// Q verification
-	if (q > 4.0) {
-		data->q = 4.0;
+	if (q > 100.0) {
+		data->q = 100.0;
 	}else if (q < 0.1) {
 		data->q = 0.1;
 	}else {
