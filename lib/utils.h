@@ -7,6 +7,8 @@ extern "C" {
 
 float interp(float val1, float val2, float mix);
 
+float cubic(float *buf, int index, float frac, int size);
+
 float scale(float x, float xmin, float xmax, float ymin, float ymax, float ex);
 
 float mtof(int midiNote);
