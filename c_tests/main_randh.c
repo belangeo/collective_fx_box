@@ -2,16 +2,16 @@
  * An example of live processing with portaudio. Outputs a sine wave signal.
  *
  * Compile on linux and MacOS with:
- *  gcc main_example_sinus.c sinosc.c -Ilib -lm -lportaudio -o main_example_sinus
+ *  gcc main_randh.c sinosc.c randh.c -Ilib -lm -lportaudio -o main_randh
  *
  * Compile on Windows with:
- *  gcc main_example_sinus.c lib/sinosc.c -Ilib -lm -lportaudio -o main_example_sinus.exe
+ *  gcc main_randh.c lib/sinosc.c lib/randh.c -Ilib -lm -lportaudio -o main_randh.exe
  *
  * Run on linux and MacOS with:
- *  ./main_example_sinus
+ *  ./main_randh
  *
  * Run on Windows with:
- *  main_example_sinus.exe
+ *  main_randh.exe
 */
 
 // System includes.
@@ -25,6 +25,7 @@
 
 // Program-specific includes.
 #include "sinosc.h"
+#include "randh.h"
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
@@ -33,6 +34,9 @@
 
 // Program-specific parameters.
 #define FREQUENCY 440
+#define RAND_SPEED 5
+#define MIN 20
+#define MAX 20000
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -48,7 +52,7 @@ struct DSP * dsp_init() {
         dsp->osc[i] = sinosc_init(FREQUENCY, SAMPLE_RATE);
     }
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->rand[i] = randh_init(FREQUENCY, SAMPLE_RATE);
+        dsp->rand[i] = randh_init(RAND_SPEED, MIN, MAX, SAMPLE_RATE);
     }
     return dsp;
 }
@@ -72,7 +76,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
     for (i=0; i<framesPerBuffer; i++) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = sinosc_process(dsp->osc[j]) * 0.25;
+            out[index] = sinosc_process(dsp->osc[j]) * randh_process(dsp->rand[j]) * 0.25;
         }
     }
 }
