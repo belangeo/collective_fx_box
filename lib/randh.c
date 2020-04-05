@@ -1,15 +1,17 @@
 #include <stdlib.h>
 #include <math.h>
-#include "randh.h"
 #include <time.h>   /* time */
+#include "randh.h"
 
 struct randh * 
-randh_init(float freq, float sr) {
+randh_init(float freq, float min, float max, float sr) {
     struct randh *data = malloc(sizeof(struct randh));
     srand((unsigned int)time(NULL));
 	data->sr = sr;
     data->angle = 0.0;
     data->inc = freq / sr;
+    min = 10;
+    max = 1000;
     return data;
 }
 

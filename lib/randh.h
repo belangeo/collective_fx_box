@@ -18,10 +18,12 @@ struct randh {
  *
  * freq:    Desired frequency in Hz.
  * sr:      Sampling rate in Hz.
+ * min:		Minimum frequency variation in Hz.
+ * max:		Maximum frequency variation in Hz.
  *
  * Returns a pointer to a randh structure.
  */
-struct randh * randh_init(float freq, float sr);
+struct randh * randh_init(float freq, float min, float max, float sr);
 
 /* Delete a randh structure.
  *
@@ -36,7 +38,7 @@ void randh_delete(struct randh *data);
 float randh_process(struct randh *data);
 
 /* Change the frequency of a randh.
- * output range: between 0 and 1.
+ * output range: between -1 and 1.
  *
  * struct randh *data: The structure for which to set a new frequency.
  * float freq:          New frequency in Hz.
