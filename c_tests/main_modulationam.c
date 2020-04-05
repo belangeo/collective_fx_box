@@ -15,6 +15,12 @@
 // Include all portaudio functions.
 #include "portaudio.h"
 
+/* Include all portmidi functions. */
+#include "portmidi.h"
+
+/* Include midi mapping functions. */
+#include "midimap.h"
+
 // Program-specific includes.
 #include "modulationam.h"
 
@@ -24,7 +30,7 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define FREQ 8000
+#define FREQ 8
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -56,10 +62,20 @@ void dsp_process(const float* in, float* out, unsigned long framesPerBuffer, str
     for (i = 0; i < framesPerBuffer; i++) {
         for (j = 0; j < NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = in[index] * modulationam_process(dsp->modulationam[j], in[index]);
+            out[index] = modulationam_process(dsp->modulationam[j], in[index]);
         }
     }
 }
+
+// This function maps midi controller values to our dsp variables.
+void dsp_midi_ctl_in(struct DSP *dsp, int ctlnum, int value) {
+    int j;
+    if (ctlnum == 0) {          // CC 0  => freq
+        for (j = 0; j < NUMBER_OF_CHANNELS; j++)
+        	modulationam_set_freq(dsp->modulationam[j], value / 127);
+    } 
+}
+
 
 /**********************************************************************************************
  *

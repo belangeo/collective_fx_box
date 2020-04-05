@@ -15,8 +15,7 @@ struct modulationam* modulationam_init(float freq, float sr) {
     struct modulationam *data = malloc(sizeof(struct modulationam));
     data->sr = sr;
     data->freq = freq;
-    data->osc = sinosc_init(freq, sr);
-    data->inc = freq / sr;
+    data->osc = sinosc_init(freq, sr); 
     return data;
 }
 
@@ -34,6 +33,10 @@ float modulationam_process(struct modulationam* data, float input) {
     return out;
 }
 
-void moadulationam_set_freq(struct modulationam* data, float freq) {
-    data->inc = freq / data->sr;
+void modulationam_set_freq(struct modulationam* data, float freq) {
+    sinosc_set_freq(data->osc, freq);
 }
+
+
+
+//data->inc = freq / data->sr;

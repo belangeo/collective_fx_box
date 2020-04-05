@@ -28,6 +28,8 @@ void modulationam_delete(struct modulationam * data);
 
 float modulationam_process(struct modulationam * data, float input);
 
+void modulationam_set_freq(struct modulationam* data, float freq);
+
 #ifdef __cplusplus
 }
 #endif
