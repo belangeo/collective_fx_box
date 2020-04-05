@@ -23,7 +23,7 @@ randh_process(struct randh *data) {
     data->angle += data->inc;
     if (data->angle >= 1.0) {
         data->angle -= 1.0;
-        data->output = (rand() / (float)RAND_MAX) - 0.5;
+        data->output = (rand() / (float)RAND_MAX) * 2 - 1;
     }
     return data->output;
 }

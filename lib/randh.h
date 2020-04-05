@@ -1,10 +1,6 @@
 #ifndef __RANDH_H__
 #define __RANDH_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Random and hold structure.
  *
  * sr:      Sampling rate in Hz.
@@ -40,14 +36,11 @@ void randh_delete(struct randh *data);
 float randh_process(struct randh *data);
 
 /* Change the frequency of a randh.
+ * output range: between 0 and 1.
  *
  * struct randh *data: The structure for which to set a new frequency.
  * float freq:          New frequency in Hz.
  */
 void randh_set_freq(struct randh *data, float freq);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
