@@ -10,8 +10,6 @@ randh_init(float freq, float min, float max, float sr) {
 	data->sr = sr;
     data->angle = 0.0;
     data->inc = freq / sr;
-    min = 10;
-    max = 1000;
     return data;
 }
 
@@ -28,9 +26,4 @@ randh_process(struct randh *data) {
         data->output = (rand() / (float)RAND_MAX) * 2 - 1;
     }
     return data->output;
-}
-
-void
-randh_set_freq(struct randh *data, float freq) {
-    data->inc = freq / data->sr;
 }
