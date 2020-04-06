@@ -2,10 +2,10 @@
  * An example of live processing with portaudio. Outputs a sine wave signal.
  *
  * Compile on linux and MacOS with:
- *  gcc c_tests/main_randh.c lib/sinosc.c lib/randh.c -Ilib -lm -lportaudio -o c_apps/main_randh
+ *  gcc c_tests/main_randh.c lib/sinosc.c lib/randh.c lib/utils.c -Ilib -lm -lportaudio -o c_apps/main_randh
  *
  * Compile on Windows with:
- *  gcc c_tests/main_randh.c lib/sinosc.c lib/randh.c -Ilib -lm -lportaudio -o c_apps/main_randh.exe
+ *  gcc c_tests/main_randh.c lib/sinosc.c lib/randh.c lib/utils.c -Ilib -lm -lportaudio -o c_apps/main_randh.exe
  *
  * Run on linux and MacOS with:
  *  ./c_apps/main_randh
@@ -26,6 +26,7 @@
 // Program-specific includes.
 #include "sinosc.h"
 #include "randh.h"
+#include "utils.h"
 
 // Define global audio parameters.
 #define SAMPLE_RATE         44100
@@ -36,7 +37,7 @@
 #define FREQUENCY 440
 #define RAND_SPEED 5
 #define MIN 20
-#define MAX 20000
+#define MAX 10000
 
 // The DSP structure contains all needed audio processing "objects". 
 struct DSP {
@@ -77,6 +78,7 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
             sinosc_set_freq(dsp->osc[j], randh_process(dsp->rand[j]) * FREQUENCY / 2 + FREQUENCY);
+            float hz = scale(randh_process(dsp->rand[j]), -1, 1, MIN, MAX, 3);
             out[index] = sinosc_process(dsp->osc[j]) * 0.25;
         }
     }
