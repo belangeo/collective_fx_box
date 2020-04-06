@@ -6,23 +6,22 @@ extern "C" {
 #endif
 
 
-enum lfoT (SINE, SQUARE, SAW, RAMP, TRIANGLE);
+enum lfoT {SINE, SQUARE, SAW, RAMP, TRIANGLE};
 
-switch (type);
 
 struct lfo {
 	float sr;
 	float phase;
 	float inc;
-	lfoT type;
+	enum lfoT type;
 
 };
 
-struct lfo * lfo_init(float freq, lfoT type float sr);
+struct lfo * lfo_init(float freq, enum lfoT type, float sr);
 
 void lfo_delete(struct lfo *data);
 
-float lfo_process(struct lfo *data, float input);
+float lfo_process(struct lfo *data);
 
 void lfo_set_freq(struct lfo *data, float freq);
 

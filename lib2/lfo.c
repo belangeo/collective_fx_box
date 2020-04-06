@@ -25,29 +25,30 @@ float
 lfo_process(struct lfo *data, float input) {
     float value;
 
-    switch (type) {
+    switch (data->type) {
 
-    	case SINE;
+        case SINE:
     		value = sinf(data->phase * M_PI * 2);
     		break;
 
-    	case SQUARE;
+        case SQUARE:
     		if (data->phase < 0.5)
     			value = -1.;
     		else
     			value = 1.;
     		break;
 
-    	case RAMP;
+        case RAMP:
     		value = data->phase * 2 -1;
     		break;
 
-    	case SAW;
-    		value = 1 - data-> * 2 -1;
+        case SAW:
+    		value = (1 - data->phase) * 2 -1;
     		break;
 
-    	case TRIANGLE;
-    		value = min(data->phase, 1 - data->phase) * 4 -1
+        case TRIANGLE:
+    		value = data->phase < (1 - data->phase) ? data->phase : (1 - data->phase);
+            value = value * 4 - 1;
     		break;
 
     }
@@ -66,6 +67,6 @@ lfo_set_freq(struct lfo *data, float freq) {
 
 void
 lfo_reset(struct lfo *data) {
-    data->x = 0.0;
+    data->phase = 0.0;
 
 }
