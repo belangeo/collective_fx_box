@@ -51,6 +51,25 @@ Outils à développer
 - gestion d'un fichier de config MIDI => Olivier Bélanger
 
 
+Deux Délais avec interpolation entre traitement en parallèle ou en série
+------------------------------------------------------------------------ 
+
+           IN                x = 0 => parallèle, x = 1 => série
+          / |
+        D1  |
+        | \ |     <== switch (IN + (D1 - IN) * x)
+        |   D2 
+        |  /|         
+        | / |
+        SUM |
+         \  |     <== switch (SUM + (D2 - SUM) * x)
+          \ |
+          OUT
+
+
+
+
+
 
 
 
