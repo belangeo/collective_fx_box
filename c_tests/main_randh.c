@@ -2,16 +2,16 @@
  * An example of live processing with portaudio. Outputs a sine wave signal.
  *
  * Compile on linux and MacOS with:
- *  gcc main_randh.c sinosc.c randh.c -Ilib -lm -lportaudio -o main_randh
+ *  gcc c_tests/main_randh.c lib/sinosc.c lib/randh.c -Ilib -lm -lportaudio -o c_apps/main_randh
  *
  * Compile on Windows with:
- *  gcc main_randh.c lib/sinosc.c lib/randh.c -Ilib -lm -lportaudio -o main_randh.exe
+ *  gcc c_tests/main_randh.c lib/sinosc.c lib/randh.c -Ilib -lm -lportaudio -o c_apps/main_randh.exe
  *
  * Run on linux and MacOS with:
- *  ./main_randh
+ *  ./c_apps/main_randh
  *
  * Run on Windows with:
- *  main_randh.exe
+ *  c_apps/main_randh.exe
 */
 
 // System includes.
@@ -76,7 +76,8 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
     for (i=0; i<framesPerBuffer; i++) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
             index = i * NUMBER_OF_CHANNELS + j;
-            out[index] = sinosc_process(dsp->osc[j]) * randh_process(dsp->rand[j]) * 0.25;
+            sinosc_set_freq(dsp->osc[j], randh_process(dsp->rand[j]) * FREQUENCY / 2 + FREQUENCY);
+            out[index] = sinosc_process(dsp->osc[j]) * 0.25;
         }
     }
 }
