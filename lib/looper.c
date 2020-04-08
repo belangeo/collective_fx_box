@@ -16,7 +16,7 @@ Choses à implémenter :
 
 */
 
-  struct looper *looper_init(float lenloop, float playrate, float sr)
+  struct looper *looper_init(float playrate, float sr)
   {
 	  struct looper *looper_data =malloc(sizeof(struct looper));
 	  looper_data->sr=sr;
@@ -34,16 +34,13 @@ Choses à implémenter :
 	  free(data);
   }
   
-  float looper_pitch(struct looper *data, float newPitch)
+  float looper_set_pitch(struct looper *data, float newPitch)
   {
-	  if (newPitch>0)
-	  {
-		  data->pitch=newPitch; 
-	  }
+	   data->pitch=newPitch;  
   }
   
   //Controle les differentes loops qu on enregistre.
-  float looper_controls(struct looper *data) //Dans le cas du programme actuel ce n est pas necessaire de passer le charInput mais c est pour la prochaine etape ou je voudrais controler les choix dans la fonction.
+  float looper_record(struct looper *data) //Dans le cas du programme actuel ce n est pas necessaire de passer le charInput mais c est pour la prochaine etape ou je voudrais controler les choix dans la fonction.
   {
 	if (data->record==0 )
 	{

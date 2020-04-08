@@ -2,16 +2,16 @@
  * Template file to create a live audio processing program with portaudio AND portmidi.
  *
  * Compile on linux and MacOS with:
- *  gcc c_tests/main_MH_looper_midi.c lib/looper.c lib/panoramisation.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_midi
+ *  gcc c_tests/main_MH_panoramisation.c lib/panoramisation.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_pan
  *
  * Compile on Windows with:
- *  gcc c_tests/main_MH_looper_stdin.c lib/looper.c lib/panoramisation.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_looper_stdin.exe
+ *  gcc c_tests/main_MH_panoramisation.c lib/panoramisation.c lib/midimap.c -Ilib -lm -lportaudio -lportmidi -lncurses -o c_apps/main_MH_pan.exe
  *
  * Run on linux and MacOS with:
- *  ./c_apps/main_MH_looper_stdin
+ *  ./c_apps/main_MH_pan
  *
  * Run on Windows with:
- *  c_apps/main_MH_looper_stdin.exe
+ *  c_apps/main_MH_pan.exe
 */
 
 /* System includes. */
@@ -42,27 +42,18 @@
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
-#define NUMBER_OF_CHANNELS  1
+#define NUMBER_OF_CHANNELS  2
 
 
 //== Program-specific includes. ==
-#include "looper.h"
 #include "panoramisation.h"
 
 //== Program-specific parameters. ==
 
-#define PLAYRATE1 1
-#define PLAYRATE2 1
-#define PLAYRATE3 1
-#define PLAYRATE4 1
-
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {
-    struct looper *loop1[NUMBER_OF_CHANNELS];
-	struct looper *loop2[NUMBER_OF_CHANNELS];
-	struct looper *loop3[NUMBER_OF_CHANNELS];
-	struct looper *loop4[NUMBER_OF_CHANNELS];
-	struct panoramisation *pan[NUMBER_OF_CHANNELS];
+    struct panoramisation *pan[NUMBER_OF_CHANNELS];
+	
 
 };
 
@@ -71,11 +62,7 @@ struct DSP * dsp_init() {
     int i;
     struct DSP *dsp = malloc(sizeof(struct DSP));
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        dsp->loop1[i] = looper_init(PLAYRATE1, SAMPLE_RATE);
-		dsp->loop2[i] = looper_init(PLAYRATE2, SAMPLE_RATE);
-		dsp->loop3[i] = looper_init(PLAYRATE3,SAMPLE_RATE);
-		dsp->loop4[i] = looper_init(PLAYRATE4,SAMPLE_RATE);
-		dsp->pan[i]=pan_init();
+        dsp->pan[i] = pan_init();
     }
     return dsp;
 }
@@ -84,11 +71,7 @@ struct DSP * dsp_init() {
 void dsp_delete(struct DSP *dsp) {
     int i;
     for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-        looper_delete(dsp->loop1[i]);
-		looper_delete(dsp->loop2[i]);
-		looper_delete(dsp->loop3[i]);
-		looper_delete(dsp->loop4[i]);
-		pan_delete(dsp->pan[i]);
+        pan_delete(dsp->pan[i]);
     }
     free(dsp);
 }
@@ -100,14 +83,10 @@ void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, str
  
     for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
-            index = i * NUMBER_OF_CHANNELS + 0;
-			
-			//out[index]=pan(looper_process(dsp->loop1[0], in[index]), 0);
-			//out[index]=in[index];
-			//out[index]=pan(out[index],0);
-            out[index] = looper_process(dsp->loop1[j], in[index])+looper_process(dsp->loop2[j], in[index])
-						+looper_process(dsp->loop3[j], in[index])+looper_process(dsp->loop4[j], in[index]);
-						
+            index = i * NUMBER_OF_CHANNELS + j;
+			out[index]= pan_set_chnl(dsp->pan[j], in[index], 0);
+            //out[index] = looper_process(dsp->loop1[j], in[index])+looper_process(dsp->loop2[j], in[index])
+						//+looper_process(dsp->loop3[j], in[index])+looper_process(dsp->loop4[j], in[index]);
         }
     }
 }
@@ -236,54 +215,7 @@ void create_window(struct DSP *dsp) {
     mvaddstr(2, 2, "COLLECTIVE FX BOX !");
     mvaddstr(3, 2, "-------------------");
 
-/*SECTION MH************************************************************************************/
 
-    char tmp[32];
-    running = 1;
-    while (running) {
-        key = getch();
-        switch (key) {
-            case '1':
-				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
-				{
-					looper_record(dsp->loop1[i]);
-				}	
-				sprintf(tmp, "Record loop %d...", key - 48);
-                mvaddstr(6, 2, tmp); refresh();
-                break;
-            case '2':
-				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
-					{
-						looper_record(dsp->loop2[i]);
-					}
-					sprintf(tmp, "Record loop %d...", key - 48);
-                mvaddstr(6, 2, tmp); refresh();
-                break;
-            case '3':
-				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
-				{
-					looper_record(dsp->loop3[i]);
-				}
-				sprintf(tmp, "Record loop %d...", key - 48);
-                mvaddstr(6, 2, tmp); refresh();
-                break;
-			
-            case '4':
-				for (int i =0; i < NUMBER_OF_CHANNELS; i++)
-				{
-					looper_record(dsp->loop1[i]);
-				}
-				
-                sprintf(tmp, "Record loop %d...", key - 48);
-                mvaddstr(6, 2, tmp); refresh();
-                break;
-            case 'q':
-                running = 0; 
-                mvaddstr(8, 2, "Quitting..."); refresh();
-                break;
-        }
-		
-/*FIN SECTION MH*********************************************************************************/
 #ifdef _WIN32
         Sleep(polltime);
 #else
@@ -371,6 +303,9 @@ int main(void)
 
     create_window(dsp);
 
+    printf("Hit ENTER to stop program.\n");
+    getchar(); 
+	
     err = Pa_CloseStream(stream);
     if (paErrorCheck(err)) { return -1; }
 

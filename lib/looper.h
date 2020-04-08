@@ -18,13 +18,13 @@ extern "C" {
 	  int record;
   };
   
-  struct looper *looper_init(float lenloop, float pitch, float sr);
+  struct looper *looper_init(float pitch, float sr);
   
   void looper_delete(struct looper *loop);
   
-  float looper_pitch(struct looper *loop, float newPitch);
+  float looper_set_pitch(struct looper *loop, float newPitch);
   
-  float looper_controls(struct looper *loop);
+  float looper_record(struct looper *loop);
   
   float looper_process(struct looper *loop, float input);
 	  
