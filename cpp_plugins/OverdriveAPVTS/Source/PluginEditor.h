@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "CustomLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -32,8 +33,15 @@ private:
     // access the processor object that created it.
     OverdriveApvtsAudioProcessor& processor;
 
+    CustomLookAndFeel lookAndFeel;
+
     /*  On a besoin d'une référence à l'arbre des paramètres dans l'éditeur graphique. */
     AudioProcessorValueTreeState& valueTreeState;
+
+    /*  Labels. */
+    Label driveLabel;
+    Label cutoffLabel;
+    Label resLabel;
 
     /*  Potentiomètres. */
     Slider distoDrive;

@@ -5,6 +5,8 @@
               headerPath="../../../../lib/">
   <MAINGROUP id="SIdBGL" name="OverdriveAPVTS">
     <GROUP id="{D52036AE-1114-BEC9-6858-1C28E0836B8C}" name="Source">
+      <FILE id="ort9Hj" name="CustomLookAndFeel.h" compile="0" resource="0"
+            file="Source/CustomLookAndFeel.h"/>
       <FILE id="jLkops" name="utils.c" compile="1" resource="0" file="../../lib/utils.c"/>
       <FILE id="OSwZO7" name="utils.h" compile="0" resource="0" file="../../lib/utils.h"/>
       <FILE id="BayXWr" name="distoFiltr.c" compile="1" resource="0" file="../../lib/distoFiltr.c"/>

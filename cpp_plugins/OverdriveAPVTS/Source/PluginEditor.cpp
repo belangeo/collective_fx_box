@@ -19,31 +19,42 @@ OverdriveApvtsAudioProcessorEditor::OverdriveApvtsAudioProcessorEditor (Overdriv
     // editor's size to whatever you need it to be.
     setSize (400, 300);
 
+    setLookAndFeel(&lookAndFeel);
+
+    driveLabel.setText("Drive", NotificationType::dontSendNotification);
+    driveLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&driveLabel);
+
+    cutoffLabel.setText("Cutoff", NotificationType::dontSendNotification);
+    cutoffLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&cutoffLabel);
+
+    resLabel.setText("Resonance", NotificationType::dontSendNotification);
+    resLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&resLabel);
+
     /*  Configuration du slider pour la quantité de distorsion. */
-    distoDrive.setSliderStyle(Slider::LinearBarVertical);
-    distoDrive.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
-    distoDrive.setPopupDisplayEnabled(true, true, this);
-    distoDrive.setTextValueSuffix(" Drive");
+    distoDrive.setLookAndFeel(&lookAndFeel);
+    distoDrive.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    distoDrive.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&distoDrive);
 
     /*  On attache le slider a l'arbre de paramètres. */
     driveAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "drive", distoDrive));
 
     /*  Configuration du slider pour la fréquence de coupure du filtre passe-bas. */
-    distoCutoff.setSliderStyle(Slider::LinearBarVertical);
-    distoCutoff.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
-    distoCutoff.setPopupDisplayEnabled(true, true, this);
-    distoCutoff.setTextValueSuffix(" Cutoff");
+    distoCutoff.setLookAndFeel(&lookAndFeel);
+    distoCutoff.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    distoCutoff.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&distoCutoff);
 
     /*  On attache le slider a l'arbre de paramètres. */
     cutoffAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "cutoff", distoCutoff));
 
     /*  Configuration du slider pour la résonance du filtre passe-bas. */
-    distoRes.setSliderStyle(Slider::LinearBarVertical);
-    distoRes.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
-    distoRes.setPopupDisplayEnabled(true, true, this);
-    distoRes.setTextValueSuffix(" Res");
+    distoRes.setLookAndFeel(&lookAndFeel);
+    distoRes.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    distoRes.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&distoRes);
 
     /*  On attache le slider a l'arbre de paramètres. */
@@ -70,12 +81,16 @@ void OverdriveApvtsAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
+    driveLabel.setBounds(40, 30, 80, 20);
+    cutoffLabel.setBounds(130, 30, 80, 20);
+    resLabel.setBounds(220, 30, 80, 20);
+
     /*  On place nos sliders dans l'interface. La méthode setBounds() (disponible pour pratiquement
         tous les objets de JUCE, prend une position x et y aux deux premiers arguments et une 
         taille width et height aux deux arguments suivants.
     */
-    distoDrive.setBounds(40, 30, 20, getHeight() - 60);
-    distoCutoff.setBounds(80, 30, 20, getHeight() - 60);
-    distoRes.setBounds(120, 30, 20, getHeight() - 60);
+    distoDrive.setBounds(40, 50, 80, 100);
+    distoCutoff.setBounds(130, 50, 80, 100);
+    distoRes.setBounds(220, 50, 80, 100);
 
 }

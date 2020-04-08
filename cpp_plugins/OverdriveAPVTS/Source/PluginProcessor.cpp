@@ -11,6 +11,30 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+static String driveSliderValueToText(float value) {
+    return String(value, 3) + String(" drv");
+}
+
+static float driveSliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
+static String cutoffSliderValueToText(float value) {
+    return String(value, 2) + String(" Hz");
+}
+
+static float cutoffSliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
+static String resSliderValueToText(float value) {
+    return String(value, 3) + String(" res");
+}
+
+static float resSliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
 /*  Structure des paramètres que l'on désire pouvoir automatiser/sauvegarder.
     Cette fonction est appelée à l'initialisation de l'AudioProcessor et son
     retour (un ParameterLayout) est donné directement à l'objet
@@ -23,15 +47,15 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
 
     parameters.push_back(std::make_unique<Parameter>(String("drive"), String("Drive"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
-                                                     0.5f, nullptr, nullptr));
+                                                     0.5f, driveSliderValueToText, driveSliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("cutoff"), String("Cutoff"), String(),
                                                      NormalisableRange<float>(50.0f, 15000.0f, 0.01f, 0.25f),
-                                                     1000.0f, nullptr, nullptr));
+                                                     1000.0f, cutoffSliderValueToText, cutoffSliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("res"), String("Res"), String(),
                                                      NormalisableRange<float>(0.0f, 2.0f),
-                                                     0.5f, nullptr, nullptr));
+                                                     0.5f, resSliderValueToText, resSliderTextToValue));
 
     return { parameters.begin(), parameters.end() };
 }
