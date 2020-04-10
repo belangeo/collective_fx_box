@@ -28,11 +28,11 @@ phasor_process(struct phasor *data) {
 }
 
 void
-phase_set_freq(struct phasor *data, float freq) {
+phasor_set_freq(struct phasor *data, float freq) {
     data->inc = freq / data->sr;
 }
 
 void
-phase_reset(struct phasor *data) {
+phasor_reset(struct phasor *data) {
     data->phase = 0.0;
 }

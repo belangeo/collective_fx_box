@@ -26,12 +26,6 @@ void noise_delete(struct noise *data);
  */
 float noise_process(struct noise *data);
 
-/* Change the frequency of a sine oscillator.
- *
- * struct noise *data: The structure for which to set a new frequency.
- * float freq:          New frequency in Hz.
- */
-void noise_set_freq(struct noise *data, float freq);
 /* Instantaneously reset the current angle of a sine oscillator to the
  * beginning of the cycle.
  *
