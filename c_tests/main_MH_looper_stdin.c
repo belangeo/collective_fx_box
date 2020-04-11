@@ -42,7 +42,7 @@
 /* Define global audio parameters, used to setup portaudio. */
 #define SAMPLE_RATE         44100
 #define FRAMES_PER_BUFFER   512
-#define NUMBER_OF_CHANNELS  1
+#define NUMBER_OF_CHANNELS  2
 
 
 //== Program-specific includes. ==
@@ -62,7 +62,7 @@ struct DSP {
 	struct looper *loop2[NUMBER_OF_CHANNELS];
 	struct looper *loop3[NUMBER_OF_CHANNELS];
 	struct looper *loop4[NUMBER_OF_CHANNELS];
-	struct panoramisation *pan[NUMBER_OF_CHANNELS];
+	struct panoramisation* pan;
 
 };
 
@@ -75,8 +75,8 @@ struct DSP * dsp_init() {
 		dsp->loop2[i] = looper_init(PLAYRATE2, SAMPLE_RATE);
 		dsp->loop3[i] = looper_init(PLAYRATE3,SAMPLE_RATE);
 		dsp->loop4[i] = looper_init(PLAYRATE4,SAMPLE_RATE);
-		dsp->pan[i]=pan_init();
     }
+	dsp->pan=pan_init();
     return dsp;
 }
 
@@ -87,27 +87,39 @@ void dsp_delete(struct DSP *dsp) {
         looper_delete(dsp->loop1[i]);
 		looper_delete(dsp->loop2[i]);
 		looper_delete(dsp->loop3[i]);
-		looper_delete(dsp->loop4[i]);
-		pan_delete(dsp->pan[i]);
+		looper_delete(dsp->loop4[i]);	
     }
+	pan_delete(dsp->pan);
     free(dsp);
 }
 
 /* This function does the actual processing chain. */
 void dsp_process(const float *in, float *out, unsigned long framesPerBuffer, struct DSP *dsp) {
-    unsigned int i, j, index;
+    unsigned int i, j, index, indexL, indexR, indextest;
     float readval, filtered;
  
     for (i=0; i<framesPerBuffer; i=i+1) {
         for (j=0; j<NUMBER_OF_CHANNELS; j++) {
-            index = i * NUMBER_OF_CHANNELS + 0;
+			index = i * NUMBER_OF_CHANNELS+j;
 			
-			//out[index]=pan(looper_process(dsp->loop1[0], in[index]), 0);
-			//out[index]=in[index];
-			//out[index]=pan(out[index],0);
-            out[index] = looper_process(dsp->loop1[j], in[index])+looper_process(dsp->loop2[j], in[index])
-						+looper_process(dsp->loop3[j], in[index])+looper_process(dsp->loop4[j], in[index]);
+            //indexL = i * NUMBER_OF_CHANNELS;
+			//indexR= i * NUMBER_OF_CHANNELS +1;
 						
+			//out[index]=pan(looper_process(dsp->loop1[0], in[index]), 0);
+			//out[indexR]=in[indexR]*(chnl);
+			//out[indexL]=in[indexL]*(1-chnl);
+			
+			//pan(in[index], out, i,index, chnl);
+			
+			//out[index]=pan(in,indextest,0);
+           // out[index] = looper_process(dsp->loop1[j], in[index])+looper_process(dsp->loop2[j], in[index])
+						//+looper_process(dsp->loop3[j], in[index])+looper_process(dsp->loop4[j], in[index]);
+						
+			//pan(out[index], out, i, index, 1);
+						
+			out[index]=pan(looper_process(dsp->loop1[j], in[index]),out, i, index, 1) + pan(looper_process(dsp->loop2[j], in[index]),out, i,index, 0);
+					  //+pan(looper_process(dsp->loop3[j], in[index]),out, i, index, 1)+pan(looper_process(dsp->loop4[j], in[index]),out, i,index, 0);
+			
         }
     }
 }

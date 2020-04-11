@@ -17,7 +17,7 @@ struct panoramisation * pan_init();
 
 void pan_delete(struct panoramisation *pan_data);
 
-float pan(float input, int chnl);
+float pan(const float input,float *ouput, int index,int index2, float chnl);
 
 
 
