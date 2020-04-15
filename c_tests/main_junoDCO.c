@@ -61,7 +61,7 @@ void output_log(char *msg);
 
 //== Program-specific parameters. ==
 // This is where you define the specific parameters needed by your program...
-#define FREQ 440
+#define FREQ 180
 
 /* The DSP structure contains all needed audio processing "objects". */
 struct DSP {

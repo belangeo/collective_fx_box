@@ -7,30 +7,30 @@ extern "C" {
 
 #include "phasor.h"
 #include "noise.h"
-/////////////////////////////////////////////////////////
-////*		Juno DCO: 3 Oscillators + 1 Noise 		*////
-////*												*////	
-////*	A synthetiser voice inspired by the Juno-60	*////
-////*	Digitally Controlled Oscillators section 	*////
-/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+////*	Juno DCO: 3 Oscillators + 1 Noise 		*////
+////*											*////	
+////*	Inspired by the Digitally Controlled  	*////
+////*	Oscillators (DCO) section of the Juno-60*////	
+/////////////////////////////////////////////////////
 /*	QUESTIONS:
 	- Compilation: pointer being freed was not allocated (verifier avec une autre main)
 	- Comment faire un PW sur un sinus
 	MODIFS
-	- Vérifier Pitch
+	- Square wave a un timbre instable
 	- Changer square brutal pour une onde sinusoidale avec une fonction arctan
 	- Ajouter LFO sur freq
 	- Ajouter PW modulations (LFO, ENV)
-	- Se débarraser eventuellement de l'argument freq ds junoDCO_init
+	- Se débarraser eventuellement de l'argument freq ds junoDCO_init?
 */
 struct junoDCO {
 	float 	sr;				//	Sampling rate				
 	float 	freq;			//	Voice frequency
 	float 	lfoInAttenuator;//	Control over the intensity of the lfo input		(0 to 1)
 
-	struct 	phasor* ramp;	//	A ramp to generate the square and triangle waves
-	struct 	phasor* rampSub;//	A ramp to generate the sub square wave
-	struct 	noise* noisy;	//	A noise generator
+	struct 	phasor* ramp;		//	A ramp to generate the square and triangle waves
+	struct 	phasor* rampSub;	//	A ramp to generate the sub square wave
+	struct 	noise* noisy;		//	A noise generator
 
 	float 	pw;				//	Pulse width of the square wave					(0 to 1)
 	int 	pwModulation;	//	Type of modulation applied to the square wave 	(0: None, 1: lfo, 2: envellope)
