@@ -11,7 +11,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#define FREQ_INIT 440
+#define FREQ_INIT 320
+#define numberOfVoices 6
 
 static String lfoAttenuatorSliderValueToText(float value) {return String(value, 2);}
 static float lfoAttenuatorSliderTextToValue(const String& text) {return text.getFloatValue();}
@@ -171,6 +172,7 @@ void JunoDcopluginAudioProcessor::changeProgramName (int index, const String& ne
 void JunoDcopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 
+    keyboardState.reset();
     /* On initialise les structures de nos objets ici car nous devons connaître la fréquence
       d'échantillonnage. Elle n'est pas disponible à la création du plugin, seulement dans la
       fonction prepareToPlay(). */
@@ -183,6 +185,7 @@ void JunoDcopluginAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    keyboardState.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -214,6 +217,8 @@ void JunoDcopluginAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+
+    keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't

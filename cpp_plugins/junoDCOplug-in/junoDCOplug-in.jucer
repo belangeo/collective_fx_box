@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="GPDd2p" name="junoDCOplug-in" projectType="audioplug" jucerVersion="5.4.7"
-              pluginManufacturer="GLV" pluginFormats="buildStandalone,buildVST,buildVST3"
+              pluginManufacturer="GLV" pluginFormats="buildStandalone,buildVST"
               companyName="GLV" headerPath="../../../../lib/" pluginCharacteristicsValue="pluginWantsMidiIn">
   <MAINGROUP id="ANArVW" name="junoDCOplug-in">
     <GROUP id="{CD91E8C6-CB86-0879-7ADF-0D812C85363B}" name="Source">
@@ -64,7 +64,7 @@
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
-    <OSX buildEnabled="1" headerPath="../../../../lib/"/>
+    <OSX buildEnabled="0" headerPath="../../../../lib/"/>
   </LIVE_SETTINGS>
   <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
 </JUCERPROJECT>

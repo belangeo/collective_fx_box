@@ -57,6 +57,8 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    MidiKeyboardState keyboardState;
+
 private:
     //==============================================================================
     /*  Le coeur de la gestion des parametres d'un plugin JUCE. */

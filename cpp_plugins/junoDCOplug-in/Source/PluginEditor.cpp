@@ -12,112 +12,88 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-JunoDcopluginAudioProcessorEditor::JunoDcopluginAudioProcessorEditor (JunoDcopluginAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), processor (p), valueTreeState (vts)
+JunoDcopluginAudioProcessorEditor::JunoDcopluginAudioProcessorEditor    (JunoDcopluginAudioProcessor& p, 
+                                                                        AudioProcessorValueTreeState& vts)
+    :   AudioProcessorEditor (&p), processor (p), valueTreeState (vts),
+        keyboardComponent (p.keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (650, 300);
+/*  Make sure that before the constructor has finished, you've set the
+    editor's size to whatever you need it to be.    */
+    setSize (650, 380);
 
     setLookAndFeel(&lookAndFeel);
 
+/*  LFO ATTENUATOR  */
+/*  Configuration du label. */
+    addAndMakeVisible(&lfoAttenuatorLabel);
     lfoAttenuatorLabel.setText("LFO", NotificationType::dontSendNotification);
     lfoAttenuatorLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&lfoAttenuatorLabel);
-
-    pwLabel.setText("PW", NotificationType::dontSendNotification);
-    pwLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&pwLabel);
-
-    pwModulationLabel.setText("PW MOD", NotificationType::dontSendNotification);
-    pwModulationLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&pwModulationLabel);
-
-    subVolumeLabel.setText("SUB", NotificationType::dontSendNotification);
-    subVolumeLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&subVolumeLabel);
-
-    noiseVolumeLabel.setText("NOISE", NotificationType::dontSendNotification);
-    noiseVolumeLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&noiseVolumeLabel);
-
-    squareIsOnLabel.setText("[ ]", NotificationType::dontSendNotification);
-    squareIsOnLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&squareIsOnLabel);
-
-    triangleIsOnLabel.setText("^", NotificationType::dontSendNotification);
-    triangleIsOnLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&triangleIsOnLabel);
-
-    subIsOnLabel.setText("SUB", NotificationType::dontSendNotification);
-    subIsOnLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&subIsOnLabel);
-
-    /*  Configuration du slider pour la quantité de distorsion. */
+/*  Configuration du slider. */
+    addAndMakeVisible(&lfoAttenuator);
     lfoAttenuator.setLookAndFeel(&lookAndFeel);
     lfoAttenuator.setSliderStyle(Slider::LinearVertical);
     lfoAttenuator.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&lfoAttenuator);
-
-    /*  On attache le slider a l'arbre de paramètres. */
+/*  On attache le slider a l'arbre de paramètres. */
     lfoAttenuatorAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "lfo_attenuator", lfoAttenuator));
-
-    /*  Configuration du slider pour la quantité de distorsion. */
+/*  PW  */
+    addAndMakeVisible(&pwLabel);
+    pwLabel.setText("PW", NotificationType::dontSendNotification);
+    pwLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&pw);
     pw.setLookAndFeel(&lookAndFeel);
     pw.setSliderStyle(Slider::LinearVertical);
     pw.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&pw);
-
-    /*  On attache le slider a l'arbre de paramètres. */
     pwAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "pw", pw));
-
-    /*  Configuration du slider pour la fréquence de coupure du filtre passe-bas. */
+/*  PW  MODULATION  */
+    addAndMakeVisible(&pwModulationLabel);
+    pwModulationLabel.setText("PW MOD", NotificationType::dontSendNotification);
+    pwModulationLabel.setJustificationType(Justification::centred);    
+    addAndMakeVisible(&pwModulation);
     pwModulation.setLookAndFeel(&lookAndFeel);
     pwModulation.setSliderStyle(Slider::LinearVertical);
     pwModulation.setTextBoxStyle(Slider::NoTextBox, false, 80, 20);
-    addAndMakeVisible(&pwModulation);
-
-    /*  On attache le slider a l'arbre de paramètres. */
     pwModulationAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "pw_mod", pwModulation));
-
-    /*  Configuration du slider pour la résonance du filtre passe-bas. */
+/*  SUB VOLUME  */
+    addAndMakeVisible(&subVolumeLabel);
+    subVolumeLabel.setText("SUB", NotificationType::dontSendNotification);
+    subVolumeLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&subVolume);
     subVolume.setLookAndFeel(&lookAndFeel);
     subVolume.setSliderStyle(Slider::LinearVertical);
     subVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&subVolume);
-
-    /*  On attache le slider a l'arbre de paramètres. */
     subVolumeAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "sub_vol", subVolume));
-
-    /*  Configuration du slider pour la quantité de distorsion. */
+/*  NOISE VOLUME  */
+    addAndMakeVisible(&noiseVolumeLabel);
+    noiseVolumeLabel.setText("NOISE", NotificationType::dontSendNotification);
+    noiseVolumeLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&noiseVolume);
     noiseVolume.setLookAndFeel(&lookAndFeel);
     noiseVolume.setSliderStyle(Slider::LinearVertical);
     noiseVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&noiseVolume);
-
-    /*  On attache le slider a l'arbre de paramètres. */
     noiseVolumeAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "noise_vol", noiseVolume));
-
-    /*  Configuration du slider pour la fréquence de coupure du filtre passe-bas. */
-    squareIsOn.setLookAndFeel(&lookAndFeel);
+/*  SQUARE ON / OFF  */
+    addAndMakeVisible(&squareIsOnLabel);
+    squareIsOnLabel.setText("[ ]", NotificationType::dontSendNotification);
+    squareIsOnLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(&squareIsOn);
-
-    /*  On attache le slider a l'arbre de paramètres. */
+    squareIsOn.setLookAndFeel(&lookAndFeel);
     squareIsOnAttachment.reset (new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, "square_onOff", squareIsOn));
-
-    /*  Configuration du slider pour la résonance du filtre passe-bas. */
-    triangleIsOn.setLookAndFeel(&lookAndFeel);
+/*  TRIANGLE ON / OFF  */
+    addAndMakeVisible(&triangleIsOnLabel);
+    triangleIsOnLabel.setText("^", NotificationType::dontSendNotification);
+    triangleIsOnLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(&triangleIsOn);
-
-    /*  On attache le slider a l'arbre de paramètres. */
+    triangleIsOn.setLookAndFeel(&lookAndFeel);
     triangleIsOnAttachment.reset (new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, "triangle_onOff", triangleIsOn));
-
-    /*  Configuration du slider pour la résonance du filtre passe-bas. */
-    subIsOn.setLookAndFeel(&lookAndFeel);
+/*  SUB ON / OFF  */
+    addAndMakeVisible(&subIsOnLabel);
+    subIsOnLabel.setText("SUB", NotificationType::dontSendNotification);
+    subIsOnLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(&subIsOn);
-
-    /*  On attache le slider a l'arbre de paramètres. */
+    subIsOn.setLookAndFeel(&lookAndFeel);
     subIsOnAttachment.reset (new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, "sub_onOff", subIsOn));
+
+    addAndMakeVisible(keyboardComponent);
 }
 
 JunoDcopluginAudioProcessorEditor::~JunoDcopluginAudioProcessorEditor()
@@ -127,15 +103,15 @@ JunoDcopluginAudioProcessorEditor::~JunoDcopluginAudioProcessorEditor()
 //==============================================================================
 void JunoDcopluginAudioProcessorEditor::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
+//  (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
+//  Top and bottom rectanges    
     g.setColour (Colours::darkred);
-    Rectangle<int> topRect (4, 4, getWidth()-8, getHeight()*0.12);
-    Rectangle<int> bottomRect (4, getHeight()-15, getWidth()-8, 11);
+    Rectangle<int> topRect (4, 4, getWidth()-8, 300*0.12);
+    Rectangle<int> bottomRect (4, 300-15, getWidth()-8, 11);
     g.fillRect (topRect);
     g.fillRect (bottomRect);
-
+//  Texts
     g.setColour (getLookAndFeel().findColour (Label::textColourId));
     g.setFont (30.0f);
     g.drawFittedText ("DCO", topRect, Justification::centred, 1);
@@ -144,7 +120,7 @@ void JunoDcopluginAudioProcessorEditor::paint (Graphics& g)
     g.drawFittedText ("ENV", pwModRect, Justification::centredTop, 1);
     g.drawFittedText ("LFO", pwModRect, Justification::centred, 1);
     g.drawFittedText ("NONE", pwModRect, Justification::centredBottom, 1);
-
+//  Lines
     g.drawLine (150, 60, 310, 60, 1);
     g.drawLine (150, 60, 150, 65, 1);
     g.drawLine (210, 60, 210, 110, 1);
@@ -156,8 +132,8 @@ void JunoDcopluginAudioProcessorEditor::paint (Graphics& g)
 
 void JunoDcopluginAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+/*  This is generally where you'll want to lay out the positions of any
+    subcomponents in your editor..  */
     lfoAttenuatorLabel.setBounds(30, 70, 80, 20);
     pwLabel.setBounds(110, 70, 80, 20);
     //pwModulationLabel.setBounds(190, 70, 80, 20);
@@ -167,11 +143,9 @@ void JunoDcopluginAudioProcessorEditor::resized()
     subVolumeLabel.setBounds(470, 70, 80, 20);
     noiseVolumeLabel.setBounds(550, 70, 80, 20);
 
-
-    /*  On place nos sliders dans l'interface. La méthode setBounds() (disponible pour pratiquement
-        tous les objets de JUCE, prend une position x et y aux deux premiers arguments et une 
-        taille width et height aux deux arguments suivants.
-    */
+/*  On place nos sliders dans l'interface. La méthode setBounds() (disponible pour pratiquement
+    tous les objets de JUCE, prend une position x et y aux deux premiers arguments et une 
+    taille width et height aux deux arguments suivants. */
     lfoAttenuator.setBounds(30, 90, 80, 190);
     pw.setBounds(110, 90, 80, 190);
     pwModulation.setBounds(170, 110, 80, 120);
@@ -181,4 +155,5 @@ void JunoDcopluginAudioProcessorEditor::resized()
     subVolume.setBounds(470, 90, 80, 190);
     noiseVolume.setBounds(550, 90, 80, 190);
 
+    keyboardComponent.setBounds(getLocalBounds().removeFromBottom(80));
 }

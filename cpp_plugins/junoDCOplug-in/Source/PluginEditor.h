@@ -27,47 +27,53 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 
+
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+/*  This reference is provided as a quick way for your editor to
+    access the processor object that created it.    */
     JunoDcopluginAudioProcessor& processor;
 
     CustomLookAndFeel lookAndFeel;
 
-    /*  On a besoin d'une référence à l'arbre des paramètres dans l'éditeur graphique. */
+/*  Référence à l'arbre des paramètres dans l'éditeur graphique.    */
     AudioProcessorValueTreeState& valueTreeState;
 
-    /*  Labels. */
-    //Label lfoInAttenuatorLabel;
+/*  Labels. 
+    Potentiomètres. 
+    SliderAttachment    */
     Label lfoAttenuatorLabel;
-    Label pwLabel;
-    Label pwModulationLabel;
-    Label subVolumeLabel;
-    Label noiseVolumeLabel;
-    Label squareIsOnLabel;
-    Label triangleIsOnLabel;
-    Label subIsOnLabel;
-
-    /*  Potentiomètres. */
     Slider lfoAttenuator;
-    Slider pw;
-    Slider pwModulation;
-    Slider subVolume;
-    Slider noiseVolume;
-    ToggleButton squareIsOn;
-    ToggleButton triangleIsOn;
-    ToggleButton subIsOn;
-
-    /*  L'objet SliderAttachment établi la communication entre le paramètre automatisable,
-        contrôlé par le séquenceur, et un potentiomètre dans l'interface graphique. */
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoAttenuatorAttachment;
+
+    Label pwLabel;
+    Slider pw;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwAttachment;
+
+    Label pwModulationLabel;
+    Slider pwModulation;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwModulationAttachment;
+
+    Label subVolumeLabel;
+    Slider subVolume;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> subVolumeAttachment;
+
+    Label noiseVolumeLabel;
+    Slider noiseVolume;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> noiseVolumeAttachment;
+
+    Label squareIsOnLabel;
+    ToggleButton squareIsOn;
     std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> squareIsOnAttachment;
+
+    Label triangleIsOnLabel;
+    ToggleButton triangleIsOn;
     std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> triangleIsOnAttachment;
+
+    Label subIsOnLabel;
+    ToggleButton subIsOn;
     std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> subIsOnAttachment;
+
+    MidiKeyboardComponent keyboardComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JunoDcopluginAudioProcessorEditor)
 };
