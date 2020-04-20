@@ -177,7 +177,7 @@ void JunoDcopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesP
       d'échantillonnage. Elle n'est pas disponible à la création du plugin, seulement dans la
       fonction prepareToPlay(). */
     for (int i = 0; i < 2; i++) {
-        voiceDCO[i] = junoDCO_init(FREQ_INIT, sampleRate);
+        voiceDCO[i] = junoDCO_init(sampleRate);
     }
 }
 
