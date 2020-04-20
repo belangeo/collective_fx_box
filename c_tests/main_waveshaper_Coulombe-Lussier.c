@@ -25,10 +25,10 @@
 #define NUMBER_OF_CHANNELS  2
 
 // Program-specific parameters.
-#define DRIVE 100.0
+#define DRIVE 0.99 // 0.0 - 0.998
 #define FREQ 8000
 #define Q 4.0
-#define DRYWET 100.0
+#define DRYWET 100.0 // 0.0 - 100.0
 
 
 // The DSP structure contains all needed audio processing "objects". 

@@ -44,7 +44,7 @@ float waveshaper_process(struct waveshaper* data, float input) {
 	float out, distoOut;
 	distoOut = (1.0 + data->k) * input / (1.0 + data->k * fabsf(input));
 	float compensation = scale(data->drive, 0.0, 0.998, 1.0, 0.017, 3.0);
-	out = (distoFltr_process(data->filter, distoOut) * data->wet * 0.017) + (input * data->dry);
+	out = (distoFltr_process(data->filter, distoOut) * data->wet * compensation) + (input * data->dry);
 	return out;
 }
 
