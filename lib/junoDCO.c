@@ -2,26 +2,26 @@
 #include <math.h>
 #include "junoDCO.h"
 
-struct junoDCO * junoDCO_init(float freq, float sr) {
+struct junoDCO * junoDCO_init(float sr) {
     struct junoDCO *data = malloc(sizeof(struct junoDCO));
 
-    data->freq = freq;
+    data->freq = 0;
     data->sr = sr;
     data->lfoInAttenuator = 0;
 
-    data->ramp = phasor_init(freq, sr);
-    data->rampSub = phasor_init(freq/4, sr);
+    data->ramp = phasor_init(data->freq, data->sr);
+    data->rampSub = phasor_init(data->freq, data->sr);
     data->noisy = noise_init();
     
-    data->pw = 0.50;
+    data->pw = 0.5;
     data->pwModulation = 0;
     
-    data->subVolume = 0.5;
-    data->noiseVolume = 0.1;
+    data->subVolume = 0;
+    data->noiseVolume = 0;
     
     data->squareIsOn = 1;
-    data->triangleIsOn = 1;
-    data->subIsOn = 1;
+    data->triangleIsOn = 0;
+    data->subIsOn = 0;
 
     return data;
 }

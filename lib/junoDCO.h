@@ -43,7 +43,7 @@ struct junoDCO {
 	int 	subIsOn;		//	On/off on the sub square wave			(0 or 1)
 };
 
-struct junoDCO * junoDCO_init(float freq, float sr);
+struct junoDCO * junoDCO_init(float sr);
 
 void junoDCO_delete(struct junoDCO *data);
 
