@@ -19,7 +19,7 @@ JunoDcopluginAudioProcessorEditor::JunoDcopluginAudioProcessorEditor    (JunoDco
 {
 /*  Make sure that before the constructor has finished, you've set the
     editor's size to whatever you need it to be.    */
-    setSize (650, 380);
+    setSize (650, 300);
 
     setLookAndFeel(&lookAndFeel);
 
@@ -93,7 +93,7 @@ JunoDcopluginAudioProcessorEditor::JunoDcopluginAudioProcessorEditor    (JunoDco
     subIsOn.setLookAndFeel(&lookAndFeel);
     subIsOnAttachment.reset (new AudioProcessorValueTreeState::ButtonAttachment(valueTreeState, "sub_onOff", subIsOn));
 
-    addAndMakeVisible(keyboardComponent);
+    //addAndMakeVisible(keyboardComponent);
 }
 
 JunoDcopluginAudioProcessorEditor::~JunoDcopluginAudioProcessorEditor()
@@ -155,5 +155,5 @@ void JunoDcopluginAudioProcessorEditor::resized()
     subVolume.setBounds(470, 90, 80, 190);
     noiseVolume.setBounds(550, 90, 80, 190);
 
-    keyboardComponent.setBounds(getLocalBounds().removeFromBottom(80));
+    //keyboardComponent.setBounds(getLocalBounds().removeFromBottom(80));
 }
