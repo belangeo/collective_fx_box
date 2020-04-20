@@ -62,6 +62,7 @@ public:
     float wetMeter;
     float compMeter;
     float wetCompMeter;
+    float wetAmpMeter;
 
 private:
     //==============================================================================

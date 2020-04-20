@@ -38,6 +38,7 @@ private:
     Slider wetSine;
     Slider compRatio;
     Slider wetComp;
+    Slider wetAmpMod;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RobotVoiceAudioProcessorEditor)

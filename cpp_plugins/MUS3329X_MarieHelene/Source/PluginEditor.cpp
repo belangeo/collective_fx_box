@@ -62,11 +62,11 @@ RobotVoiceAudioProcessorEditor::RobotVoiceAudioProcessorEditor(RobotVoiceAudioPr
     addAndMakeVisible(&compRatio);
 
     compRatio.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    compRatio.setRange(1.0, 2000, 1.0);
+    compRatio.setRange(0.01, 1.0, 0.001);
     compRatio.setTextBoxStyle(Slider::TextBoxAbove, false, 80, 20);
     compRatio.setPopupDisplayEnabled(true, false, this);
     compRatio.setTextValueSuffix("Comp");
-    compRatio.setValue(500.0);
+    compRatio.setValue(0.5);
     compRatio.addListener(this);
 
     //Wet Slider for Compression
@@ -80,6 +80,19 @@ RobotVoiceAudioProcessorEditor::RobotVoiceAudioProcessorEditor(RobotVoiceAudioPr
     wetComp.setTextValueSuffix("Wet/Dry");
     wetComp.setValue(0.5);
     wetComp.addListener(this);
+
+ 
+    //Wet Slider for modulation amplitude
+
+    addAndMakeVisible(&wetAmpMod);
+
+    wetAmpMod.setSliderStyle(Slider::LinearBarVertical);
+    wetAmpMod.setRange(0.0, 1, 0.01);
+    wetAmpMod.setTextBoxStyle(Slider::TextBoxAbove, false, 90, 20);
+    wetAmpMod.setPopupDisplayEnabled(true, false, this);
+    wetAmpMod.setTextValueSuffix("Amp Mod");
+    wetAmpMod.setValue(0.5);
+    wetAmpMod.addListener(this);
 
 }
 
@@ -108,6 +121,7 @@ void RobotVoiceAudioProcessorEditor::resized()
     wetSine.setBounds(120, 110, 20, getHeight() - 140);
     compRatio.setBounds(170, 30, 80, 100);
     wetComp.setBounds(200, 110, 20, getHeight() - 140);
+    wetAmpMod.setBounds(280, 30, 20, getHeight() - 60);
 }
 
 void RobotVoiceAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -133,6 +147,11 @@ void RobotVoiceAudioProcessorEditor::sliderValueChanged(Slider* slider)
     if (slider == &wetComp)
     {
         processor.wetCompMeter = wetComp.getValue();
+    }
+
+    if (slider == &wetAmpMod)
+    {
+        processor.wetAmpMeter = wetAmpMod.getValue();
     }
 
 }

@@ -9,17 +9,21 @@
 
     ROBOT VOICE
 
-    1. Compression
-    2. Modulation d'amplitude
-    3. Modulation de fréquences.
-    4. Transposition
-    5. Reverb
-    6. Gain
+    Ce plugin sert à m'aider à générer des voix robotique plus rapidement en évitant d'exporter les sons après plein de traitements.
+    Ca me permet en une seule place de gérer plusieurs effets souvent utiles.
+
+    1. Compression oK!
+    2. Modulation de frequence oK! (sine pour l instant)
+    3. Modulation par lui meme.
+    4. Filtre passe haut, passe bas
+    5. Chorus ? 
+    6. Gain oK!
 */
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "math.h"
+#include <algorithm>
 
 //static FILE* fTrace = NULL;
 
@@ -199,7 +203,16 @@ void RobotVoiceAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuff
         auto* channelData = buffer.getWritePointer(channel);
 
         for (int i = 0; i < buffer.getNumSamples(); i++) {
-            channelData[i] = channelData[i] * (1 - wetMeter) + channelData[i] * monoBuffer[i] * wetMeter;
+
+            channelData[i] = channelData[i] * (1 - wetMeter) +
+                             channelData[i] * monoBuffer[i] * wetMeter; //Sine + wet/dry
+
+            channelData[i] = channelData[i] * (1 - wetCompMeter) + 
+                             std::max(std::min(channelData[i], compMeter), -compMeter) * wetCompMeter; //Clipping + wet/dry
+
+            channelData[i] = channelData[i] * (1 - wetAmpMeter) +
+                             channelData[i] * channelData[i] * wetAmpMeter *4; //Modulation amplitude par lui meme wet/dry
+
             channelData[i] *= volumeMeter; //Controle du gain tres brute
         }
 
