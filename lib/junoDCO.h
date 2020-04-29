@@ -21,7 +21,6 @@ extern "C" {
 	- Changer square brutal pour une onde sinusoidale avec une fonction arctan
 	- Ajouter LFO sur freq
 	- Ajouter PW modulations (LFO, ENV)
-	- Se débarraser eventuellement de l'argument freq ds junoDCO_init?
 */
 struct junoDCO {
 	float 	sr;				//	Sampling rate				
@@ -47,7 +46,7 @@ struct junoDCO * junoDCO_init(float sr);
 
 void junoDCO_delete(struct junoDCO *data);
 
-float junoDCO_process(struct junoDCO *data, float lfoIn);
+float junoDCO_process(struct junoDCO *data, float lfoIn, float envIn);
 
 void junoDCO_set_freq(struct junoDCO *data, float freq);
 

@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 #include "junoDCO.h"
 
 struct junoDCO * junoDCO_init(float sr) {
@@ -34,31 +34,46 @@ void junoDCO_delete(struct junoDCO *data) {
     free(data);
 }
 
-float junoDCO_process(struct junoDCO *data, float lfoIn){
-	float phasor, phasorSub, square, triangle, sub, noise, sum;
+float junoDCO_process(struct junoDCO *data, float lfoIn, float envIn) {
+	float lfoFreq, pw, phasor, phasorSub, square, triangle, sub, noise, sum;
+    //  lfoIn varies between 0 and 1, lfoFreq varies around 1
+    lfoFreq = (1.0 + lfoIn * data->lfoInAttenuator) - data->lfoInAttenuator / 2.0;
+
+    phasor_set_freq(data->ramp, data->freq * lfoFreq);
+    phasor_set_freq(data->rampSub, data->freq/4 * lfoFreq);
 
 	phasor = phasor_process(data->ramp);
 	phasorSub = phasor_process(data->rampSub);
 	noise = noise_process(data->noisy);
-	//	SQUARE WAVE
-    if (phasor < data->pw) {square = -1.0;} else {square = 1.0;}
+	// SQUARE WAVE
+    switch (data->pwModulation) {
+        case 0:
+            pw = data->pw;
+            break;
+        case 1:
+            pw = (data->pw - 0.5) * lfoIn + 0.5;
+            break;
+        case 2:
+            pw = (data->pw - 0.5) * envIn + 0.5;
+            break;
+    }
+    if (phasor < pw) {square = -1.0;} else {square = 1.0;}
     if (data->squareIsOn == 1) {square *= 0.2;} else {square *= 0;}
-    //	TRIANGLE WAVE
+    //  TRIANGLE WAVE
     triangle = phasor * 2.0 - 1.0;
     if (data->triangleIsOn == 1) {triangle *= 0.2;} else {triangle *= 0;}
     // SUB SQUARE WAVE
     if (phasorSub < 0.5) {sub = 1.0;} else {sub = -1.0;}
     if (data->subIsOn == 1) {sub *= 0.2 * data->subVolume;} else {sub *= 0;}
     //	NOISE
-    noise *= 0.2 * data->noiseVolume;
+    noise *= 0.3 * data->noiseVolume;
 
     sum = square + triangle + sub + noise;
     return sum;
 }
 
 void junoDCO_set_freq(struct junoDCO *data, float freq){
-	phasor_set_freq(data->ramp, freq);
-	phasor_set_freq(data->rampSub, freq/4);
+    data->freq = freq;
 }
 
 void junoDCO_set_lfoInAttenuator(struct junoDCO *data, float lfoInAttenuator){
@@ -76,12 +91,9 @@ void junoDCO_set_pw(struct junoDCO *data, float pw){
 }
 
 void junoDCO_set_pwModulation(struct junoDCO *data, int pwModulation){
-	int pwModulationValue = 0;
-
-	if (pwModulation < 0) {pwModulationValue = 0;}
-	else if (pwModulation > 2) {pwModulationValue = 2;}
-	else {pwModulation = pwModulationValue;}
-	data->pwModulation = pwModulationValue;
+	if (pwModulation <= 0) {data->pwModulation = 0;}
+	else if (pwModulation >= 2) {data->pwModulation = 2;}
+	else {data->pwModulation = 1;}
 }
 
 void junoDCO_set_subVolume(struct junoDCO *data, float subVolume){

@@ -36,58 +36,90 @@ private:
 /*  Référence à l'arbre des paramètres dans l'éditeur graphique.    */
     AudioProcessorValueTreeState& valueTreeState;
 
-/*  Labels. 
-    Potentiomètres. 
-    SliderAttachment    */
+/*  Labels 
+    Potentiomètres 
+    Attachments    */
+
+/*	VOLUME 	*/
+    Label 	volumeLabel;
+    Slider 	volumeKnob;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> volumeKnobAttachment;
+
+/*	LFO		*/
+    Label 	lfoRateLabel;
+    Slider 	lfoRateSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoRateSliderAttachment;
+
+    Label 	lfoDelayLabel;
+    Slider 	lfoDelaySlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoDelaySliderAttachment;
+
 /*	DCO		*/
-    Label lfoAttenuatorLabel;
-    Slider lfoAttenuator;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoAttenuatorAttachment;
+    Label 	lfoAttenuatorLabel;
+    Slider 	lfoAttenuatorSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoAttenuatorSliderAttachment;
 
-    Label pwLabel;
-    Slider pw;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwAttachment;
+    Label 	pwLabel;
+    Slider 	pwSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwSliderAttachment;
 
-    Label pwModulationLabel;
-    Slider pwModulation;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwModulationAttachment;
+    Label 	pwModulationLabel;
+    Slider 	pwModulationSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwModulationSliderAttachment;
 
-    Label subVolumeLabel;
-    Slider subVolume;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> subVolumeAttachment;
+    Label 	squareIsOnLabel;
+    ToggleButton squareIsOnToggle;
+    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> squareIsOnToggleAttachment;
 
-    Label noiseVolumeLabel;
-    Slider noiseVolume;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> noiseVolumeAttachment;
+    Label 	triangleIsOnLabel;
+    ToggleButton triangleIsOnToggle;
+    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> triangleIsOnToggleAttachment;
 
-    Label squareIsOnLabel;
-    ToggleButton squareIsOn;
-    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> squareIsOnAttachment;
+    Label 	subIsOnLabel;
+    ToggleButton subIsOnToggle;
+    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> subIsOnToggleAttachment;
 
-    Label triangleIsOnLabel;
-    ToggleButton triangleIsOn;
-    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> triangleIsOnAttachment;
+    Label 	subVolumeLabel;
+    Slider 	subVolumeSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> subVolumeSliderAttachment;
 
-    Label subIsOnLabel;
-    ToggleButton subIsOn;
-    std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> subIsOnAttachment;
+    Label 	noiseVolumeLabel;
+    Slider 	noiseVolumeSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> noiseVolumeSliderAttachment;
+
+/*	VCF		*/
+    Label  filtFreqMultLabel;
+    Slider filtFreqMultSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> filtFreqMultSliderAttachment;
+
+    Label  filtResLabel;
+    Slider filtResSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> filtResSliderAttachment;
+
+    Label  filtEnvMultLabel;
+    Slider filtEnvMultSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> filtEnvMultSliderAttachment;
+
+    Label  filtKybdLabel;
+    Slider filtKybdSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> filtKybdSliderAttachment;
 
 /*	ENVELOPE ADSR	*/
     Label  attackLabel;
-    Slider attackKnob;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> attackAttachment;
+    Slider attackSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> attackSliderAttachment;
 
     Label  decayLabel;
-    Slider decayKnob;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> decayAttachment;
+    Slider decaySlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> decaySliderAttachment;
 
     Label  sustainLabel;
-    Slider sustainKnob;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
+    Slider sustainSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> sustainSliderAttachment;
 
     Label  releaseLabel;
-    Slider releaseKnob;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
+    Slider releaseSlider;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> releaseSliderAttachment;
 
     MidiKeyboardComponent keyboardComponent;
 

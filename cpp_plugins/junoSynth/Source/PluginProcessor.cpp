@@ -12,11 +12,12 @@
 #include "PluginEditor.h"
 
 static const int numberOfVoices = 6;
+static const float filtConstFreq = 440.0;
 
 //==============================================================================
 JunoSynthVoice::JunoSynthVoice() {
-  //oscillator.setup(getSampleRate());
   dco = junoDCO_init(getSampleRate());
+  vcf = moog_init(0, 0, getSampleRate());
   envelope.setSampleRate(getSampleRate());
 }
 
@@ -26,32 +27,40 @@ bool JunoSynthVoice::canPlaySound(SynthesiserSound *sound) {
 
 void JunoSynthVoice::startNote(int midiNoteNumber, float velocity,
                               SynthesiserSound *, int /*currentPitchWheelPosition*/) {
-  //level = velocity * 0.15;
-  envelope.noteOn();
-  //oscillator.setFreq(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
-  junoDCO_set_freq(dco, MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+	envelope.noteOn();
+	noteValue = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+	junoDCO_set_freq(dco, noteValue);
 }
 
 void JunoSynthVoice::stopNote(float /*velocity*/, bool allowTailOff) {
-  envelope.noteOff();
+  	envelope.noteOff();
 }
 
 void JunoSynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples) {
-  float lfoIn = 0;
-  while (--numSamples >= 0) {
-      auto envAmp = envelope.getNextSample();
-      auto currentSample = junoDCO_process(dco, lfoIn) * envAmp;
+	while (--numSamples >= 0) {
 
-      for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-          outputBuffer.addSample(i, startSample, currentSample);
+		auto envAmp = envelope.getNextSample();
+		float lfoIn = 0;
+		float filtFreq = filtFreqMult * (filtConstFreq - (filtConstFreq - noteValue) * filtKybdMult) * (envAmp * filtEnvMult + 1);
 
-      ++startSample;
+		float voiceDCO = junoDCO_process(dco, lfoIn, envAmp);
+		moog_set_freq(vcf, filtFreq);
+		float currentSample = moog_process(vcf, voiceDCO) * envAmp;
 
-      if (envAmp <= 0.0) {
-          clearCurrentNote();
-          break;
-      }
+		for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
+		  outputBuffer.addSample(i, startSample, currentSample);
+
+		++startSample;
+
+		if (envAmp <= 0.0) {
+		  clearCurrentNote();
+		  break;
+		}
   }
+}
+//==============================================================================
+void JunoSynthVoice::setLfoValue (float lfoIn) {
+    lfoValue = lfoIn;
 }
 
 void JunoSynthVoice::setLfoAttenuatorParameter(float lfoAttenuator) {
@@ -63,7 +72,7 @@ void JunoSynthVoice::setPwParameter(float pw) {
 }
 
 void JunoSynthVoice::setPwModulationParameter(float pwMod) {
-    junoDCO_set_pwModulation(dco, pwMod);
+    junoDCO_set_pwModulation(dco, (int)pwMod);
 }
 
 void JunoSynthVoice::setSubVolumeParameter(float subVol) {
@@ -86,11 +95,43 @@ void JunoSynthVoice::setSubIsOnParameter(float subIsOn) {
     junoDCO_set_subIsOn(dco, subIsOn);
 }
 
+void JunoSynthVoice::setFiltFreqMultParameter(float filtFreq) {
+	filtFreqMult = filtFreq * 100;
+}
+
+void JunoSynthVoice::setFiltResParameter(float filtRes) {
+	moog_set_res(vcf, filtRes * 2);
+}
+
+void JunoSynthVoice::setFiltEnvMultParameter(float filtEnv) {
+	filtEnvMult = filtEnv * 100;
+}
+
+void JunoSynthVoice::setFiltKybdParameter(float filtKybd) {
+	filtKybdMult = filtKybd;
+}
+
 void JunoSynthVoice::setEnvelopeParameters(ADSR::Parameters params) {
     envelope.setParameters(params);
 }
 
 //==============================================================================
+bool JunoSynth::isAllNotesOff() {
+	bool isKeyDown; 
+	bool isAllNotesOff = true;
+    for (int i = 0; i < getNumVoices(); i++) {
+       isKeyDown = dynamic_cast<JunoSynthVoice *> (getVoice(i))->isKeyDown();
+       if (isKeyDown == true) {isAllNotesOff = false;}
+    }
+	return isAllNotesOff;
+}
+
+void JunoSynth::setLfoValue (float lfoIn) {
+    for (int i = 0; i < getNumVoices(); i++) {
+       dynamic_cast<JunoSynthVoice *> (getVoice(i))->setLfoValue(lfoIn);
+    }
+}
+
 void JunoSynth::setLfoAttenuatorParameter(float lfoAttenuator) {
     for (int i = 0; i < getNumVoices(); i++) {
        dynamic_cast<JunoSynthVoice *> (getVoice(i))->setLfoAttenuatorParameter(lfoAttenuator);
@@ -139,6 +180,30 @@ void JunoSynth::setSubIsOnParameter(float subIsOn) {
     }
 }
 
+void JunoSynth::setFiltFreqMultParameter(float filtFreq) {
+    for (int i = 0; i < getNumVoices(); i++) {
+       dynamic_cast<JunoSynthVoice *> (getVoice(i))->setFiltFreqMultParameter(filtFreq);
+    }	
+}
+
+void JunoSynth::setFiltResParameter(float filtRes) {
+    for (int i = 0; i < getNumVoices(); i++) {
+       dynamic_cast<JunoSynthVoice *> (getVoice(i))->setFiltResParameter(filtRes);
+    }	
+}
+
+void JunoSynth::setFiltEnvMultParameter(float filtEnv) {
+    for (int i = 0; i < getNumVoices(); i++) {
+       dynamic_cast<JunoSynthVoice *> (getVoice(i))->setFiltEnvMultParameter(filtEnv);
+    }	
+}
+
+void JunoSynth::setFiltKybdParameter(float filtKybd) {
+    for (int i = 0; i < getNumVoices(); i++) {
+       dynamic_cast<JunoSynthVoice *> (getVoice(i))->setFiltKybdParameter(filtKybd);
+    }	
+}
+
 void JunoSynth::setEnvelopeParameters(ADSR::Parameters params) {
     for (int i = 0; i < getNumVoices(); i++) {
        dynamic_cast<JunoSynthVoice *> (getVoice(i))->setEnvelopeParameters(params);
@@ -146,6 +211,15 @@ void JunoSynth::setEnvelopeParameters(ADSR::Parameters params) {
 }
 
 //==============================================================================
+static String gainSliderValueToText(float value) {
+    float val = 20.0f * log10f(jmax(0.001f, value));
+    return String(val, 2) + String(" dB");
+}
+
+static float gainSliderTextToValue(const String& text) {
+    float val = jlimit(-60.0f, 18.0f, text.getFloatValue());
+    return powf(10.0f, val * 0.05f);
+}
 static String sliderValueToText(float value) {return String(value, 2);}
 static float sliderTextToValue(const String& text) {return text.getFloatValue();}
 static String toggleValueToText(float value) {return String(value, 0);}
@@ -156,25 +230,37 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
 
     std::vector<std::unique_ptr<Parameter>> parameters;
 
+    parameters.push_back(std::make_unique<Parameter>(String("volume"), String("Volume"), String(),    		//min, max, step, skew
+                                                     NormalisableRange<float>(0.001f, 7.94f, 0.001f, 0.3f),
+                                                     0.5f, gainSliderValueToText, gainSliderTextToValue));	//default value
+
+    parameters.push_back(std::make_unique<Parameter>(String("lfo_rate"), String("LFO Rate"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f),
+                                                     0.0f, sliderValueToText, sliderTextToValue));
+
+    parameters.push_back(std::make_unique<Parameter>(String("lfo_delay"), String("LFO Delay"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f),
+                                                     0.0f, sliderValueToText, sliderTextToValue));
+
     parameters.push_back(std::make_unique<Parameter>(String("lfo_attenuator"), String("LFO Attenuator"), String(),
-                                                     NormalisableRange<float>(0.0f, 1.0f),    //min, max, step, skew
-                                                     0.0f, sliderValueToText, sliderTextToValue));//default value
+                                                     NormalisableRange<float>(0.0f, 1.0f),
+                                                     0.0f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("pw"), String("PW"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
-                                                     0.0f, sliderValueToText, sliderTextToValue));
+                                                     0.5f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("pw_mod"), String("PW Modulation"), String(),
                                                      NormalisableRange<float>(0.0f, 2.0f, 1.0f),
-                                                     0.0f, sliderValueToText, sliderTextToValue));
+                                                     2.0f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("sub_vol"), String("Sub Volume"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
-                                                     0.0f, sliderValueToText, sliderTextToValue));
+                                                     1.0f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("noise_vol"), String("Noise Volume"), String(),
-                                                     NormalisableRange<float>(0.0f, 1.0f),
-                                                     0.0f, sliderValueToText, sliderTextToValue));
+                                                     NormalisableRange<float>(0.001f, 1.0f),
+                                                     0.001f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("square_onOff"), String("Square On/Off"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f, 1.0f),
@@ -182,27 +268,43 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
 
     parameters.push_back(std::make_unique<Parameter>(String("triangle_onOff"), String("Triangle On/Off"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f, 1.0f),
-                                                     0.0f, toggleValueToText, toggleTextToValue));
+                                                     1.0f, toggleValueToText, toggleTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("sub_onOff"), String("Sub On/Off"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f, 1.0f),
-                                                     0.0f, toggleValueToText, toggleTextToValue));
+                                                     1.0f, toggleValueToText, toggleTextToValue));
+
+    parameters.push_back(std::make_unique<Parameter>(String("filt_freq_mult"), String("Filter Freq Multiplier"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f, 0.0001f, 0.3f),
+                                                     0.01f, sliderValueToText, sliderTextToValue));
+
+    parameters.push_back(std::make_unique<Parameter>(String("filt_res"), String("Filter Res"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f, 0.0001f, 0.5f),
+                                                     0.3f, sliderValueToText, sliderTextToValue));
+
+    parameters.push_back(std::make_unique<Parameter>(String("filt_env_mult"), String("Filter Env Multiplier"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f, 0.0001f, 0.3f),
+                                                     0.4f, sliderValueToText, sliderTextToValue));
+
+    parameters.push_back(std::make_unique<Parameter>(String("filt_kybd"), String("Filter Kybd"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f),
+                                                     1.0f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("attack"), String("Attack"), String(),
-                                                     NormalisableRange<float>(0.001f, 1.0f, 0.0001f, 0.3f), //min, max, step, skew
-                                                     0.005f, sliderValueToText, sliderTextToValue));		//default
+                                                     NormalisableRange<float>(0.001f, 1.0f, 0.0001f, 0.3f),
+                                                     0.005f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("decay"), String("Decay"), String(),
                                                      NormalisableRange<float>(0.001f, 1.0f, 0.0001f, 0.3f),
-                                                     0.2f, sliderValueToText, sliderTextToValue));
+                                                     0.1f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("sustain"), String("Sustain"), String(),
                                                      NormalisableRange<float>(0.001f, 1.0f, 0.001f),
-                                                     0.5f, sliderValueToText, sliderTextToValue));
+                                                     0.33f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("release"), String("Release"), String(),
                                                      NormalisableRange<float>(0.001f, 1.0f, 0.0001f, 0.3f),
-                                                     0.03f, sliderValueToText, sliderTextToValue));
+                                                     0.01f, sliderValueToText, sliderTextToValue));
 
     return { parameters.begin(), parameters.end() };
 }
@@ -226,6 +328,11 @@ JunoSynthAudioProcessor::JunoSynthAudioProcessor()
 
     synthesiser.addSound(new JunoSynthSound());
 
+    volumeParameter = parameters.getRawParameterValue("volume");
+
+    lfoRateParameter = parameters.getRawParameterValue("lfo_rate");
+    lfoDelayParameter = parameters.getRawParameterValue("lfo_delay");
+
     lfoAttenuatorParameter = parameters.getRawParameterValue("lfo_attenuator");
     pwParameter = parameters.getRawParameterValue("pw");
     pwModulationParameter = parameters.getRawParameterValue("pw_mod");    
@@ -234,6 +341,11 @@ JunoSynthAudioProcessor::JunoSynthAudioProcessor()
     squareIsOnParameter = parameters.getRawParameterValue("square_onOff");    
     triangleIsOnParameter = parameters.getRawParameterValue("triangle_onOff");
     subIsOnParameter = parameters.getRawParameterValue("sub_onOff");
+
+    filtFreqMultParameter = parameters.getRawParameterValue("filt_freq_mult");
+    filtResParameter = parameters.getRawParameterValue("filt_res");
+    filtEnvMultParameter = parameters.getRawParameterValue("filt_env_mult");
+    filtKybdParameter = parameters.getRawParameterValue("filt_kybd");
 
     attackParameter = parameters.getRawParameterValue("attack");
     decayParameter = parameters.getRawParameterValue("decay");
@@ -313,6 +425,7 @@ void JunoSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     keyboardState.reset();
+    lfo = junoLFO_init(sampleRate);
     synthesiser.setCurrentPlaybackSampleRate(sampleRate);
 }
 
@@ -372,13 +485,24 @@ void JunoSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     synthesiser.setSquareIsOnParameter(*squareIsOnParameter);
     synthesiser.setTriangleIsOnParameter(*triangleIsOnParameter);
     synthesiser.setSubIsOnParameter(*subIsOnParameter);
-
-    synthesiser.setEnvelopeParameters(ADSR::Parameters {static_cast<float>(*attackParameter * 3.3), 
+    synthesiser.setFiltFreqMultParameter(*filtFreqMultParameter);    
+    synthesiser.setFiltResParameter(*filtResParameter);    
+    synthesiser.setFiltEnvMultParameter(*filtEnvMultParameter);        
+    synthesiser.setFiltKybdParameter(*filtKybdParameter);    
+    synthesiser.setEnvelopeParameters(ADSR::Parameters{	static_cast<float>(*attackParameter * 3.3), 
     													static_cast<float>(*decayParameter * 21.0), 
     													static_cast<float>(*sustainParameter), 
     													static_cast<float>(*releaseParameter * 21.0)});
  
     synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+    buffer.applyGainRamp(0, buffer.getNumSamples(), lastVolume, *volumeParameter);
+    lastVolume = *volumeParameter;
+
+/*
+    if (synthesiser.isAllNotesOff()) {
+		junoLFO_reset_ramp(lfo);
+	}
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -386,12 +510,22 @@ void JunoSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-/*    
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+ 
+    junoLFO_set_freq(lfo, *lfoRateParameter * 20);
+    junoLFO_set_rampLength(lfo, *lfoDelayParameter * 2);
 
-        // ..do something to the data...
+
+    for (int i = 0; i < getBlockSize(); i++) {
+        // On applique le traitement de signal à chacun des échantillons (i) du bloc
+        // pour chacun des canaux (channel).
+
+		if (!synthesiser.isAllNotesOff()) {
+			junoLFO_process_ramp(lfo);
+		} else {
+			junoLFO_reset_ramp(lfo);
+		}
+	 
+    	synthesiser.setLfoValue(junoLFO_process(lfo));
     }
 */
 }
