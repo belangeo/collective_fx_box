@@ -55,7 +55,7 @@ struct parametricEQ
  */
 struct parametricEQ * parametricEQ_init(float freq, float q, float gain, filterT type, float sr);
 
-/* Delete  filter's structure.
+/* Delete filter's structure.
  *
  * struct parametricEQ *data: The structure for which to release memory.
  */
@@ -93,7 +93,7 @@ void parametricEQ_set_q(struct parametricEQ *data, float q);
  */
 void parametricEQ_set_gain(struct parametricEQ *data, float gain);
 
-/* Change the type of filter.
+/* Change type of filter's parts.
  *
  * struct parametricEQ *data:  The structure for which to set a new frequency.
  * filter type  :              New type value.

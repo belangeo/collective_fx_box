@@ -408,3 +408,6 @@ MigrationBackup/
 # Projucer 
 **/Builds
 **/JuceLibraryCode
+
+#Compiling folder app
+c_apps/
