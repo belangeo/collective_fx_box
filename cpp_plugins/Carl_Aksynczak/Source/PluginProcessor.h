@@ -78,9 +78,9 @@ private:
     //==============================================================================
     
     AudioProcessorValueTreeState parameters;
-      
+
     // Struture de la librairie collective_box
-    struct parametricEQ *eq4B[2];
+    struct eq4Bands *eq4B[2];
 
     std::atomic<float>* freqLsParameter = nullptr;
     std::atomic<float>* qLsParameter = nullptr;

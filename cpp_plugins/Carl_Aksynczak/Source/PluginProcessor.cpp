@@ -32,7 +32,7 @@ static float qLsSliderTextToValue(const String& text) {
 }
 
 static String gainLsSliderValueToText(float value) {
-    return String(value, 2) + String(" gain");
+    return String(value, 2) + String(" dB");
 }
 
 static float gainLsSliderTextToValue(const String& text) {
@@ -41,7 +41,7 @@ static float gainLsSliderTextToValue(const String& text) {
 
 // Controle Notch 1
 static String freqN1SliderValueToText(float value) {
-    return String(value, 2) + String(" Hz");
+    return String(value, 1) + String(" Hz");
 }
 
 static float freqN1SliderTextToValue(const String& text) {
@@ -57,7 +57,7 @@ static float qN1SliderTextToValue(const String& text) {
 }
 
 static String gainN1SliderValueToText(float value) {
-    return String(value, 2) + String(" gain");
+    return String(value, 2) + String(" dB");
 }
 
 static float gainN1SliderTextToValue(const String& text) {
@@ -66,7 +66,7 @@ static float gainN1SliderTextToValue(const String& text) {
 
 // Controle Notch 2
 static String freqN2SliderValueToText(float value) {
-    return String(value, 2) + String(" Hz");
+    return String(value, 1) + String(" Hz");
 }
 
 static float freqN2SliderTextToValue(const String& text) {
@@ -82,7 +82,7 @@ static float qN2SliderTextToValue(const String& text) {
 }
 
 static String gainN2SliderValueToText(float value) {
-    return String(value, 2) + String(" gain");
+    return String(value, 2) + String(" dB");
 }
 
 static float gainN2SliderTextToValue(const String& text) {
@@ -91,7 +91,7 @@ static float gainN2SliderTextToValue(const String& text) {
 
 // Controle pour le highShelf
 static String freqHsSliderValueToText(float value) {
-    return String(value, 2) + String(" Hz");
+    return String(value, 1) + String(" Hz");
 }
 
 static float freqHsSliderTextToValue(const String& text) {
@@ -107,7 +107,7 @@ static float qHsSliderTextToValue(const String& text) {
 }
 
 static String gainHsSliderValueToText(float value) {
-    return String(value, 2) + String(" gain");
+    return String(value, 2) + String(" dB");
 }
 
 static float gainHsSliderTextToValue(const String& text) {
@@ -130,7 +130,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             qLsSliderValueToText, qLsSliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("gainLS"), String("Gain LowShelf"), String("Gain LowShelf"),
-                                                            NormalisableRange<float>(0.0f, 5.0f), 1.0f,
+                                                            NormalisableRange<float>(-40.0f, 12.0f), 0.0f,
                                                             gainLsSliderValueToText, gainLsSliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("freqN1"), String("Freq Notch 1"), String("Freq Notch 1"),
@@ -142,7 +142,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             qN1SliderValueToText, qN1SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("gainN1"), String("Gain Notch 1"), String("Gain Notch 1"),
-                                                            NormalisableRange<float>(0.0f, 5.0f), 1.0f,
+                                                            NormalisableRange<float>(-40.0f, 12.0f), 0.0f,
                                                             gainN1SliderValueToText, gainN1SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("freqN2"), String("Freq Notch 2"), String("Freq Notch 2"),
@@ -154,7 +154,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             qN2SliderValueToText, qN2SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("gainN2"), String("Gain Notch 2"), String("Gain Notch 2"),
-                                                            NormalisableRange<float>(0.0f, 5.0f), 1.0f,
+                                                            NormalisableRange<float>(-40.0f, 12.0f), 0.0f,
                                                             gainN2SliderValueToText, gainN2SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("freqHS"), String("Freq HighShelf"), String("Freq HighShelf"),
@@ -166,7 +166,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             qHsSliderValueToText, qHsSliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("gainHS"), String("Gain HighShelf"), String("Gain HighShelf"),
-                                                            NormalisableRange<float>(0.0f, 5.0f), 1.0f,
+                                                            NormalisableRange<float>(-40.0f, 12.0f), 0.0f,
                                                             gainHsSliderValueToText, gainHsSliderTextToValue
                                                             ));
     
@@ -279,6 +279,20 @@ void PluginCarlAksyAudioProcessor::prepareToPlay (double sampleRate, int samples
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    
+    /*  On garde la fréquence d'échantillonnage courante en mémoire. */
+    currentSampleRate = sampleRate;
+
+    /* On initialise les structures de nos objets ici car nous devons connaître la fréquence
+      d'échantillonnage. Elle n'est pas disponible à la création du plugin, seulement dans la
+      fonction prepareToPlay(). */
+    for (int i = 0; i < 2; i++) {
+        eq4B[i] = eq4Bands_init(*freqLsParameter, *qLsParameter, *gainLsParameter,
+                                *freqN1Parameter, *qN1Parameter, *gainN1Parameter,
+                                *freqN2Parameter, *qN2Parameter, *gainN2Parameter,
+                                *freqHsParameter, *qHsParameter, *gainHsParameter, currentSampleRate);
+    }
+
 }
 
 void PluginCarlAksyAudioProcessor::releaseResources()
@@ -337,6 +351,32 @@ void PluginCarlAksyAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
+        
+        /* Avant le calcul de chacun des blocs d'échantillons, on ajuste le drive
+           de la distorsion ainsi que la fréquence et la résonance du filtre. */
+        
+        eq4Bands_set_freq(eq4B[channel], *freqLsParameter, BAND_LOWSHELF);
+        eq4Bands_set_freq(eq4B[channel], *freqN1Parameter, BAND_NOTCH1);
+        eq4Bands_set_freq(eq4B[channel], *freqN2Parameter, BAND_NOTCH2);
+        eq4Bands_set_freq(eq4B[channel], *freqHsParameter, BAND_HIGHSHELF);
+        
+        eq4Bands_set_q(eq4B[channel], *qLsParameter, BAND_LOWSHELF);
+        eq4Bands_set_q(eq4B[channel], *qN1Parameter, BAND_NOTCH1);
+        eq4Bands_set_q(eq4B[channel], *qN2Parameter, BAND_NOTCH2);
+        eq4Bands_set_q(eq4B[channel], *qHsParameter, BAND_HIGHSHELF);
+        
+        eq4Bands_set_gain(eq4B[channel], *gainLsParameter, BAND_LOWSHELF);
+        eq4Bands_set_gain(eq4B[channel], *gainN1Parameter, BAND_NOTCH1);
+        eq4Bands_set_gain(eq4B[channel], *gainN2Parameter, BAND_NOTCH2);
+        eq4Bands_set_gain(eq4B[channel], *gainHsParameter, BAND_HIGHSHELF);
+        
+        for (int i = 0; i < getBlockSize(); i++) {
+            /* On applique le traitement de signal à chacun des échantillons (i) du bloc
+               pour chacun des canaux (channel). */
+
+            channelData[i] = eq4Bands_process(eq4B[channel], channelData[i]);
+            
+        }
     }
 }
 

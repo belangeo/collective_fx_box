@@ -31,7 +31,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     freqLsLbl.setBounds (32, 48, 88, 16);
 
     freqLsAttachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "freqLS", freqLsSld));
-    freqLsSld.setRange (0, 400, 0);
+    //freqLsSld.setRange (0, 400, 0);
     freqLsSld.setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     freqLsSld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible (&freqLsSld);
@@ -49,7 +49,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     freqN1Lbl.setBounds (128, 48, 88, 16);
 
     freqN1Attachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "freqN1", freqN1Sld));
-    freqN1Sld.setRange (350, 5000, 0);
+    //freqN1Sld.setRange (350, 5000, 0);
     freqN1Sld.setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     freqN1Sld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&freqN1Sld);
@@ -67,7 +67,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     freqN2Lbl.setBounds (224, 48, 88, 16);
 
     freqN2Attachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "freqN2", freqN2Sld));
-    freqN2Sld.setRange (4000, 12000, 0);
+    //freqN2Sld.setRange (4000, 12000, 0);
     freqN2Sld.setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     freqN2Sld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&freqN2Sld);
@@ -85,7 +85,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     freqHsLbl.setBounds (320, 48, 88, 16);
 
     freqHsAttachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "freqHS", freqHsSld));
-    freqHsSld.setRange (11000, 20000, 0);
+    //freqHsSld.setRange (11000, 20000, 0);
     freqHsSld.setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     freqHsSld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&freqHsSld);
@@ -93,7 +93,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     freqHsSld.setBounds (320, 72, 88, 112);
 
     qLsAttachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "qLS", qLsSld));
-    qLsSld.setRange (0, 10, 0);
+    //qLsSld.setRange (0, 10, 0);
     qLsSld.setSliderStyle (Slider::LinearHorizontal);
     qLsSld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&qLsSld);
@@ -141,7 +141,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     qHsLbl.setBounds (320, 200, 88, 16);
 
     qN1Attachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "qN1", qN1Sld));
-    qN1Sld.setRange (0, 10, 0);
+    //qN1Sld.setRange (0, 10, 0);
     qN1Sld.setSliderStyle (Slider::LinearHorizontal);
     qN1Sld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&qN1Sld);
@@ -149,7 +149,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     qN1Sld.setBounds (120, 216, 104, 48);
 
     qN2Attachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "qN2", qN2Sld));
-    qN2Sld.setRange (0, 10, 0);
+    //qN2Sld.setRange (0, 10, 0);
     qN2Sld.setSliderStyle (Slider::LinearHorizontal);
     qN2Sld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&qN2Sld);
@@ -157,7 +157,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     qN2Sld.setBounds (216, 216, 104, 48);
 
     qHsAttachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "qHS", qHsSld));
-    qHsSld.setRange (0, 10, 0);
+    //qHsSld.setRange (0, 10, 0);
     qHsSld.setSliderStyle (Slider::LinearHorizontal);
     qHsSld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&qHsSld);
@@ -165,7 +165,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     qHsSld.setBounds (312, 216, 104, 48);
 
     gainLsAttachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gainLS", gainLsSld));
-    gainLsSld.setRange (0, 5, 0);
+    //gainLsSld.setRange (0, 5, 0);
     gainLsSld.setSliderStyle (Slider::LinearHorizontal);
     gainLsSld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&gainLsSld);
@@ -182,7 +182,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
 
     gainLsLbl.setBounds (32, 272, 88, 16);
 
-    gainN1Lbl.setText("GAin Notch 1", NotificationType::dontSendNotification);
+    gainN1Lbl.setText("Gain Notch 1", NotificationType::dontSendNotification);
     gainN1Lbl.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     gainN1Lbl.setJustificationType (Justification::centredLeft);
     gainN1Lbl.setEditable (false, false, false);
@@ -213,7 +213,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     gainHsLbl.setBounds (320, 272, 88, 16);
 
     gainN1Attachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gainN1", gainN1Sld));
-    gainN1Sld.setRange (0, 5, 0);
+    //gainN1Sld.setRange (0, 5, 0);
     gainN1Sld.setSliderStyle (Slider::LinearHorizontal);
     gainN1Sld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&gainN1Sld);
@@ -221,7 +221,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     gainN1Sld.setBounds (120, 288, 104, 48);
 
     gainN2Attachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gainN2", gainN2Sld));
-    gainN2Sld.setRange (0, 5, 0);
+    //gainN2Sld.setRange (0, 5, 0);
     gainN2Sld.setSliderStyle (Slider::LinearHorizontal);
     gainN2Sld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&gainN2Sld);
@@ -229,7 +229,7 @@ PluginCarlAksyAudioProcessorEditor::PluginCarlAksyAudioProcessorEditor (PluginCa
     gainN2Sld.setBounds (216, 288, 104, 48);
 
     gainHsAttachement.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "gainHS", gainHsSld));
-    gainHsSld.setRange (0, 5, 0);
+    //gainHsSld.setRange (0, 5, 0);
     gainHsSld.setSliderStyle (Slider::LinearHorizontal);
     gainHsSld.setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&gainHsSld);
