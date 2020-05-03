@@ -24,7 +24,7 @@ static float freqLsSliderTextToValue(const String& text) {
 }
 
 static String qLsSliderValueToText(float value) {
-    return String(value, 3) + String(" q");
+    return String(value, 2) + String(" q");
 }
 
 static float qLsSliderTextToValue(const String& text) {
@@ -32,7 +32,7 @@ static float qLsSliderTextToValue(const String& text) {
 }
 
 static String gainLsSliderValueToText(float value) {
-    return String(value, 3) + String(" gain");
+    return String(value, 2) + String(" gain");
 }
 
 static float gainLsSliderTextToValue(const String& text) {
@@ -49,7 +49,7 @@ static float freqN1SliderTextToValue(const String& text) {
 }
 
 static String qN1SliderValueToText(float value) {
-    return String(value, 3) + String(" q");
+    return String(value, 2) + String(" q");
 }
 
 static float qN1SliderTextToValue(const String& text) {
@@ -57,7 +57,7 @@ static float qN1SliderTextToValue(const String& text) {
 }
 
 static String gainN1SliderValueToText(float value) {
-    return String(value, 3) + String(" gain");
+    return String(value, 2) + String(" gain");
 }
 
 static float gainN1SliderTextToValue(const String& text) {
@@ -74,7 +74,7 @@ static float freqN2SliderTextToValue(const String& text) {
 }
 
 static String qN2SliderValueToText(float value) {
-    return String(value, 3) + String(" q");
+    return String(value, 2) + String(" q");
 }
 
 static float qN2SliderTextToValue(const String& text) {
@@ -82,7 +82,7 @@ static float qN2SliderTextToValue(const String& text) {
 }
 
 static String gainN2SliderValueToText(float value) {
-    return String(value, 3) + String(" gain");
+    return String(value, 2) + String(" gain");
 }
 
 static float gainN2SliderTextToValue(const String& text) {
@@ -99,7 +99,7 @@ static float freqHsSliderTextToValue(const String& text) {
 }
 
 static String qHsSliderValueToText(float value) {
-    return String(value, 3) + String(" q");
+    return String(value, 2) + String(" q");
 }
 
 static float qHsSliderTextToValue(const String& text) {
@@ -107,7 +107,7 @@ static float qHsSliderTextToValue(const String& text) {
 }
 
 static String gainHsSliderValueToText(float value) {
-    return String(value, 3) + String(" gain");
+    return String(value, 2) + String(" gain");
 }
 
 static float gainHsSliderTextToValue(const String& text) {
@@ -134,7 +134,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             gainLsSliderValueToText, gainLsSliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("freqN1"), String("Freq Notch 1"), String("Freq Notch 1"),
-                                                            NormalisableRange<float>(0.0f, 400.0f), 60.0f,
+                                                            NormalisableRange<float>(350.0f, 5000.0f), 400.0f,
                                                             freqN1SliderValueToText, freqN1SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("qN1"), String("Q Notch 1"), String("Q Notch 1"),
@@ -146,7 +146,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             gainN1SliderValueToText, gainN1SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("freqN2"), String("Freq Notch 2"), String("Freq Notch 2"),
-                                                            NormalisableRange<float>(0.0f, 400.0f), 60.0f,
+                                                            NormalisableRange<float>(4000.0f, 12000.0f), 5000.0f,
                                                             freqN2SliderValueToText, freqN2SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("qN2"), String("Q Notch 2"), String("Q Notch 2"),
@@ -158,7 +158,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
                                                             gainN2SliderValueToText, gainN2SliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("freqHS"), String("Freq HighShelf"), String("Freq HighShelf"),
-                                                            NormalisableRange<float>(0.0f, 400.0f), 60.0f,
+                                                            NormalisableRange<float>(11000.0f, 20000.0f), 15000.0f,
                                                             freqHsSliderValueToText, freqHsSliderTextToValue
                                                             ));
     parameters.push_back(std::make_unique<Parameter>(String("qHS"), String("Q HighShelf"), String("Q HighShelf"),
