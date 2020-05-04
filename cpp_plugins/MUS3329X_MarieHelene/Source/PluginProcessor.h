@@ -63,15 +63,18 @@ public:
     float compMeter;
     float wetCompMeter;
     float wetAmpMeter;
+    int oscChoice;
 
 private:
     //==============================================================================
     //Variables we need to generate sinus
     float gen_amplitude;
-    float gen_frequency;
     float gen_phase; //starting point
     float gen_time; //time counter
     float gen_deltaTime;
+
+    //Saw tooth
+    float ramp;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RobotVoiceAudioProcessor)
 };

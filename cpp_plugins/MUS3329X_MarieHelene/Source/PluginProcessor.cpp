@@ -115,10 +115,10 @@ void RobotVoiceAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 {
     //Initializing the generator
     gen_amplitude = 0.5;
-    gen_frequency = freqMeter;
     gen_phase = 0.0;
     gen_time = 0.0;
     gen_deltaTime = 1 / sampleRate;
+    ramp = 0.0;
 
 }
 
@@ -168,14 +168,26 @@ void RobotVoiceAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuff
         gen_time = 0.0;
     }
 
-    float* monoBuffer = new float[buffer.getNumSamples()];
 
+    float* monoBuffer = new float[buffer.getNumSamples()];
     for (int sample = 0; sample < buffer.getNumSamples(); sample++)
     {
-        //sin formula : y(t) = A * sin(2Pi * f * t + p)
-        float sinValue = gen_amplitude * sin(2 * double_Pi * freqMeter * gen_time + gen_phase);
-        monoBuffer[sample] = sinValue;
-        gen_time = gen_time + gen_deltaTime;
+        if (oscChoice == 1)
+        {
+            //sin formula : y(t) = A * sin(2Pi * f * t + p)
+            float sinValue = gen_amplitude * sin(2 * double_Pi * freqMeter * gen_time + gen_phase);
+            monoBuffer[sample] = sinValue;
+            gen_time = gen_time + gen_deltaTime;
+        }
+        else if (oscChoice == 2)
+        {
+            //Equations to create a saw tooth oscillator
+            ramp <= 0.5 ? monoBuffer[sample] = ramp : monoBuffer[sample] = 1 - ramp;
+            ramp = ramp + (freqMeter*gen_deltaTime);
+            ramp >= 1? ramp = 0 : ramp = ramp;
+            
+        }
+        
     }
 
     //=============================================================================================
@@ -204,16 +216,17 @@ void RobotVoiceAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuff
 
         for (int i = 0; i < buffer.getNumSamples(); i++) {
 
+
             channelData[i] = channelData[i] * (1 - wetMeter) +
-                             channelData[i] * monoBuffer[i] * wetMeter; //Sine + wet/dry
+                             channelData[i] * monoBuffer[i] * wetMeter; //Osc + wet/dry
 
             channelData[i] = channelData[i] * (1 - wetCompMeter) + 
                              std::max(std::min(channelData[i], compMeter), -compMeter) * wetCompMeter; //Clipping + wet/dry
 
             channelData[i] = channelData[i] * (1 - wetAmpMeter) +
-                             channelData[i] * channelData[i] * wetAmpMeter *4; //Modulation amplitude par lui meme wet/dry
+                             channelData[i] * channelData[i] * wetAmpMeter; //Modulation amplitude par lui meme wet/dry
 
-            channelData[i] *= volumeMeter; //Controle du gain tres brute
+            channelData[i] = channelData[i]*powf(10, volumeMeter * 0.05); //Controle du gain en db
         }
 
         // ..do something to the data...

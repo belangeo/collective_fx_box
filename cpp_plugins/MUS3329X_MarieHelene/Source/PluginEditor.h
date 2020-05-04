@@ -34,11 +34,12 @@ private:
     RobotVoiceAudioProcessor& processor;
 
     Slider gain;
-    Slider freqSine;
+    Slider freqOsc;
     Slider wetSine;
     Slider compRatio;
     Slider wetComp;
     Slider wetAmpMod;
+    ComboBox oscMenu;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RobotVoiceAudioProcessorEditor)

@@ -26,26 +26,26 @@ RobotVoiceAudioProcessorEditor::RobotVoiceAudioProcessorEditor(RobotVoiceAudioPr
     addAndMakeVisible(&gain);
 
     gain.setSliderStyle(Slider::LinearBarVertical);
-    gain.setRange(0.0, 127.0, 1.0);
+    gain.setRange(-60.0, 12.0, 1.0);
     gain.setTextBoxStyle(Slider::TextBoxBelow, false, 90, 20);
     gain.setPopupDisplayEnabled(true, false, this);
     gain.setTextValueSuffix("Gain");
     gain.setValue(1.0);
     gain.addListener(this);
 
-    //Freq Slider of Sinus
+    //Freq Slider of Oscillator
 
-    addAndMakeVisible(&freqSine);
+    addAndMakeVisible(&freqOsc);
 
-    freqSine.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    freqSine.setRange(1.0, 2000, 1.0);
-    freqSine.setTextBoxStyle(Slider::TextBoxAbove, false, 80, 20);
-    freqSine.setPopupDisplayEnabled(true, false, this);
-    freqSine.setTextValueSuffix("Freq");
-    freqSine.setValue(500.0);
-    freqSine.addListener(this);
+    freqOsc.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    freqOsc.setRange(1, 2000, 1);
+    freqOsc.setTextBoxStyle(Slider::TextBoxAbove, false, 80, 20);
+    freqOsc.setPopupDisplayEnabled(true, false, this);
+    freqOsc.setTextValueSuffix("Freq");
+    freqOsc.setValue(500.0);
+    freqOsc.addListener(this);
 
-    //Wet Slider of Sinus
+    //Wet Slider of Osc
 
     addAndMakeVisible(&wetSine);
 
@@ -56,6 +56,15 @@ RobotVoiceAudioProcessorEditor::RobotVoiceAudioProcessorEditor(RobotVoiceAudioPr
     wetSine.setTextValueSuffix("Wet/Dry");
     wetSine.setValue(0.5);
     wetSine.addListener(this);
+
+    //Menu Osc
+
+    addAndMakeVisible(&oscMenu);
+
+    oscMenu.addItem("Sinus", 1);
+    oscMenu.addItem("Saw tooth", 2);
+    oscMenu.setSelectedId(1);
+
 
     //Ratio Compression Slider
 
@@ -106,10 +115,10 @@ void RobotVoiceAudioProcessorEditor::paint(Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
 
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
-
     g.setColour(Colours::greenyellow);
     g.setFont(20.0f);
     g.drawFittedText("ROBOT VOICE", getLocalBounds(), Justification::centredTop, 1);
+    
 }
 
 void RobotVoiceAudioProcessorEditor::resized()
@@ -117,22 +126,25 @@ void RobotVoiceAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     gain.setBounds(40, 30, 20, getHeight() - 60);
-    freqSine.setBounds(90, 30, 80, 100);
-    wetSine.setBounds(120, 110, 20, getHeight() - 140);
-    compRatio.setBounds(170, 30, 80, 100);
-    wetComp.setBounds(200, 110, 20, getHeight() - 140);
+    freqOsc.setBounds(90, 80, 80, 100);
+    wetSine.setBounds(120, 150, 20, getHeight() - 180);
+    oscMenu.setBounds(120, 30, 20, 30);
+    compRatio.setBounds(170, 80, 80, 100);
+    wetComp.setBounds(200, 150, 20, getHeight() - 180);
     wetAmpMod.setBounds(280, 30, 20, getHeight() - 60);
+    
+    
 }
 
 void RobotVoiceAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
     if (slider == &gain)
     {
-        processor.volumeMeter = gain.getValue() / 127;
+        processor.volumeMeter = gain.getValue();
     }
-    if (slider == &freqSine)
+    if (slider == &freqOsc)
     {
-        processor.freqMeter = freqSine.getValue();
+        processor.freqMeter = freqOsc.getValue();
     }
     if (slider == &wetSine)
     {
@@ -153,6 +165,9 @@ void RobotVoiceAudioProcessorEditor::sliderValueChanged(Slider* slider)
     {
         processor.wetAmpMeter = wetAmpMod.getValue();
     }
+
+    processor.oscChoice = oscMenu.getSelectedId();
+       
 
 }
 
