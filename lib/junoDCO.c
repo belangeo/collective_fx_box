@@ -51,10 +51,10 @@ float junoDCO_process(struct junoDCO *data, float lfoIn, float envIn) {
             pw = data->pw;
             break;
         case 1:
-            pw = (data->pw - 0.5) * lfoIn + 0.5;
+            pw = (data->pw - 0.5) * envIn + 0.5;
             break;
         case 2:
-            pw = (data->pw - 0.5) * envIn + 0.5;
+            pw = (data->pw - 0.5) * lfoIn + 0.5;
             break;
     }
     if (phasor < pw) {square = -1.0;} else {square = 1.0;}

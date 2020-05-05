@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="gfWvfh" name="junoSynth" projectType="audioplug" jucerVersion="5.4.7"
-              pluginFormats="buildStandalone" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              companyName="GLV" headerPath="../../../../lib/">
+              pluginFormats="buildAU,buildStandalone,buildVST,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              companyName="mus3329X" headerPath="../../../../lib/">
   <MAINGROUP id="YTLMkW" name="junoSynth">
     <GROUP id="{F09208EB-A4D7-1573-A46F-390CC30C2B3A}" name="Source">
-      <FILE id="ORpQDi" name="junoLFO.c" compile="1" resource="0" file="../../lib/junoLFO.c"/>
-      <FILE id="MEF731" name="junoLFO.h" compile="0" resource="0" file="../../lib/junoLFO.h"/>
       <FILE id="BOdhSh" name="junoDCO.c" compile="1" resource="0" file="../../lib/junoDCO.c"/>
       <FILE id="BshMvZ" name="junoDCO.h" compile="0" resource="0" file="../../lib/junoDCO.h"/>
       <FILE id="Y67oKd" name="moog.c" compile="1" resource="0" file="../../lib/moog.c"/>

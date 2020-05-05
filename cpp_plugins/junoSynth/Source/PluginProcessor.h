@@ -11,7 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "junoLFO.h"
+//#include "junoLFO.h"
 #include "junoDCO.h"
 #include "moog.h"
 
@@ -39,8 +39,8 @@ struct JunoSynthVoice   : public SynthesiserVoice
 
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
 
-    void setLfoValue(float lfoIn);
-    void setLfoAttenuatorParameter(float lfoAttenuator);
+//    void setLfoValue(float lfoIn);
+//    void setLfoAttenuatorParameter(float lfoAttenuator);
     void setPwParameter(float pw);
     void setPwModulationParameter(float pwMod);
     void setSubVolumeParameter(float subVol);
@@ -56,7 +56,7 @@ struct JunoSynthVoice   : public SynthesiserVoice
 
 private:
 
-    float lfoValue;
+//    float lfoValue;
     float noteValue;
     float filtFreqMult;
     float filtEnvMult;
@@ -72,8 +72,8 @@ class JunoSynth : public Synthesiser
 public:
     bool isAllNotesOff();
 
-    void setLfoValue(float lfoIn);
-    void setLfoAttenuatorParameter(float lfoAttenuator);
+//    void setLfoValue(float lfoIn);
+//    void setLfoAttenuatorParameter(float lfoAttenuator);
     void setPwParameter(float pw);
     void setPwModulationParameter(float pwMod);
     void setSubVolumeParameter(float subVol);
@@ -135,17 +135,17 @@ private:
     //==============================================================================
     AudioProcessorValueTreeState parameters;
 
-    struct junoLFO *lfo;
+//    struct junoLFO *lfo;
 
     JunoSynth synthesiser;
 
     std::atomic<float> *volumeParameter = nullptr;
     float lastVolume = 0.f;
 
-    std::atomic<float> *lfoRateParameter = nullptr;
-    std::atomic<float> *lfoDelayParameter = nullptr;
+//    std::atomic<float> *lfoRateParameter = nullptr;
+//    std::atomic<float> *lfoDelayParameter = nullptr;
 
-    std::atomic<float> *lfoAttenuatorParameter = nullptr;
+//    std::atomic<float> *lfoAttenuatorParameter = nullptr;
     std::atomic<float> *pwParameter = nullptr;
     std::atomic<float> *pwModulationParameter = nullptr;
     std::atomic<float> *subVolumeParameter = nullptr;

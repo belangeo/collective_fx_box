@@ -59,6 +59,7 @@ void JunoSynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startS
   }
 }
 //==============================================================================
+/*
 void JunoSynthVoice::setLfoValue (float lfoIn) {
     lfoValue = lfoIn;
 }
@@ -66,7 +67,7 @@ void JunoSynthVoice::setLfoValue (float lfoIn) {
 void JunoSynthVoice::setLfoAttenuatorParameter(float lfoAttenuator) {
     junoDCO_set_lfoInAttenuator(dco, lfoAttenuator);
 }
-
+*/
 void JunoSynthVoice::setPwParameter(float pw) {
     junoDCO_set_pw(dco, pw);
 }
@@ -125,7 +126,7 @@ bool JunoSynth::isAllNotesOff() {
     }
 	return isAllNotesOff;
 }
-
+/*
 void JunoSynth::setLfoValue (float lfoIn) {
     for (int i = 0; i < getNumVoices(); i++) {
        dynamic_cast<JunoSynthVoice *> (getVoice(i))->setLfoValue(lfoIn);
@@ -137,7 +138,7 @@ void JunoSynth::setLfoAttenuatorParameter(float lfoAttenuator) {
        dynamic_cast<JunoSynthVoice *> (getVoice(i))->setLfoAttenuatorParameter(lfoAttenuator);
     }
 }
-
+*/
 void JunoSynth::setPwParameter(float pw) {
     for (int i = 0; i < getNumVoices(); i++) {
        dynamic_cast<JunoSynthVoice *> (getVoice(i))->setPwParameter(pw);
@@ -233,7 +234,7 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     parameters.push_back(std::make_unique<Parameter>(String("volume"), String("Volume"), String(),    		//min, max, step, skew
                                                      NormalisableRange<float>(0.001f, 7.94f, 0.001f, 0.3f),
                                                      0.5f, gainSliderValueToText, gainSliderTextToValue));	//default value
-
+/*
     parameters.push_back(std::make_unique<Parameter>(String("lfo_rate"), String("LFO Rate"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
                                                      0.0f, sliderValueToText, sliderTextToValue));
@@ -245,14 +246,14 @@ AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     parameters.push_back(std::make_unique<Parameter>(String("lfo_attenuator"), String("LFO Attenuator"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
                                                      0.0f, sliderValueToText, sliderTextToValue));
-
+*/
     parameters.push_back(std::make_unique<Parameter>(String("pw"), String("PW"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
                                                      0.5f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("pw_mod"), String("PW Modulation"), String(),
-                                                     NormalisableRange<float>(0.0f, 2.0f, 1.0f),
-                                                     2.0f, sliderValueToText, sliderTextToValue));
+                                                     NormalisableRange<float>(0.0f, 1.0f, 1.0f),
+                                                     1.0f, sliderValueToText, sliderTextToValue));
 
     parameters.push_back(std::make_unique<Parameter>(String("sub_vol"), String("Sub Volume"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
@@ -330,10 +331,10 @@ JunoSynthAudioProcessor::JunoSynthAudioProcessor()
 
     volumeParameter = parameters.getRawParameterValue("volume");
 
-    lfoRateParameter = parameters.getRawParameterValue("lfo_rate");
-    lfoDelayParameter = parameters.getRawParameterValue("lfo_delay");
+//    lfoRateParameter = parameters.getRawParameterValue("lfo_rate");
+//    lfoDelayParameter = parameters.getRawParameterValue("lfo_delay");
 
-    lfoAttenuatorParameter = parameters.getRawParameterValue("lfo_attenuator");
+//    lfoAttenuatorParameter = parameters.getRawParameterValue("lfo_attenuator");
     pwParameter = parameters.getRawParameterValue("pw");
     pwModulationParameter = parameters.getRawParameterValue("pw_mod");    
     subVolumeParameter = parameters.getRawParameterValue("sub_vol");    
@@ -424,8 +425,9 @@ void JunoSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+
     keyboardState.reset();
-    lfo = junoLFO_init(sampleRate);
+//    lfo = junoLFO_init(sampleRate);
     synthesiser.setCurrentPlaybackSampleRate(sampleRate);
 }
 
@@ -433,6 +435,7 @@ void JunoSynthAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+
     keyboardState.reset();
 }
 
@@ -477,7 +480,7 @@ void JunoSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    synthesiser.setLfoAttenuatorParameter(*lfoAttenuatorParameter);
+//    synthesiser.setLfoAttenuatorParameter(*lfoAttenuatorParameter);
     synthesiser.setPwParameter(*pwParameter);
     synthesiser.setPwModulationParameter(*pwModulationParameter);
     synthesiser.setSubVolumeParameter(*subVolumeParameter);

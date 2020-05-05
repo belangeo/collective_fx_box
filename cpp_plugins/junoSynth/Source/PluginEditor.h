@@ -45,7 +45,7 @@ private:
     Slider 	volumeKnob;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> volumeKnobAttachment;
 
-/*	LFO		*/
+/*	LFO		*//*
     Label 	lfoRateLabel;
     Slider 	lfoRateSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoRateSliderAttachment;
@@ -53,12 +53,12 @@ private:
     Label 	lfoDelayLabel;
     Slider 	lfoDelaySlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoDelaySliderAttachment;
-
-/*	DCO		*/
+*/
+/*	DCO		*//*
     Label 	lfoAttenuatorLabel;
     Slider 	lfoAttenuatorSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> lfoAttenuatorSliderAttachment;
-
+*/
     Label 	pwLabel;
     Slider 	pwSlider;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> pwSliderAttachment;
