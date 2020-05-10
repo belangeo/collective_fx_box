@@ -45,28 +45,31 @@ static float delayVolumeSliderTextToValue(const String& text) {
     return text.getFloatValue();
 }
 
+String makeBandParameter(String param, int band){
+  return param + String(band);
+}
 
 AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     using Parameter = AudioProcessorValueTreeState::Parameter;
 
     std::vector<std::unique_ptr<Parameter>> parameters;
 
-    parameters.push_back(std::make_unique<Parameter>(String("delayDuration"), String("delayDuration"), String(),
+    parameters.push_back(std::make_unique<Parameter>(makeBandParameter("delayDuration", 1), String("delayDuration"), String(),
                                                      NormalisableRange<float>(0.0f, 2.0f),
                                                      0.5f, delayDurationSliderValueToText, delayDurationSliderTextToValue));
 
 
-    parameters.push_back(std::make_unique<Parameter>(String("delayFeedback"), String("delayFeedback"), String(),
+    parameters.push_back(std::make_unique<Parameter>(makeBandParameter("delayFeedback", 1), String("delayFeedback"), String(),
                                                      NormalisableRange<float>(0.0f, 0.99f),
                                                      0.5f, delayFeedbackSliderValueToText, delayFeedbackSliderTextToValue));
 
 
-    parameters.push_back(std::make_unique<Parameter>(String("delayWetDry"), String("delayWetDry"), String(),
+    parameters.push_back(std::make_unique<Parameter>(makeBandParameter("delayWetDry", 1), String("delayWetDry"), String(),
                                                      NormalisableRange<float>(0.0f, 1.0f),
                                                      0.5f, delayWetDrySliderValueToText, delayWetDrySliderTextToValue));
 
 
-    parameters.push_back(std::make_unique<Parameter>(String("delayVolume"), String("delayVolume"), String(),
+    parameters.push_back(std::make_unique<Parameter>(makeBandParameter("delayVolume", 1), String("delayVolume"), String(),
                                                      NormalisableRange<float>(0.0f, 2.0f),
                                                      1.0f, delayVolumeSliderValueToText, delayVolumeSliderTextToValue));
 
@@ -94,10 +97,10 @@ MultibandDelayAudioProcessor::MultibandDelayAudioProcessor()
     parameters (*this, nullptr, Identifier(JucePlugin_Name), createParameterLayout())
 {
     /*  On garde une référence directe aux valeurs brutes des paramètres afin d'avoir un accès rapide dans la méthode processBlock. */
-  delayDurationParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayDuration");
-  delayFeedbackParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayFeedback");
-  delayWetDryParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayWetDry");
-  delayVolumeParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayVolume");
+  band.delayDurationParameter = (std::atomic<float>*) parameters.getRawParameterValue(makeBandParameter("delayDuration", 1));
+  band.delayFeedbackParameter = (std::atomic<float>*) parameters.getRawParameterValue(makeBandParameter("delayFeedback", 1));
+  band.delayWetDryParameter = (std::atomic<float>*) parameters.getRawParameterValue(makeBandParameter("delayWetDry", 1));
+  band.delayVolumeParameter = (std::atomic<float>*) parameters.getRawParameterValue(makeBandParameter("delayVolume", 1));
 }
 
 MultibandDelayAudioProcessor::~MultibandDelayAudioProcessor()
@@ -171,8 +174,8 @@ void MultibandDelayAudioProcessor::prepareToPlay (double sampleRate, int samples
 {
   int maxDur = 10;
   for (int i = 0; i < 2; i++) {
-    delay[i] = delay_init(maxDur, (float) sampleRate);
-    bp[i] = bp_init(100, 1.5, (float) sampleRate);
+    band.delay[i] = delay_init(maxDur, (float) sampleRate);
+    band.bp[i] = bp_init(100, 1.5, (float) sampleRate);
   }
 
     // Use this method as the place to do any pre-playback
@@ -185,8 +188,8 @@ void MultibandDelayAudioProcessor::releaseResources()
     // spare memory, etc.
 
   for (int i = 0; i < 2; i++) {
-    delay_delete(delay[i]);
-    bp_delete(bp[i]);
+    delay_delete(band.delay[i]);
+    bp_delete(band.bp[i]);
   }
 }
 
@@ -243,20 +246,20 @@ void MultibandDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
           /* On applique le traitement de signal à chacun des échantillons (i) du bloc
              pour chacun des canaux (channel). */
 
-          float dry_wet = *delayWetDryParameter;
-          float feedback = *delayFeedbackParameter;;
+          float dry_wet = *band.delayWetDryParameter;
+          float feedback = *band.delayFeedbackParameter;;
 
           float input = channelData[i];
 
-          float filtered_input = bp_process(bp[channel], input);
+          float filtered_input = bp_process(band.bp[channel], input);
 
-          float delayVal = delay_read(delay[channel], *delayDurationParameter);
+          float delayVal = delay_read(band.delay[channel], *band.delayDurationParameter);
 
           float output = (1.0 - dry_wet) * filtered_input + dry_wet * delayVal;
 
-          delay_write(delay[channel], filtered_input + feedback * output);
+          delay_write(band.delay[channel], filtered_input + feedback * output);
 
-          channelData[i] = *delayVolumeParameter * output;
+          channelData[i] = *band.delayVolumeParameter * output;
         }
 
 

@@ -14,9 +14,25 @@
 #include "delay.h"
 #include "bp.h"
 
+// Le nombre de bandes spectrales. Pour chaque bande, l'interface ajoutera une colonne de potentiometres
+#define NB_BANDS 1
+
 //==============================================================================
 /**
 */
+
+struct band {
+
+
+    struct delay * delay[2];
+    struct bp * bp[2];
+
+    std::atomic<float> *delayDurationParameter = nullptr;
+    std::atomic<float> *delayFeedbackParameter = nullptr;
+    std::atomic<float> *delayWetDryParameter = nullptr;
+    std::atomic<float> *delayVolumeParameter = nullptr;
+};
+
 class MultibandDelayAudioProcessor  : public AudioProcessor
 {
 public:
@@ -62,13 +78,9 @@ private:
 
     AudioProcessorValueTreeState parameters;
 
-    struct delay * delay[2];
-    struct bp * bp[2];
-
-    std::atomic<float> *delayDurationParameter = nullptr;
-    std::atomic<float> *delayFeedbackParameter = nullptr;
-    std::atomic<float> *delayWetDryParameter = nullptr;
-    std::atomic<float> *delayVolumeParameter = nullptr;
+    struct band band;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultibandDelayAudioProcessor)
 };
+
+String makeBandParameter(String param, int band);
