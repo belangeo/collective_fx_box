@@ -45,7 +45,7 @@ MultibandDelayAudioProcessorEditor::MultibandDelayAudioProcessorEditor (Multiban
     bandInterface.delayFeedback.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&bandInterface.delayFeedback);
 
-    bandInterface.delayFeedbackAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "delayFeedback", bandInterface.delayFeedback));
+    bandInterface.delayFeedbackAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayFeedback", 1), bandInterface.delayFeedback));
 
 
     bandInterface.delayWetDryLabel.setText("wet-dry", NotificationType::dontSendNotification);
@@ -57,7 +57,7 @@ MultibandDelayAudioProcessorEditor::MultibandDelayAudioProcessorEditor (Multiban
     bandInterface.delayWetDry.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&bandInterface.delayWetDry);
 
-    bandInterface.delayWetDryAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "delayWetDry", bandInterface.delayWetDry));
+    bandInterface.delayWetDryAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayWetDry", 1), bandInterface.delayWetDry));
 
 
     bandInterface.delayVolumeLabel.setText("volume", NotificationType::dontSendNotification);
@@ -69,7 +69,7 @@ MultibandDelayAudioProcessorEditor::MultibandDelayAudioProcessorEditor (Multiban
     bandInterface.delayVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
     addAndMakeVisible(&bandInterface.delayVolume);
 
-    bandInterface.delayVolumeAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "delayVolume", bandInterface.delayVolume));
+    bandInterface.delayVolumeAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayVolume", 1), bandInterface.delayVolume));
 
 }
 
@@ -82,10 +82,6 @@ void MultibandDelayAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-    g.setColour (Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
 }
 
 void MultibandDelayAudioProcessorEditor::resized()
