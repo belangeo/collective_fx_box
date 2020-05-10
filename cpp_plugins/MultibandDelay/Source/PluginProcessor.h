@@ -11,6 +11,8 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "delay.h"
+#include "bp.h"
 
 //==============================================================================
 /**
@@ -57,5 +59,16 @@ public:
 
 private:
     //==============================================================================
+
+    AudioProcessorValueTreeState parameters;
+
+    struct delay * delay[2];
+    struct bp * bp[2];
+
+    std::atomic<float> *delayDurationParameter = nullptr;
+    std::atomic<float> *delayFeedbackParameter = nullptr;
+    std::atomic<float> *delayWetDryParameter = nullptr;
+    std::atomic<float> *delayVolumeParameter = nullptr;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultibandDelayAudioProcessor)
 };

@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="Jcv79a" name="MultibandDelay" projectType="audioplug" jucerVersion="5.4.5">
-  <MAINGROUP id="HrlM9l" name="MultibandDelay">
-    <GROUP id="{2673C4B0-8F54-F3DC-B623-DAB340293B63}" name="Source">
-      <FILE id="dAHy5w" name="PluginProcessor.cpp" compile="1" resource="0"
+<JUCERPROJECT id="bFw8DO" name="MultibandDelay" projectType="audioplug" jucerVersion="5.4.5"
+              pluginFormats="buildStandalone,buildVST3" pluginCharacteristicsValue="pluginWantsMidiIn"
+              headerPath="../../../../lib/">
+  <MAINGROUP id="ZUgmgW" name="MultibandDelay">
+    <GROUP id="{F4DF7542-7645-3BE5-F516-12C6B7663486}" name="Source">
+      <FILE id="kbispf" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
-      <FILE id="e8r0Lb" name="PluginProcessor.h" compile="0" resource="0"
+      <FILE id="wK21rx" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="rSFJqz" name="PluginEditor.cpp" compile="1" resource="0"
+      <FILE id="PcMEdF" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
-      <FILE id="N9iezX" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="n8ESgZ" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="pIBNr5" name="bp.c" compile="1" resource="0" file="../../lib/bp.c"/>
+    <FILE id="I55vTB" name="bp.h" compile="0" resource="0" file="../../lib/bp.h"/>
+    <FILE id="HTIyTJ" name="delay.c" compile="1" resource="0" file="../../lib/delay.c"/>
+    <FILE id="PjEqGE" name="delay.h" compile="0" resource="0" file="../../lib/delay.h"/>
+    <FILE id="ragZl7" name="utils.c" compile="1" resource="0" file="../../lib/utils.c"/>
+    <FILE id="GzZDZR" name="utils.h" compile="0" resource="0" file="../../lib/utils.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">

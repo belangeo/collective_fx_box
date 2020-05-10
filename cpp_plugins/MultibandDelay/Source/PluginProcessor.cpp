@@ -12,6 +12,70 @@
 #include "PluginEditor.h"
 
 //==============================================================================
+
+static String delayDurationSliderValueToText(float value) {
+    return String(value, 3) + String(" sec");
+}
+
+static float delayDurationSliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
+static String delayFeedbackSliderValueToText(float value) {
+    return String(value, 3) + String(" feed");
+}
+
+static float delayFeedbackSliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
+static String delayWetDrySliderValueToText(float value) {
+    return String(value, 3) + String(" w/d");
+}
+
+static float delayWetDrySliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
+static String delayVolumeSliderValueToText(float value) {
+    return String(value, 3) + String(" vol");
+}
+
+static float delayVolumeSliderTextToValue(const String& text) {
+    return text.getFloatValue();
+}
+
+
+AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
+    using Parameter = AudioProcessorValueTreeState::Parameter;
+
+    std::vector<std::unique_ptr<Parameter>> parameters;
+
+    parameters.push_back(std::make_unique<Parameter>(String("delayDuration"), String("delayDuration"), String(),
+                                                     NormalisableRange<float>(0.0f, 2.0f),
+                                                     0.5f, delayDurationSliderValueToText, delayDurationSliderTextToValue));
+
+
+    parameters.push_back(std::make_unique<Parameter>(String("delayFeedback"), String("delayFeedback"), String(),
+                                                     NormalisableRange<float>(0.0f, 0.99f),
+                                                     0.5f, delayFeedbackSliderValueToText, delayFeedbackSliderTextToValue));
+
+
+    parameters.push_back(std::make_unique<Parameter>(String("delayWetDry"), String("delayWetDry"), String(),
+                                                     NormalisableRange<float>(0.0f, 1.0f),
+                                                     0.5f, delayWetDrySliderValueToText, delayWetDrySliderTextToValue));
+
+
+    parameters.push_back(std::make_unique<Parameter>(String("delayVolume"), String("delayVolume"), String(),
+                                                     NormalisableRange<float>(0.0f, 2.0f),
+                                                     1.0f, delayVolumeSliderValueToText, delayVolumeSliderTextToValue));
+
+    return { parameters.begin(), parameters.end() };
+}
+
+
+
+
 MultibandDelayAudioProcessor::MultibandDelayAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
@@ -21,9 +85,19 @@ MultibandDelayAudioProcessor::MultibandDelayAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), /* <-- ça prend une virgule ici puisque paramters est le second d'une liste de deux objets à initialiser. */
 #endif
+    /*  Cette ligne initialise la variable parameters (un objet AudioProcessorValueTreeState)
+        à la création du AudioProcessor. Notez l'appel de la fonction createParameterLayout()
+        pour lui donner la configuration des paramètres.
+    */
+    parameters (*this, nullptr, Identifier(JucePlugin_Name), createParameterLayout())
 {
+    /*  On garde une référence directe aux valeurs brutes des paramètres afin d'avoir un accès rapide dans la méthode processBlock. */
+  delayDurationParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayDuration");
+  delayFeedbackParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayFeedback");
+  delayWetDryParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayWetDry");
+  delayVolumeParameter = (std::atomic<float>*) parameters.getRawParameterValue("delayVolume");
 }
 
 MultibandDelayAudioProcessor::~MultibandDelayAudioProcessor()
@@ -95,6 +169,12 @@ void MultibandDelayAudioProcessor::changeProgramName (int index, const String& n
 //==============================================================================
 void MultibandDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+  int maxDur = 10;
+  for (int i = 0; i < 2; i++) {
+    delay[i] = delay_init(maxDur, (float) sampleRate);
+    bp[i] = bp_init(100, 1.5, (float) sampleRate);
+  }
+
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -103,6 +183,11 @@ void MultibandDelayAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+
+  for (int i = 0; i < 2; i++) {
+    delay_delete(delay[i]);
+    bp_delete(bp[i]);
+  }
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -154,6 +239,28 @@ void MultibandDelayAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     {
         auto* channelData = buffer.getWritePointer (channel);
 
+        for (int i = 0; i < getBlockSize(); i++) {
+          /* On applique le traitement de signal à chacun des échantillons (i) du bloc
+             pour chacun des canaux (channel). */
+
+          float dry_wet = *delayWetDryParameter;
+          float feedback = *delayFeedbackParameter;;
+
+          float input = channelData[i];
+
+          float filtered_input = bp_process(bp[channel], input);
+
+          float delayVal = delay_read(delay[channel], *delayDurationParameter);
+
+          float output = (1.0 - dry_wet) * filtered_input + dry_wet * delayVal;
+
+          delay_write(delay[channel], filtered_input + feedback * output);
+
+          channelData[i] = *delayVolumeParameter * output;
+        }
+
+
+
         // ..do something to the data...
     }
 }
@@ -166,7 +273,7 @@ bool MultibandDelayAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* MultibandDelayAudioProcessor::createEditor()
 {
-    return new MultibandDelayAudioProcessorEditor (*this);
+    return new MultibandDelayAudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================
