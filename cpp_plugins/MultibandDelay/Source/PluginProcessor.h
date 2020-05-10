@@ -15,7 +15,7 @@
 #include "bp.h"
 
 // Le nombre de bandes spectrales. Pour chaque bande, l'interface ajoutera une colonne de potentiometres
-#define NB_BANDS 1
+#define NB_BANDS 8
 
 //==============================================================================
 /**

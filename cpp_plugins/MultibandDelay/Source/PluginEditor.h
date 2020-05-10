@@ -60,6 +60,6 @@ private:
     /*  On a besoin d'une référence à l'arbre des paramètres dans l'éditeur graphique. */
     AudioProcessorValueTreeState& valueTreeState;
 
-    struct band_interface bandInterface;
+    struct band_interface bandInterface[NB_BANDS];
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultibandDelayAudioProcessorEditor)
 };

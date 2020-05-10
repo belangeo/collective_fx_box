@@ -24,53 +24,55 @@ MultibandDelayAudioProcessorEditor::MultibandDelayAudioProcessorEditor (Multiban
 
     setLookAndFeel(&lookAndFeel);
 
-    bandInterface.delayDurationLabel.setText("duration", NotificationType::dontSendNotification);
-    bandInterface.delayDurationLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&bandInterface.delayDurationLabel);
+    for(int i = 0; i < NB_BANDS; i++){
 
-    bandInterface.delayDuration.setLookAndFeel(&lookAndFeel);
-    bandInterface.delayDuration.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    bandInterface.delayDuration.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&bandInterface.delayDuration);
+    bandInterface[i].delayDurationLabel.setText("duration", NotificationType::dontSendNotification);
+    bandInterface[i].delayDurationLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&bandInterface[i].delayDurationLabel);
 
-    bandInterface.delayDurationAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayDuration", 1), bandInterface.delayDuration));
+    bandInterface[i].delayDuration.setLookAndFeel(&lookAndFeel);
+    bandInterface[i].delayDuration.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    bandInterface[i].delayDuration.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
+    addAndMakeVisible(&bandInterface[i].delayDuration);
 
-
-    bandInterface.delayFeedbackLabel.setText("feedback", NotificationType::dontSendNotification);
-    bandInterface.delayFeedbackLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&bandInterface.delayFeedbackLabel);
-
-    bandInterface.delayFeedback.setLookAndFeel(&lookAndFeel);
-    bandInterface.delayFeedback.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    bandInterface.delayFeedback.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&bandInterface.delayFeedback);
-
-    bandInterface.delayFeedbackAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayFeedback", 1), bandInterface.delayFeedback));
+    bandInterface[i].delayDurationAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayDuration", i), bandInterface[i].delayDuration));
 
 
-    bandInterface.delayWetDryLabel.setText("wet-dry", NotificationType::dontSendNotification);
-    bandInterface.delayWetDryLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&bandInterface.delayWetDryLabel);
+    bandInterface[i].delayFeedbackLabel.setText("feedback", NotificationType::dontSendNotification);
+    bandInterface[i].delayFeedbackLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&bandInterface[i].delayFeedbackLabel);
 
-    bandInterface.delayWetDry.setLookAndFeel(&lookAndFeel);
-    bandInterface.delayWetDry.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    bandInterface.delayWetDry.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&bandInterface.delayWetDry);
+    bandInterface[i].delayFeedback.setLookAndFeel(&lookAndFeel);
+    bandInterface[i].delayFeedback.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    bandInterface[i].delayFeedback.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
+    addAndMakeVisible(&bandInterface[i].delayFeedback);
 
-    bandInterface.delayWetDryAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayWetDry", 1), bandInterface.delayWetDry));
+    bandInterface[i].delayFeedbackAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayFeedback", i), bandInterface[i].delayFeedback));
 
 
-    bandInterface.delayVolumeLabel.setText("volume", NotificationType::dontSendNotification);
-    bandInterface.delayVolumeLabel.setJustificationType(Justification::centred);
-    addAndMakeVisible(&bandInterface.delayVolumeLabel);
+    bandInterface[i].delayWetDryLabel.setText("wet-dry", NotificationType::dontSendNotification);
+    bandInterface[i].delayWetDryLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&bandInterface[i].delayWetDryLabel);
 
-    bandInterface.delayVolume.setLookAndFeel(&lookAndFeel);
-    bandInterface.delayVolume.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    bandInterface.delayVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
-    addAndMakeVisible(&bandInterface.delayVolume);
+    bandInterface[i].delayWetDry.setLookAndFeel(&lookAndFeel);
+    bandInterface[i].delayWetDry.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    bandInterface[i].delayWetDry.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
+    addAndMakeVisible(&bandInterface[i].delayWetDry);
 
-    bandInterface.delayVolumeAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayVolume", 1), bandInterface.delayVolume));
+    bandInterface[i].delayWetDryAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayWetDry", i), bandInterface[i].delayWetDry));
 
+
+    bandInterface[i].delayVolumeLabel.setText("volume", NotificationType::dontSendNotification);
+    bandInterface[i].delayVolumeLabel.setJustificationType(Justification::centred);
+    addAndMakeVisible(&bandInterface[i].delayVolumeLabel);
+
+    bandInterface[i].delayVolume.setLookAndFeel(&lookAndFeel);
+    bandInterface[i].delayVolume.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+    bandInterface[i].delayVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 80, 20);
+    addAndMakeVisible(&bandInterface[i].delayVolume);
+
+    bandInterface[i].delayVolumeAttachment.reset (new AudioProcessorValueTreeState::SliderAttachment(valueTreeState, makeBandParameter("delayVolume", i), bandInterface[i].delayVolume));
+    }
 }
 
 MultibandDelayAudioProcessorEditor::~MultibandDelayAudioProcessorEditor()
@@ -86,18 +88,20 @@ void MultibandDelayAudioProcessorEditor::paint (Graphics& g)
 
 void MultibandDelayAudioProcessorEditor::resized()
 {
+  for(int i = 0; i < NB_BANDS; i++){
+    bandInterface[i].delayVolumeLabel.setBounds(40 + i * 120, 30, 80, 20);
+    bandInterface[i].delayVolume.setBounds(40 + i * 120, 50, 80, 100);
 
-    bandInterface.delayVolumeLabel.setBounds(40, 30, 80, 20);
-    bandInterface.delayVolume.setBounds(40, 50, 80, 100);
+    bandInterface[i].delayDurationLabel.setBounds(40 + i * 120, 180, 80, 20);
+    bandInterface[i].delayDuration.setBounds(40 + i * 120, 200, 80, 100);
 
-    bandInterface.delayDurationLabel.setBounds(40, 180, 80, 20);
-    bandInterface.delayDuration.setBounds(40, 200, 80, 100);
+    bandInterface[i].delayFeedbackLabel.setBounds(40 + i * 120, 330, 80, 20);
+    bandInterface[i].delayFeedback.setBounds(40 + i * 120, 350, 80, 100);
 
-    bandInterface.delayFeedbackLabel.setBounds(40, 330, 80, 20);
-    bandInterface.delayFeedback.setBounds(40, 350, 80, 100);
+    bandInterface[i].delayWetDryLabel.setBounds(40 + i * 120, 480, 80, 20);
+    bandInterface[i].delayWetDry.setBounds(40 + i * 120, 500, 80, 100);
 
-    bandInterface.delayWetDryLabel.setBounds(40, 480, 80, 20);
-    bandInterface.delayWetDry.setBounds(40, 500, 80, 100);
+  }
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 }
