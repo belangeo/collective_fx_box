@@ -1,3 +1,4 @@
+// Fabien Lamarche-Filion
 #ifndef __BP_H__
 #define __BP_H__
 

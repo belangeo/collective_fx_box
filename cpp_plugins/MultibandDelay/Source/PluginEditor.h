@@ -1,3 +1,5 @@
+// Fabien Lamarche-Filion
+
 /*
   ==============================================================================
 
@@ -18,27 +20,27 @@
 /**
 */
 
+// Structure pour l'interface pour chaque bande frequentielle
 struct band_interface{
     /*  Labels. */
+    Label freqLabel;
     Label delayDurationLabel;
     Label delayFeedbackLabel;
-    Label delayWetDryLabel;
+    Label delayDryWetLabel;
     Label delayVolumeLabel;
 
     /*  Potentiomètres. */
     Slider delayDuration;
     Slider delayFeedback;
-    Slider delayWetDry;
+    Slider delayDryWet;
     Slider delayVolume;
 
     /*  L'objet SliderAttachment établi la communication entre le paramètre automatisable,
         contrôlé par le séquenceur, et un potentiomètre dans l'interface graphique. */
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> delayDurationAttachment;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> delayFeedbackAttachment;
-    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> delayWetDryAttachment;
+    std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> delayDryWetAttachment;
     std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> delayVolumeAttachment;
-
-
 };
 class MultibandDelayAudioProcessorEditor  : public AudioProcessorEditor
 {

@@ -1,3 +1,5 @@
+// Fabien Lamarche-Filion
+
 /*
   ==============================================================================
 
@@ -15,21 +17,29 @@
 #include "bp.h"
 
 // Le nombre de bandes spectrales. Pour chaque bande, l'interface ajoutera une colonne de potentiometres
+// Il faut faire attention, la methode pour determiner le Q en fonction des differentes bandes n'est pas
+// tout a fait au point, et certaines combinaisons (e.g. NB_BANDS=5 et ARBITRARY_MAX_FREQ=5000.0f) causent
+// des resonnances epouvantables.
 #define NB_BANDS 8
+
+#define ARBITRARY_MAX_FREQ 12000.0f
 
 //==============================================================================
 /**
 */
 
+float arbitrary_freq(int idx, int nbBands);
+
+float arbitrary_q(int nbBands);
+
+// Structure pour une bande frequencielle. Chaque bande a sa propre
+// serie de potentiometres.
 struct band {
-
-
     struct delay * delay[2];
     struct bp * bp[2];
-
     std::atomic<float> *delayDurationParameter = nullptr;
     std::atomic<float> *delayFeedbackParameter = nullptr;
-    std::atomic<float> *delayWetDryParameter = nullptr;
+    std::atomic<float> *delayDryWetParameter = nullptr;
     std::atomic<float> *delayVolumeParameter = nullptr;
 };
 
@@ -78,7 +88,7 @@ private:
 
     AudioProcessorValueTreeState parameters;
 
-    struct band band;
+    struct band band[NB_BANDS];
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultibandDelayAudioProcessor)
 };
